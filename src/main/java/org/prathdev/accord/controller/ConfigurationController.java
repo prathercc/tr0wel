@@ -12,9 +12,9 @@ import org.prathdev.accord.domain.Guild;
 public class ConfigurationController {
 
 	@FXML
-	private ChoiceBox guildSelectionBox;
+	private ChoiceBox<Guild> guildSelectionBox;
 	@FXML
-	private ChoiceBox channelSelectionBox;
+	private ChoiceBox<Channel> channelSelectionBox;
 	@FXML
 	private Button manageChannelButton;
 
