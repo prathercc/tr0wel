@@ -25,7 +25,9 @@ public class Guild {
 
 	public void setChannels(Channel[] val) {
 		for (Channel c : val) {
-			channels.add(c);
+			if(c.getType() == 0) {
+				channels.add(c);
+			}
 		}
 	}
 
@@ -54,14 +56,9 @@ public class Guild {
 	}
 
 	public String toString() {
-		String channelString = "[";
-		int counter = 0;
-		for(Channel c: channels) {
 			channelString = counter == 0 ? channelString + c.toString() + "]" : channelString + " | [" + c.toString() + "]";
 			counter++;
-		}
-		
-		return "Guild Name: " + getName() + " | Channels: " + channelString;
+		return getName();
 	}
 
 }

@@ -16,6 +16,16 @@ public class Channel {
 
 	@JsonProperty("nsfw")
 	private boolean isNsfw = false;
+	
+	@JsonProperty("type")
+	private int type = 0;
+	
+	public int getType() {
+		return type;
+	}
+	public void setType(int val) {
+		type = val;
+	}
 
 	public String getId() {
 		return id;
