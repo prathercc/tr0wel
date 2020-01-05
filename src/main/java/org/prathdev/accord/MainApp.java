@@ -11,6 +11,8 @@ import org.slf4j.LoggerFactory;
 public class MainApp extends Application {
 
 	private static final Logger log = LoggerFactory.getLogger(MainApp.class);
+	
+	public static Stage authenticationMenu;
 
 	public static void main(String[] args) throws Exception {
 		launch(args);
@@ -20,7 +22,7 @@ public class MainApp extends Application {
 
 		log.info("Starting application...");
 
-		String fxmlFile = "/fxml/Authentication/authenticationMenu.fxml";
+		String fxmlFile = "/fxml/authenticationMenu.fxml";
 		log.debug("Loading FXML for main view from: {}", fxmlFile);
 		FXMLLoader loader = new FXMLLoader();
 		Parent rootNode = (Parent) loader.load(getClass().getResourceAsStream(fxmlFile));
@@ -29,8 +31,9 @@ public class MainApp extends Application {
 		Scene scene = new Scene(rootNode);
 		scene.getStylesheets().add("/styles/styles.css");
 
-		stage.setTitle("accord");
+		stage.setTitle("accord - Authentication Menu");
 		stage.setScene(scene);
+		authenticationMenu = stage;
 		stage.show();
 	}
 }
