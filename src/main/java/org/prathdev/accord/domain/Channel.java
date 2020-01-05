@@ -60,6 +60,6 @@ public class Channel {
 	}
 	
 	public String toString() {
-		return "Channel Name: " + getName();
+		return getName();
 	}
 }

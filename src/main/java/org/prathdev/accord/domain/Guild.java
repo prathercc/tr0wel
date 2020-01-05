@@ -56,8 +56,6 @@ public class Guild {
 	}
 
 	public String toString() {
-			channelString = counter == 0 ? channelString + c.toString() + "]" : channelString + " | [" + c.toString() + "]";
-			counter++;
 		return getName();
 	}
 
