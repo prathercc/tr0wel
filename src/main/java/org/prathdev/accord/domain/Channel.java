@@ -1,5 +1,8 @@
 package org.prathdev.accord.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -19,6 +22,17 @@ public class Channel {
 	
 	@JsonProperty("type")
 	private int type = 0;
+	
+	private List<Message> messages = new ArrayList<Message>();
+	
+	public List<Message> getMessages(){
+		return messages;
+	}
+	public void setMessages(Message[] val) {
+		for(Message m: val) {
+			messages.add(m);
+		}
+	}
 	
 	public int getType() {
 		return type;
