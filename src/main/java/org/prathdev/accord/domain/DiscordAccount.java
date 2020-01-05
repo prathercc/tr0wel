@@ -8,10 +8,18 @@ public class DiscordAccount {
 	private String password = "";
 	private String authorization = "";
 	private List<Guild> guilds = new ArrayList<Guild>();
+	private User user = new User();
 
 	public DiscordAccount(String mail, String pass) {
 		email = mail;
 		password = pass;
+	}
+	
+	public User getUser() {
+		return user;
+	}
+	public void setUser(User val) {
+		user = val;
 	}
 
 	public List<Guild> getGuilds() {
@@ -56,6 +64,6 @@ public class DiscordAccount {
 			counter++;
 		}
 		
-		return "Email: " + getEmail() + " | Password: " + getPassword() + " | Authorization: " + getAuthorization() + " | Guilds: " + guildString;
+		return user.toString() + " | Email: " + getEmail() + " | Password: " + getPassword() + " | Authorization: " + getAuthorization() + " | Guilds: " + guildString;
 	}
 }
