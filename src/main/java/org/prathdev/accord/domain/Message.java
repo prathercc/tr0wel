@@ -3,6 +3,9 @@ package org.prathdev.accord.domain;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Message {
 
@@ -20,6 +23,16 @@ public class Message {
 
 	@JsonProperty("timestamp")
 	private String datePosted = "";
+	
+	private BooleanProperty isSelected = new SimpleBooleanProperty();
+	
+	public final BooleanProperty getIsSelected() {
+		return isSelected;
+	}
+	
+	public final void setIsSelected(final boolean val) {
+		getIsSelected().set(val);
+	}
 
 	public Author getAuthor() {
 		return author;
@@ -62,7 +75,6 @@ public class Message {
 	}
 
 	public String toString() {
-		return "Id: " + getId() + " | Message: " + getMessage() + " | Date Posted: " + getDatePosted()
-				+ " | Channel Id: " + getChannelId() + " | " + getAuthor().toString();
+		return "[" + getDatePosted() + "] " + getAuthor().getUsername() + ": " + getMessage();
 	}
 }
