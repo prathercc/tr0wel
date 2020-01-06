@@ -25,12 +25,32 @@ public class Channel {
 	
 	private List<Message> messages = new ArrayList<Message>();
 	
+	private List<User> participatingUsers = new ArrayList<User>();
+	
+	public List<User> getParticipatingUsers(){
+		return participatingUsers;
+	}
+	
+	
 	public List<Message> getMessages(){
 		return messages;
 	}
-	public void setMessages(Message[] val) {
-		for(Message m: val) {
-			messages.add(m);
+	
+	public void setMessages(List<Message> val) {
+		messages = val;
+		for(Message m: messages) {
+			boolean alreadyInPUsers = false;
+			for(User user: participatingUsers) {
+				if(m.getAuthor().getId().equalsIgnoreCase(user.getId())) {
+					alreadyInPUsers = true;
+				}
+			}
+			if(!alreadyInPUsers) {
+				User user = new User();
+				user.setUsername(m.getAuthor().getUsername());
+				user.setId(m.getAuthor().getId());
+				participatingUsers.add(user);
+			}
 		}
 	}
 	
