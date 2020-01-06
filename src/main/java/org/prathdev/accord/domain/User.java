@@ -28,6 +28,6 @@ public class User {
 	}
 	
 	public String toString() {
-		return "Username: " + getUsername() + " | User Id: " + getId();
+		return getUsername();
 	}
 }
