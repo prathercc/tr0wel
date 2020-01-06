@@ -2,6 +2,8 @@ package org.prathdev.accord.controller;
 
 import javafx.application.Platform;
 import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -36,6 +38,8 @@ public class AuthenticationController {
 	private Button authenticateButton;
 	@FXML
 	private Text progressText;
+	
+	public static Stage configurationStage;
 
 	private void launchConfiguration(DiscordAccount discordAccount) {
 		progressText.setText("Launching configuration menu...");
@@ -51,8 +55,7 @@ public class AuthenticationController {
 			controller.fillGuildChoiceBox();
 			stage.setTitle("accord - Configuration Menu");
 			stage.setScene(scene);
-//			 stage.initModality(Modality.WINDOW_MODAL);
-//			 stage.initOwner(MainApp.mainStage);
+			configurationStage = stage;
 			stage.show();
 			org.prathdev.accord.MainApp.authenticationMenu.hide();
 		} catch (Exception e) {
@@ -63,7 +66,7 @@ public class AuthenticationController {
 	}
 
 	public void authenticate() throws InterruptedException {
-		Thread thread = new Thread(authenticationTask);
+		Thread thread = new Thread(getNewAuthTask());
 		thread.setDaemon(true);
 		thread.start();
 	}
@@ -133,69 +136,58 @@ public class AuthenticationController {
 		}
 	}
 
-	Task<Void> authenticationTask = new Task<Void>() {
-		@Override
-		protected Void call() throws Exception {
-			authenticateButton.setDisable(true);
-			emailTextField.setDisable(true);
-			passwordTextField.setDisable(true);
-			String email = emailTextField.getText();
-			String password = passwordTextField.getText();
-			DiscordAccount discordAccount = new DiscordAccount(email, password);
+	private Task<Void> getNewAuthTask(){
+		Task<Void> authenticationTask = new Task<Void>() {
+			@Override
+			protected Void call() throws Exception {
+				authenticateButton.setDisable(true);
+				emailTextField.setDisable(true);
+				passwordTextField.setDisable(true);
+				String email = emailTextField.getText();
+				String password = passwordTextField.getText();
+				DiscordAccount discordAccount = new DiscordAccount(email, password);
 
-			RestTemplate restTemplate = new RestTemplate();
-			String requestUrl = "https://discordapp.com/api/auth/login";
-			HttpHeaders headers = new HttpHeaders();
-			headers.setContentType(MediaType.APPLICATION_JSON);
-			headers.set("user-agent",
-					"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4000.3 Mobile Safari/537.36");
-			HttpEntity<String> request = new HttpEntity<String>(
-					"{\"email\":\"" + email + "\",\"password\":\"" + password + "\"}", headers);
-			restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-			restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
-			try {
-				ResponseEntity<String> response = restTemplate.exchange(requestUrl, HttpMethod.POST, request,
-						String.class);
-				if (response.getStatusCodeValue() == 200) {
-					String authorization = response.getBody();
-					authorization = authorization.replace("{\"token\": \"", "");
-					authorization = authorization.replace("\"}", "");
-					discordAccount.setAuthorization(authorization);
-					discordAccount.setGuilds(fetchGuilds(discordAccount));
-					for (Guild guild : discordAccount.getGuilds()) {
-						guild.setChannels(fetchChannels(guild, discordAccount));
-					}
-					discordAccount.setUser(fetchUserData(discordAccount));
-					System.out.println(discordAccount.toString());
-					Platform.runLater(new Runnable() {
-						@Override
-						public void run() {
-							launchConfiguration(discordAccount);
+				RestTemplate restTemplate = new RestTemplate();
+				String requestUrl = "https://discordapp.com/api/auth/login";
+				HttpHeaders headers = new HttpHeaders();
+				headers.setContentType(MediaType.APPLICATION_JSON);
+				headers.set("user-agent",
+						"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4000.3 Mobile Safari/537.36");
+				HttpEntity<String> request = new HttpEntity<String>(
+						"{\"email\":\"" + email + "\",\"password\":\"" + password + "\"}", headers);
+				restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+				restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
+				try {
+					ResponseEntity<String> response = restTemplate.exchange(requestUrl, HttpMethod.POST, request,
+							String.class);
+					if (response.getStatusCodeValue() == 200) {
+						String authorization = response.getBody();
+						authorization = authorization.replace("{\"token\": \"", "");
+						authorization = authorization.replace("\"}", "");
+						discordAccount.setAuthorization(authorization);
+						discordAccount.setGuilds(fetchGuilds(discordAccount));
+						for (Guild guild : discordAccount.getGuilds()) {
+							guild.setChannels(fetchChannels(guild, discordAccount));
 						}
-					});
+						discordAccount.setUser(fetchUserData(discordAccount));
+						System.out.println(discordAccount.toString());
+						Platform.runLater(new Runnable() {
+							@Override
+							public void run() {
+								launchConfiguration(discordAccount);
+							}
+						});
+					}
+				} catch (Exception e) {
+					System.out.println("Unable to authenticate user!\n" + e.toString());
+					authenticateButton.setDisable(false);
+					emailTextField.setDisable(false);
+					passwordTextField.setDisable(false);
+					progressText.setText("");
 				}
-			} catch (Exception e) {
-				System.out.println("Unable to authenticate user!\n" + e.toString());
-				authenticateButton.setDisable(false);
-				emailTextField.setDisable(false);
-				passwordTextField.setDisable(false);
-				progressText.setText("");
+				return null;
 			}
-			return null;
-		}
-	};
+		};
+		return authenticationTask;
+	}
 }
-
-//RestTemplate restTemplate = new RestTemplate();
-//String requestUrl = "https://discordapp.com/api/channels/211181834967580673/messages?limit=100"; 
-//HttpHeaders headers = new HttpHeaders();
-//headers.set("authorization", "");
-//headers.set("user-agent", "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4000.3 Mobile Safari/537.36");
-//HttpEntity<JsonNode> request = new HttpEntity<JsonNode>(headers);
-//restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-//ResponseEntity<Message[]> response = restTemplate.exchange(requestUrl, HttpMethod.GET, request, Message[].class);
-//
-//Message[] messages = response.getBody();
-//for(Message message: messages) {
-//	System.out.println(message.toString());
-//}
