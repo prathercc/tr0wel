@@ -3,10 +3,8 @@ package org.prathdev.accord.controller;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.prathdev.accord.domain.Author;
 import org.prathdev.accord.domain.Channel;
 import org.prathdev.accord.domain.DiscordAccount;
-import org.prathdev.accord.domain.Guild;
 import org.prathdev.accord.domain.Message;
 import org.prathdev.accord.domain.User;
 import org.springframework.http.HttpEntity;
@@ -19,9 +17,6 @@ import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import javafx.application.Platform;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -29,7 +24,6 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.cell.CheckBoxListCell;
 import javafx.scene.text.Text;
-import javafx.util.Callback;
 
 public class ManageChannelController {
 	@FXML
