@@ -69,14 +69,12 @@ public class ManageChannelController {
 		Thread thread = new Thread(getNewSelectionTask());
 		thread.setDaemon(true);
 		thread.start();
-
 	}
 
 	public void deleteSelections() {
 		Thread thread = new Thread(getNewDeletionTask());
 		thread.setDaemon(true);
 		thread.start();
-
 	}
 
 	public Task<Void> getNewDeletionTask() {
@@ -155,7 +153,6 @@ public class ManageChannelController {
 							}
 						}
 						numOfMsgText.setText("Found " + listView.getItems().size() + " messages by user.");
-
 					}
 				});
 
@@ -164,10 +161,7 @@ public class ManageChannelController {
 				userSelectionBox.setDisable(false);
 				return null;
 			}
-
 		};
 		return selectionTask;
-
 	}
-
 }
