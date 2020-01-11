@@ -106,7 +106,7 @@ public class ManageChannelController {
 								System.out.println("Successfully deleted: " + msg.toString());
 								msgToDelete.add(msg);
 							}
-							Thread.sleep(1000);
+							Thread.sleep(500);
 
 						} catch (Exception e) {
 							System.out.println("Was unable to delete: " + msg.toString());
