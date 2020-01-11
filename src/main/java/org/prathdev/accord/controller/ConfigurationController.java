@@ -37,16 +37,6 @@ public class ConfigurationController {
 	@FXML
 	private Button manageChannelButton;
 
-	private String test = "default";
-
-	public void setTest(String val) {
-		test = val;
-	}
-
-	public String getTest() {
-		return test;
-	}
-
 	private DiscordAccount discordAccount = null;
 
 	public DiscordAccount getDiscordAccount() {
