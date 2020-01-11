@@ -33,6 +33,7 @@ public class MainApp extends Application {
 
 		stage.setTitle("accord - Authentication Menu");
 		stage.setScene(scene);
+		stage.setResizable(false);
 		authenticationMenu = stage;
 		stage.show();
 	}
