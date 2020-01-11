@@ -20,6 +20,8 @@ import org.prathdev.accord.domain.Channel;
 import org.prathdev.accord.domain.DiscordAccount;
 import org.prathdev.accord.domain.Guild;
 import org.prathdev.accord.domain.Message;
+import org.prathdev.accord.utility.Properties;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -39,6 +41,8 @@ public class ConfigurationController {
 	private Button manageChannelButton;
 	@FXML
 	private Text configProgressText;
+	
+	Properties properties = new Properties();
 
 	private DiscordAccount discordAccount = null;
 
@@ -120,21 +124,18 @@ public class ConfigurationController {
 					try {
 						RestTemplate restTemplate = new RestTemplate();
 						String requestUrl = lastId.length() < 1
-								? "https://discordapp.com/api/channels/" + selectedChannel.getId()
-										+ "/messages?limit=100"
-								: "https://discordapp.com/api/channels/" + selectedChannel.getId()
-										+ "/messages?limit=100&before=" + lastId;
+								? properties.getDiscordChannelsUrl() + "/" + selectedChannel.getId() + "/messages?limit=100"
+								: properties.getDiscordChannelsUrl() + "/" + selectedChannel.getId() + "/messages?limit=100&before="
+										+ lastId;
 						HttpHeaders headers = new HttpHeaders();
 						headers.set("authorization", discordAccount.getAuthorization());
-						headers.set("user-agent",
-								"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4000.3 Mobile Safari/537.36");
+						headers.set("user-agent",properties.getUserAgent());
 						HttpEntity<JsonNode> request = new HttpEntity<JsonNode>(headers);
 						restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
 						ResponseEntity<Message[]> response = restTemplate.exchange(requestUrl, HttpMethod.GET, request,
 								Message[].class);
 						Message[] responseArr = response.getBody();
 						if (responseArr.length < 100) {
-							System.out.println("Data length was less than 100, setting 'reachedEnd' flag.");
 							updateConfigProgress("Completed loading for channel " + selectedChannel.getId());
 							reachedEnd = true; // If the data length was less than 100, we know we have reached the end
 						}
@@ -145,7 +146,7 @@ public class ConfigurationController {
 						lastId = responseArr[responseArr.length - 1].getId(); // Save the last id we are on
 						updateConfigProgress("Loading - [" + lastId + "]");
 					} catch (Exception e) {
-						updateConfigProgress( "[" + lastId + "] - Failure!");
+						updateConfigProgress("[" + lastId + "] - Failure!");
 					}
 				}
 				updateConfigProgress("");

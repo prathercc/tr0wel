@@ -19,6 +19,8 @@ import org.prathdev.accord.domain.Credentials;
 import org.prathdev.accord.domain.DiscordAccount;
 import org.prathdev.accord.domain.Guild;
 import org.prathdev.accord.domain.User;
+import org.prathdev.accord.utility.Properties;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -39,6 +41,8 @@ public class AuthenticationController {
 	private Button authenticateButton;
 	@FXML
 	private Text progressText;
+	
+	Properties properties = new Properties();
 
 	public static Stage configurationStage;
 
@@ -80,14 +84,13 @@ public class AuthenticationController {
 		setProgressText("Fetching user data...");
 		try {
 			RestTemplate restTemplate = new RestTemplate();
-			String requestUrl = "https://discordapp.com/api/users/@me";
 			HttpHeaders headers = new HttpHeaders();
 			headers.set("authorization", discordAccount.getAuthorization());
-			headers.set("user-agent",
-					"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4000.3 Mobile Safari/537.36");
+			headers.set("user-agent", properties.getUserAgent());
 			HttpEntity<JsonNode> request = new HttpEntity<JsonNode>(headers);
 			restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-			ResponseEntity<User> response = restTemplate.exchange(requestUrl, HttpMethod.GET, request, User.class);
+			ResponseEntity<User> response = restTemplate.exchange(properties.getDiscordUsersUrl() + "/@me", HttpMethod.GET, request,
+					User.class);
 			return response.getBody();
 		} catch (Exception e) {
 			setProgressText("Error fetching user data for account - " + discordAccount.getCredentials().getEmail());
@@ -99,15 +102,13 @@ public class AuthenticationController {
 		setProgressText("Fetching channels for guild: " + guild.getId() + "...");
 		try {
 			RestTemplate restTemplate = new RestTemplate();
-			String requestUrl = "https://discordapp.com/api/guilds/" + guild.getId() + "/channels";
 			HttpHeaders headers = new HttpHeaders();
 			headers.set("authorization", discordAccount.getAuthorization());
-			headers.set("user-agent",
-					"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4000.3 Mobile Safari/537.36");
+			headers.set("user-agent", properties.getUserAgent());
 			HttpEntity<JsonNode> request = new HttpEntity<JsonNode>(headers);
 			restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-			ResponseEntity<Channel[]> response = restTemplate.exchange(requestUrl, HttpMethod.GET, request,
-					Channel[].class);
+			ResponseEntity<Channel[]> response = restTemplate.exchange(
+					properties.getDiscordGuildsUrl() + "/" + guild.getId() + "/channels", HttpMethod.GET, request, Channel[].class);
 			return response.getBody();
 		} catch (Exception e) {
 			setProgressText("Error fetching channels from guild id - " + guild.getId());
@@ -119,15 +120,13 @@ public class AuthenticationController {
 		setProgressText("Fetching guilds...");
 		try {
 			RestTemplate restTemplate = new RestTemplate();
-			String requestUrl = "https://discordapp.com/api/users/@me/guilds";
 			HttpHeaders headers = new HttpHeaders();
 			headers.set("authorization", discordAccount.getAuthorization());
-			headers.set("user-agent",
-					"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4000.3 Mobile Safari/537.36");
+			headers.set("user-agent", properties.getUserAgent());
 			HttpEntity<JsonNode> request = new HttpEntity<JsonNode>(headers);
 			restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-			ResponseEntity<Guild[]> response = restTemplate.exchange(requestUrl, HttpMethod.GET, request,
-					Guild[].class);
+			ResponseEntity<Guild[]> response = restTemplate.exchange(properties.getDiscordUsersUrl() + "/@me/guilds", HttpMethod.GET,
+					request, Guild[].class);
 			return response.getBody();
 		} catch (Exception e) {
 			setProgressText("Error fetching guilds for user - " + discordAccount.getUser().getId());
@@ -142,21 +141,16 @@ public class AuthenticationController {
 				toggleControls(true);
 				Credentials credentials = new Credentials(emailTextField.getText(), passwordTextField.getText());
 				DiscordAccount discordAccount = new DiscordAccount(credentials);
-
 				RestTemplate restTemplate = new RestTemplate();
-				String requestUrl = "https://discordapp.com/api/auth/login";
 				HttpHeaders headers = new HttpHeaders();
 				headers.setContentType(MediaType.APPLICATION_JSON);
-				headers.set("user-agent",
-						"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4000.3 Mobile Safari/537.36");
-				
+				headers.set("user-agent", properties.getUserAgent());
 				HttpEntity<Credentials> request = new HttpEntity<Credentials>(credentials, headers);
-				
 				restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
 				restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
 				try {
-					ResponseEntity<Authorization> response = restTemplate.exchange(requestUrl, HttpMethod.POST, request,
-							Authorization.class);
+					ResponseEntity<Authorization> response = restTemplate.exchange(properties.getDiscordAuthUrl() + "/login",
+							HttpMethod.POST, request, Authorization.class);
 					if (response.getStatusCodeValue() == 200) {
 						Authorization authorization = response.getBody();
 						discordAccount.setAuthorization(authorization);
@@ -187,7 +181,7 @@ public class AuthenticationController {
 			}
 		});
 	}
-	
+
 	private void setProgressText(String val) {
 		Platform.runLater(new Runnable() {
 			@Override
