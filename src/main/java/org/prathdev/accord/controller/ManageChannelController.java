@@ -7,6 +7,8 @@ import org.prathdev.accord.domain.Channel;
 import org.prathdev.accord.domain.DiscordAccount;
 import org.prathdev.accord.domain.Message;
 import org.prathdev.accord.domain.User;
+import org.prathdev.accord.utility.Properties;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -36,6 +38,10 @@ public class ManageChannelController {
 	private Button deleteButton;
 	@FXML
 	private Text numOfMsgText;
+	@FXML
+	private Text progressText;
+
+	Properties properties = new Properties();
 
 	Channel selectedChannel = null;
 	DiscordAccount discordAccount = null;
@@ -50,9 +56,6 @@ public class ManageChannelController {
 		for (User user : channel.getParticipatingUsers()) {
 			userSelectionBox.getItems().add(user);
 		}
-
-		System.out.println("Loaded ManageChannelController for channel '" + selectedChannel.getName() + "', containing "
-				+ selectedChannel.getMessages().size() + " messages!");
 	}
 
 	public void selectAll() {
@@ -81,35 +84,29 @@ public class ManageChannelController {
 		Task<Void> deletionTask = new Task<Void>() {
 			@Override
 			protected Void call() throws Exception {
-				listView.setDisable(true);
-				selectAllButton.setDisable(true);
-				userSelectionBox.setDisable(true);
-				deleteButton.setDisable(true);
+				toggleControls(true);
 				List<Message> msgToDelete = new ArrayList<Message>();
-
 				for (Message msg : listView.getItems()) {
-
 					if (msg.getIsSelected().get()) {
 						try {
 							RestTemplate restTemplate = new RestTemplate();
-							String requestUrl = "https://discordapp.com/api/channels/" + selectedChannel.getId()
+							String requestUrl = properties.getDiscordChannelsUrl() + "/" + selectedChannel.getId()
 									+ "/messages/" + msg.getId();
 							HttpHeaders headers = new HttpHeaders();
 							headers.set("authorization", discordAccount.getAuthorization());
-							headers.set("user-agent",
-									"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4000.3 Mobile Safari/537.36");
+							headers.set("user-agent", properties.getUserAgent());
 							HttpEntity<JsonNode> request = new HttpEntity<JsonNode>(headers);
 							restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
 							ResponseEntity<String> response = restTemplate.exchange(requestUrl, HttpMethod.DELETE,
 									request, String.class);
 							if (response.getStatusCodeValue() == 204) {
-								System.out.println("Successfully deleted: " + msg.toString());
+								updateProgressText("Deletion Success - [" + msg.getId() + "]");
 								msgToDelete.add(msg);
 							}
-							Thread.sleep(500);
+							Thread.sleep(250);
 
 						} catch (Exception e) {
-							System.out.println("Was unable to delete: " + msg.toString());
+							updateProgressText("Deletion Failure - [" + msg.getId() + "]");
 						}
 					}
 				}
@@ -120,13 +117,24 @@ public class ManageChannelController {
 						for (Message delMsg : msgToDelete) {
 							listView.getItems().remove(delMsg);
 						}
+						if (listView.getItems().size() != 0) {
+							// Is there are still messages, update the number of msgs text
+							updateNumOfMessagesText("Found " + listView.getItems().size() + " messages by user.");
+						} else {
+							// No more messages? Pull them off the user selection list
+							User userToDelete = (User) userSelectionBox.getValue();
+							selectedChannel.getParticipatingUsers().remove(userToDelete);
+							userSelectionBox.getSelectionModel().clearSelection();
+							userSelectionBox.getItems().clear();
+							for (User user : selectedChannel.getParticipatingUsers()) {
+								userSelectionBox.getItems().add(user);
+							}
+							updateNumOfMessagesText("");
+						}
 					}
 				});
-
-				listView.setDisable(false);
-				selectAllButton.setDisable(false);
-				userSelectionBox.setDisable(false);
-				deleteButton.setDisable(false);
+				updateProgressText("");
+				toggleControls(false);
 				return null;
 			}
 		};
@@ -137,31 +145,59 @@ public class ManageChannelController {
 		Task<Void> selectionTask = new Task<Void>() {
 			@Override
 			protected Void call() throws Exception {
-				listView.setDisable(true);
-				selectAllButton.setDisable(true);
-				userSelectionBox.setDisable(true);
+				toggleControls(true);
 				Platform.runLater(new Runnable() {
 					@Override
 					public void run() {
 						listView.getItems().clear();
 
-						User selectedUser = (User) userSelectionBox.getValue();
+						if (userSelectionBox.getValue() != null) {
+							User selectedUser = (User) userSelectionBox.getValue();
 
-						for (Message msg : selectedChannel.getMessages()) {
-							if (msg.getAuthor().getId().equalsIgnoreCase(selectedUser.getId())) {
-								listView.getItems().add(msg);
+							for (Message msg : selectedChannel.getMessages()) {
+								if (msg.getAuthor().getId().equalsIgnoreCase(selectedUser.getId())) {
+									listView.getItems().add(msg);
+								}
 							}
+							updateNumOfMessagesText("Found " + listView.getItems().size() + " messages by user.");
 						}
-						numOfMsgText.setText("Found " + listView.getItems().size() + " messages by user.");
 					}
 				});
 
-				listView.setDisable(false);
-				selectAllButton.setDisable(false);
-				userSelectionBox.setDisable(false);
+				toggleControls(false);
 				return null;
 			}
 		};
 		return selectionTask;
+	}
+
+	private void toggleControls(boolean val) {
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				listView.setDisable(val);
+				selectAllButton.setDisable(val);
+				userSelectionBox.setDisable(val);
+				deleteButton.setDisable(val);
+			}
+		});
+	}
+
+	private void updateProgressText(String val) {
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				progressText.setText(val);
+			}
+		});
+	}
+
+	private void updateNumOfMessagesText(String val) {
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				numOfMsgText.setText(val);
+			}
+		});
 	}
 }
