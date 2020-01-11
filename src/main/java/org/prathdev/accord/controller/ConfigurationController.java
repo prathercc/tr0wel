@@ -9,6 +9,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -36,12 +37,10 @@ public class ConfigurationController {
 	private ChoiceBox<Channel> channelSelectionBox;
 	@FXML
 	private Button manageChannelButton;
+	@FXML
+	private Text configProgressText;
 
 	private DiscordAccount discordAccount = null;
-
-	public DiscordAccount getDiscordAccount() {
-		return discordAccount;
-	}
 
 	public void setDiscordAccount(DiscordAccount val) {
 		discordAccount = val;
@@ -55,24 +54,30 @@ public class ConfigurationController {
 	}
 
 	private void launchManageChannel(List<Message> channelMessages) {
-		Channel selectedChannel = (Channel) channelSelectionBox.getValue();
-		selectedChannel.setMessages(channelMessages);
-		try {
-			String fxml = "/fxml/manageChannelMenu.fxml";
-			FXMLLoader loader = new FXMLLoader();
-			loader.setLocation(getClass().getResource(fxml));
-			Parent rootNode = (Parent) loader.load(getClass().getResourceAsStream(fxml));
-			Scene scene = new Scene(rootNode);
-			Stage stage = new Stage();
-			ManageChannelController controller = loader.getController();
-			controller.setUpMessageData(discordAccount, selectedChannel);
-			stage.setTitle("accord - Channel Manager Menu");
-			stage.setScene(scene);
-			stage.initModality(Modality.WINDOW_MODAL);
-			stage.initOwner(AuthenticationController.configurationStage);
-			stage.show();
-		} catch (Exception e) {
-		}
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				Channel selectedChannel = (Channel) channelSelectionBox.getValue();
+				selectedChannel.setMessages(channelMessages);
+				try {
+					String fxml = "/fxml/manageChannelMenu.fxml";
+					FXMLLoader loader = new FXMLLoader();
+					loader.setLocation(getClass().getResource(fxml));
+					Parent rootNode = (Parent) loader.load(getClass().getResourceAsStream(fxml));
+					Scene scene = new Scene(rootNode);
+					Stage stage = new Stage();
+					ManageChannelController controller = loader.getController();
+					controller.setUpMessageData(discordAccount, selectedChannel);
+					stage.setTitle("accord - Channel Manager Menu");
+					stage.setScene(scene);
+					stage.setResizable(false);
+					stage.initModality(Modality.WINDOW_MODAL);
+					stage.initOwner(AuthenticationController.configurationStage);
+					stage.show();
+				} catch (Exception e) {
+				}
+			}
+		});
 	}
 
 	public void manageChannel() {
@@ -83,8 +88,6 @@ public class ConfigurationController {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
-		System.out.println("Manage channel button was pressed");
 	}
 
 	@SuppressWarnings("unchecked")
@@ -107,12 +110,8 @@ public class ConfigurationController {
 		Task<Void> messageTask = new Task<Void>() {
 			@Override
 			protected Void call() throws Exception {
-				manageChannelButton.setDisable(true);
-				channelSelectionBox.setDisable(true);
-				guildSelectionBox.setDisable(true);
-
+				toggleControls(true);
 				Channel selectedChannel = (Channel) channelSelectionBox.getValue();
-
 				boolean reachedEnd = false;
 				String lastId = "";
 				List<Message> retList = new ArrayList<Message>();
@@ -133,35 +132,43 @@ public class ConfigurationController {
 						restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
 						ResponseEntity<Message[]> response = restTemplate.exchange(requestUrl, HttpMethod.GET, request,
 								Message[].class);
-						Thread.sleep(1000);
 						Message[] responseArr = response.getBody();
 						if (responseArr.length < 100) {
 							System.out.println("Data length was less than 100, setting 'reachedEnd' flag.");
+							updateConfigProgress("Completed loading for channel " + selectedChannel.getId());
 							reachedEnd = true; // If the data length was less than 100, we know we have reached the end
-												// of the data
 						}
 						for (Message msg : responseArr) {
 							retList.add(msg); // Populate our retList with the additional data
 						}
+						Thread.sleep(250);
 						lastId = responseArr[responseArr.length - 1].getId(); // Save the last id we are on
-						System.out.println("Successfully retrived new data. Last Id: " + lastId);
+						updateConfigProgress("Loading - [" + lastId + "]");
 					} catch (Exception e) {
-						System.out.println("Unable to fetch messages for channel '" + selectedChannel.getName()
-								+ "', with last Id being - " + lastId + "!");
+						updateConfigProgress( "[" + lastId + "] - Failure!");
 					}
 				}
-				Platform.runLater(new Runnable() {
-					@Override
-					public void run() {
-						launchManageChannel(retList);
-					}
-				});
-				manageChannelButton.setDisable(false);
-				channelSelectionBox.setDisable(false);
-				guildSelectionBox.setDisable(false);
+				updateConfigProgress("");
+				toggleControls(false);
+				launchManageChannel(retList);
 				return null;
 			}
 		};
 		return messageTask;
+	}
+
+	private void toggleControls(boolean val) {
+		manageChannelButton.setDisable(val);
+		channelSelectionBox.setDisable(val);
+		guildSelectionBox.setDisable(val);
+	}
+
+	private void updateConfigProgress(String val) {
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				configProgressText.setText(val);
+			}
+		});
 	}
 }
