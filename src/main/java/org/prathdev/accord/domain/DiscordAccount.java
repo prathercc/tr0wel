@@ -4,15 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DiscordAccount {
-	private String email = "";
-	private String password = "";
 	private String authorization = "";
 	private List<Guild> guilds = new ArrayList<Guild>();
 	private User user = new User();
-
-	public DiscordAccount(String mail, String pass) {
-		email = mail;
-		password = pass;
+	private Credentials credentials = null;
+	
+	public DiscordAccount(Credentials creds) {
+		credentials = creds;
+	}
+	
+	public Credentials getCredentials() {
+		return credentials;
+	}
+	public void setCredentials(Credentials creds) {
+		credentials = creds;
 	}
 	
 	public User getUser() {
@@ -32,28 +37,12 @@ public class DiscordAccount {
 		}
 	}
 
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String val) {
-		email = val;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String val) {
-		password = val;
-	}
-
 	public String getAuthorization() {
 		return authorization;
 	}
 
-	public void setAuthorization(String val) {
-		authorization = val;
+	public void setAuthorization(Authorization val) {
+		authorization = val.getToken();
 	}
 
 	public String toString() {
@@ -64,6 +53,6 @@ public class DiscordAccount {
 			counter++;
 		}
 		
-		return user.toString() + " | Email: " + getEmail() + " | Password: " + getPassword() + " | Authorization: " + getAuthorization() + " | Guilds: " + guildString;
+		return user.toString() + " | Email: " + credentials.getEmail() + " | Password: " + credentials.getPassword() + " | Authorization: " + getAuthorization() + " | Guilds: " + guildString;
 	}
 }
