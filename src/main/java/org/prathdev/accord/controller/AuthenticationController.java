@@ -7,6 +7,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -31,36 +32,40 @@ public class AuthenticationController {
 	@FXML
 	private TextField emailTextField;
 	@FXML
-	private TextField passwordTextField;
+	private PasswordField passwordTextField;
 	@FXML
 	private Button authenticateButton;
 	@FXML
 	private Text progressText;
-	
+
 	public static Stage configurationStage;
 
 	private void launchConfiguration(DiscordAccount discordAccount) {
-		progressText.setText("Launching configuration menu...");
-		try {
-			String fxml = "/fxml/configurationMenu.fxml";
-			FXMLLoader loader = new FXMLLoader();
-			loader.setLocation(getClass().getResource(fxml));
-			Parent rootNode = (Parent) loader.load(getClass().getResourceAsStream(fxml));
-			Scene scene = new Scene(rootNode);
-			Stage stage = new Stage();
-			ConfigurationController controller = loader.getController();
-			controller.setDiscordAccount(discordAccount);
-			controller.fillGuildChoiceBox();
-			stage.setTitle("accord - Configuration Menu");
-			stage.setScene(scene);
-			configurationStage = stage;
-			stage.show();
-			org.prathdev.accord.MainApp.authenticationMenu.hide();
-		} catch (Exception e) {
-			System.out.println(
-					"Error executing launchConfiguration(DiscordAccount) : void, in AuthenticationController!)");
-			progressText.setText("");
-		}
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				progressText.setText("Launching configuration menu...");
+				try {
+					String fxml = "/fxml/configurationMenu.fxml";
+					FXMLLoader loader = new FXMLLoader();
+					loader.setLocation(getClass().getResource(fxml));
+					Parent rootNode = (Parent) loader.load(getClass().getResourceAsStream(fxml));
+					Scene scene = new Scene(rootNode);
+					Stage stage = new Stage();
+					ConfigurationController controller = loader.getController();
+					controller.setDiscordAccount(discordAccount);
+					controller.fillGuildChoiceBox();
+					stage.setTitle("accord - Configuration Menu");
+					stage.setScene(scene);
+					stage.setResizable(false);
+					configurationStage = stage;
+					stage.show();
+					org.prathdev.accord.MainApp.authenticationMenu.hide();
+				} catch (Exception e) {
+					setProgressText("Error launching configuration menu!");
+				}
+			}
+		});
 	}
 
 	public void authenticate() throws InterruptedException {
@@ -81,11 +86,9 @@ public class AuthenticationController {
 			HttpEntity<JsonNode> request = new HttpEntity<JsonNode>(headers);
 			restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
 			ResponseEntity<User> response = restTemplate.exchange(requestUrl, HttpMethod.GET, request, User.class);
-			Thread.sleep(1000);
 			return response.getBody();
 		} catch (Exception e) {
-			System.out.println("Unable to fetch User data for account '" + discordAccount.getEmail() + "'");
-			progressText.setText("");
+			setProgressText("Error fetching user data for account - " + discordAccount.getEmail());
 			return null;
 		}
 	}
@@ -103,11 +106,9 @@ public class AuthenticationController {
 			restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
 			ResponseEntity<Channel[]> response = restTemplate.exchange(requestUrl, HttpMethod.GET, request,
 					Channel[].class);
-			Thread.sleep(1000);
 			return response.getBody();
 		} catch (Exception e) {
-			System.out.println("Unable to fetch channels for guild '" + guild.getName() + "'");
-			progressText.setText("");
+			setProgressText("Error fetching channels from guild id - " + guild.getId());
 			return null;
 		}
 	}
@@ -125,16 +126,14 @@ public class AuthenticationController {
 			restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
 			ResponseEntity<Guild[]> response = restTemplate.exchange(requestUrl, HttpMethod.GET, request,
 					Guild[].class);
-			Thread.sleep(1000);
 			return response.getBody();
 		} catch (Exception e) {
-			System.out.println("Unable to fetch guilds for specified DiscordUser '" + discordAccount.getEmail() + "'");
-			progressText.setText("");
+			setProgressText("Error fetching guilds for user - " + discordAccount.getUser().getId());
 			return null;
 		}
 	}
 
-	private Task<Void> getNewAuthTask(){
+	private Task<Void> getNewAuthTask() {
 		Task<Void> authenticationTask = new Task<Void>() {
 			@Override
 			protected Void call() throws Exception {
@@ -169,23 +168,35 @@ public class AuthenticationController {
 						}
 						discordAccount.setUser(fetchUserData(discordAccount));
 						System.out.println(discordAccount.toString());
-						Platform.runLater(new Runnable() {
-							@Override
-							public void run() {
-								launchConfiguration(discordAccount);
-							}
-						});
+						launchConfiguration(discordAccount);
 					}
 				} catch (Exception e) {
-					System.out.println("Unable to authenticate user!\n" + e.toString());
-					authenticateButton.setDisable(false);
-					emailTextField.setDisable(false);
-					passwordTextField.setDisable(false);
-					progressText.setText("");
+					resetControls();
+					setProgressText("User authentication failed!");
 				}
 				return null;
 			}
 		};
 		return authenticationTask;
+	}
+
+	private void resetControls() {
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				authenticateButton.setDisable(false);
+				emailTextField.setDisable(false);
+				passwordTextField.setDisable(false);
+			}
+		});
+	}
+	
+	private void setProgressText(String val) {
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				progressText.setText(val);
+			}
+		});
 	}
 }
