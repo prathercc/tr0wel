@@ -13,7 +13,9 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import org.prathdev.accord.controller.ConfigurationController;
+import org.prathdev.accord.domain.Authorization;
 import org.prathdev.accord.domain.Channel;
+import org.prathdev.accord.domain.Credentials;
 import org.prathdev.accord.domain.DiscordAccount;
 import org.prathdev.accord.domain.Guild;
 import org.prathdev.accord.domain.User;
@@ -44,7 +46,7 @@ public class AuthenticationController {
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
-				progressText.setText("Launching configuration menu...");
+				setProgressText("Launching configuration menu...");
 				try {
 					String fxml = "/fxml/configurationMenu.fxml";
 					FXMLLoader loader = new FXMLLoader();
@@ -75,7 +77,7 @@ public class AuthenticationController {
 	}
 
 	private User fetchUserData(DiscordAccount discordAccount) {
-		progressText.setText("Fetching user data...");
+		setProgressText("Fetching user data...");
 		try {
 			RestTemplate restTemplate = new RestTemplate();
 			String requestUrl = "https://discordapp.com/api/users/@me";
@@ -88,13 +90,13 @@ public class AuthenticationController {
 			ResponseEntity<User> response = restTemplate.exchange(requestUrl, HttpMethod.GET, request, User.class);
 			return response.getBody();
 		} catch (Exception e) {
-			setProgressText("Error fetching user data for account - " + discordAccount.getEmail());
+			setProgressText("Error fetching user data for account - " + discordAccount.getCredentials().getEmail());
 			return null;
 		}
 	}
 
 	private Channel[] fetchChannels(Guild guild, DiscordAccount discordAccount) {
-		progressText.setText("Fetching channels for guild: " + guild.getId() + "...");
+		setProgressText("Fetching channels for guild: " + guild.getId() + "...");
 		try {
 			RestTemplate restTemplate = new RestTemplate();
 			String requestUrl = "https://discordapp.com/api/guilds/" + guild.getId() + "/channels";
@@ -114,7 +116,7 @@ public class AuthenticationController {
 	}
 
 	private Guild[] fetchGuilds(DiscordAccount discordAccount) {
-		progressText.setText("Fetching guilds...");
+		setProgressText("Fetching guilds...");
 		try {
 			RestTemplate restTemplate = new RestTemplate();
 			String requestUrl = "https://discordapp.com/api/users/@me/guilds";
@@ -137,12 +139,9 @@ public class AuthenticationController {
 		Task<Void> authenticationTask = new Task<Void>() {
 			@Override
 			protected Void call() throws Exception {
-				authenticateButton.setDisable(true);
-				emailTextField.setDisable(true);
-				passwordTextField.setDisable(true);
-				String email = emailTextField.getText();
-				String password = passwordTextField.getText();
-				DiscordAccount discordAccount = new DiscordAccount(email, password);
+				toggleControls(true);
+				Credentials credentials = new Credentials(emailTextField.getText(), passwordTextField.getText());
+				DiscordAccount discordAccount = new DiscordAccount(credentials);
 
 				RestTemplate restTemplate = new RestTemplate();
 				String requestUrl = "https://discordapp.com/api/auth/login";
@@ -150,28 +149,26 @@ public class AuthenticationController {
 				headers.setContentType(MediaType.APPLICATION_JSON);
 				headers.set("user-agent",
 						"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4000.3 Mobile Safari/537.36");
-				HttpEntity<String> request = new HttpEntity<String>(
-						"{\"email\":\"" + email + "\",\"password\":\"" + password + "\"}", headers);
+				
+				HttpEntity<Credentials> request = new HttpEntity<Credentials>(credentials, headers);
+				
 				restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
 				restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
 				try {
-					ResponseEntity<String> response = restTemplate.exchange(requestUrl, HttpMethod.POST, request,
-							String.class);
+					ResponseEntity<Authorization> response = restTemplate.exchange(requestUrl, HttpMethod.POST, request,
+							Authorization.class);
 					if (response.getStatusCodeValue() == 200) {
-						String authorization = response.getBody();
-						authorization = authorization.replace("{\"token\": \"", "");
-						authorization = authorization.replace("\"}", "");
+						Authorization authorization = response.getBody();
 						discordAccount.setAuthorization(authorization);
 						discordAccount.setGuilds(fetchGuilds(discordAccount));
 						for (Guild guild : discordAccount.getGuilds()) {
 							guild.setChannels(fetchChannels(guild, discordAccount));
 						}
 						discordAccount.setUser(fetchUserData(discordAccount));
-						System.out.println(discordAccount.toString());
 						launchConfiguration(discordAccount);
 					}
 				} catch (Exception e) {
-					resetControls();
+					toggleControls(false);
 					setProgressText("User authentication failed!");
 				}
 				return null;
@@ -180,13 +177,13 @@ public class AuthenticationController {
 		return authenticationTask;
 	}
 
-	private void resetControls() {
+	private void toggleControls(boolean val) {
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
-				authenticateButton.setDisable(false);
-				emailTextField.setDisable(false);
-				passwordTextField.setDisable(false);
+				authenticateButton.setDisable(val);
+				emailTextField.setDisable(val);
+				passwordTextField.setDisable(val);
 			}
 		});
 	}
