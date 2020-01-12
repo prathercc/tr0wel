@@ -22,7 +22,7 @@
             <ChoiceBox fx:id="dmUserDropDown" focusTraversable="false" layoutX="231.0" layoutY="64.0" prefHeight="25.0" prefWidth="150.0" onAction="#selectConversation"/>
             <Separator layoutX="207.0" layoutY="3.0" orientation="VERTICAL" prefHeight="182.0" prefWidth="6.0" />
             <Text layoutX="277.0" layoutY="55.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Select User" />
-            <Button fx:id="manageDmButton" disable="true" focusTraversable="false" layoutX="240.0" layoutY="113.0" mnemonicParsing="false" text="Manage Conversation" />
+            <Button fx:id="manageDmButton" disable="true" focusTraversable="false" layoutX="240.0" layoutY="113.0" mnemonicParsing="false" text="Manage Conversation" onAction="#manageConversation"/>
             <ImageView fitHeight="46.0" fitWidth="172.0" layoutX="24.0" layoutY="3.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@/images/channelManage.png" />
