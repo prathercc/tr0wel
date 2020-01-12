@@ -7,11 +7,17 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.stream.Stream;
+
+import org.prathdev.accord.MainApp;
 import org.prathdev.accord.controller.ConfigurationController;
 import org.prathdev.accord.domain.Authorization;
 import org.prathdev.accord.domain.Channel;
@@ -41,15 +47,34 @@ public class AuthenticationController {
 	private Button authenticateButton;
 	@FXML
 	private Text progressText;
-	
+	@FXML
+	private CheckBox rememberMeCheckBox;
+
 	Properties properties = new Properties();
 
 	public static Stage configurationStage;
+
+	public void initialize() {
+		StringBuilder builder = new StringBuilder();
+		try {
+			Stream<String> fileStream = Files.lines(MainApp.iniPath);
+			fileStream.forEach(s -> builder.append(s));
+			fileStream.close();
+		} catch (Exception e) {
+			System.err.println(e.toString());
+		}
+		if (builder.toString().length() != 0) {
+			rememberMeCheckBox.setSelected(true);
+			emailTextField.setText(builder.toString());
+			emailTextField.setFocusTraversable(false);
+		}
+	}
 
 	private void launchConfiguration(DiscordAccount discordAccount) {
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
+				finalizeIni();
 				setProgressText("Launching configuration menu...");
 				try {
 					String fxml = "/fxml/configurationMenu.fxml";
@@ -89,8 +114,8 @@ public class AuthenticationController {
 			headers.set("user-agent", properties.getUserAgent());
 			HttpEntity<JsonNode> request = new HttpEntity<JsonNode>(headers);
 			restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-			ResponseEntity<User> response = restTemplate.exchange(properties.getDiscordUsersUrl() + "/@me", HttpMethod.GET, request,
-					User.class);
+			ResponseEntity<User> response = restTemplate.exchange(properties.getDiscordUsersUrl() + "/@me",
+					HttpMethod.GET, request, User.class);
 			return response.getBody();
 		} catch (Exception e) {
 			setProgressText("Error fetching user data for account - " + discordAccount.getCredentials().getEmail());
@@ -108,7 +133,8 @@ public class AuthenticationController {
 			HttpEntity<JsonNode> request = new HttpEntity<JsonNode>(headers);
 			restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
 			ResponseEntity<Channel[]> response = restTemplate.exchange(
-					properties.getDiscordGuildsUrl() + "/" + guild.getId() + "/channels", HttpMethod.GET, request, Channel[].class);
+					properties.getDiscordGuildsUrl() + "/" + guild.getId() + "/channels", HttpMethod.GET, request,
+					Channel[].class);
 			return response.getBody();
 		} catch (Exception e) {
 			setProgressText("Error fetching channels from guild id - " + guild.getId());
@@ -125,8 +151,8 @@ public class AuthenticationController {
 			headers.set("user-agent", properties.getUserAgent());
 			HttpEntity<JsonNode> request = new HttpEntity<JsonNode>(headers);
 			restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-			ResponseEntity<Guild[]> response = restTemplate.exchange(properties.getDiscordUsersUrl() + "/@me/guilds", HttpMethod.GET,
-					request, Guild[].class);
+			ResponseEntity<Guild[]> response = restTemplate.exchange(properties.getDiscordUsersUrl() + "/@me/guilds",
+					HttpMethod.GET, request, Guild[].class);
 			return response.getBody();
 		} catch (Exception e) {
 			setProgressText("Error fetching guilds for user - " + discordAccount.getUser().getId());
@@ -149,8 +175,8 @@ public class AuthenticationController {
 				restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
 				restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
 				try {
-					ResponseEntity<Authorization> response = restTemplate.exchange(properties.getDiscordAuthUrl() + "/login",
-							HttpMethod.POST, request, Authorization.class);
+					ResponseEntity<Authorization> response = restTemplate.exchange(
+							properties.getDiscordAuthUrl() + "/login", HttpMethod.POST, request, Authorization.class);
 					if (response.getStatusCodeValue() == 200) {
 						Authorization authorization = response.getBody();
 						discordAccount.setAuthorization(authorization);
@@ -178,6 +204,7 @@ public class AuthenticationController {
 				authenticateButton.setDisable(val);
 				emailTextField.setDisable(val);
 				passwordTextField.setDisable(val);
+				rememberMeCheckBox.setDisable(val);
 			}
 		});
 	}
@@ -189,5 +216,21 @@ public class AuthenticationController {
 				progressText.setText(val);
 			}
 		});
+	}
+
+	private void finalizeIni() {
+		if (rememberMeCheckBox.isSelected()) {
+			try {
+				Files.write(MainApp.iniPath, emailTextField.getText().getBytes());
+			} catch (IOException e) {
+				System.err.println(e.toString());
+			}
+		} else {
+			try {
+				Files.write(MainApp.iniPath, "".getBytes());
+			} catch (IOException e) {
+				System.err.println(e.toString());
+			}
+		}
 	}
 }
