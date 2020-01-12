@@ -63,6 +63,33 @@ public class ConfigurationController {
 			dmUserDropDown.getItems().add(convo);
 		}
 	}
+	
+	private void launchManageConversation(List<Message> conversationMessages) {
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				Conversation selectedConversation = (Conversation) dmUserDropDown.getValue();
+				selectedConversation.setMessages(conversationMessages);
+				try {
+					String fxml = "/fxml/manageConversationMenu.fxml";
+					FXMLLoader loader = new FXMLLoader();
+					loader.setLocation(getClass().getResource(fxml));
+					Parent rootNode = (Parent) loader.load(getClass().getResourceAsStream(fxml));
+					Scene scene = new Scene(rootNode);
+					Stage stage = new Stage();
+					ManageConversationController controller = loader.getController();
+					controller.setUpMessageData(discordAccount, selectedConversation);
+					stage.setTitle("accord - Conversation Manager");
+					stage.setScene(scene);
+					stage.setResizable(false);
+					stage.initModality(Modality.WINDOW_MODAL);
+					stage.initOwner(AuthenticationController.configurationStage);
+					stage.show();
+				} catch (Exception e) {
+				}
+			}
+		});
+	}
 
 	private void launchManageChannel(List<Message> channelMessages) {
 		Platform.runLater(new Runnable() {
@@ -90,10 +117,20 @@ public class ConfigurationController {
 			}
 		});
 	}
+	
+	public void manageConversation() {
+		try {
+			Thread thread = new Thread(getNewConversationTask());
+			thread.setDaemon(true);
+			thread.start();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 	public void manageChannel() {
 		try {
-			Thread thread = new Thread(getNewMessageTask());
+			Thread thread = new Thread(getNewChannelTask());
 			thread.setDaemon(true);
 			thread.start();
 		} catch (Exception e) {
@@ -121,7 +158,7 @@ public class ConfigurationController {
 		manageDmButton.setDisable(false);
 	}
 
-	private Task<Void> getNewMessageTask() {
+	private Task<Void> getNewChannelTask() {
 		Task<Void> messageTask = new Task<Void>() {
 			@Override
 			protected Void call() throws Exception {
@@ -168,14 +205,78 @@ public class ConfigurationController {
 		};
 		return messageTask;
 	}
+	
+	
+	private Task<Void> getNewConversationTask() {
+		Task<Void> messageTask = new Task<Void>() {
+			@Override
+			protected Void call() throws Exception {
+				toggleControls(true);
+				Conversation selectedConversation = (Conversation) dmUserDropDown.getValue();
+				boolean reachedEnd = false;
+				String lastId = "";
+				List<Message> retList = new ArrayList<Message>();
 
-	private void toggleControls(boolean val) {
-		manageChannelButton.setDisable(val);
+				while (reachedEnd != true) {
+					try {
+						RestTemplate restTemplate = new RestTemplate();
+						String requestUrl = lastId.length() < 1
+								? properties.getDiscordChannelsUrl() + "/" + selectedConversation.getId() + "/messages?limit=100"
+								: properties.getDiscordChannelsUrl() + "/" + selectedConversation.getId() + "/messages?limit=100&before="
+										+ lastId;
+						HttpHeaders headers = new HttpHeaders();
+						headers.set("authorization", discordAccount.getAuthorization());
+						headers.set("user-agent",properties.getUserAgent());
+						HttpEntity<JsonNode> request = new HttpEntity<JsonNode>(headers);
+						restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+						ResponseEntity<Message[]> response = restTemplate.exchange(requestUrl, HttpMethod.GET, request,
+								Message[].class);
+						Message[] responseArr = response.getBody();
+						if (responseArr.length < 100) {
+							updateConfigProgress("Completed loading for conversation " + selectedConversation.getId());
+							reachedEnd = true; // If the data length was less than 100, we know we have reached the end
+						}
+						for (Message msg : responseArr) {
+							retList.add(msg); // Populate our retList with the additional data
+						}
+						Thread.sleep(250);
+						lastId = responseArr[responseArr.length - 1].getId(); // Save the last id we are on
+						updateConfigProgress("Loading - [" + lastId + "]");
+					} catch (Exception e) {
+						updateConfigProgress("[" + lastId + "] - Failure!");
+					}
+				}
+				updateConfigProgress("");
+				toggleControls(false);
+				launchManageConversation(retList);
+				return null;
+			}
+		};
+		return messageTask;
+	}
+	
+
+	private void toggleControls(boolean val) {		
+		if(!val && channelSelectionBox.getValue() != null) {
+			manageChannelButton.setDisable(val); // Only reenable if there is a channel selected
+		}
+		if(val) {
+			manageChannelButton.setDisable(val);
+		}
+		
 		channelSelectionBox.setDisable(val);
 		guildSelectionBox.setDisable(val);
+		
+		if(!val && dmUserDropDown.getValue() != null) {
+			manageDmButton.setDisable(val); // Only reenable if there is a conversation selected
+		}
+		if(val) {
+			manageDmButton.setDisable(val);
+		}
 		dmUserDropDown.setDisable(val);
-		manageDmButton.setDisable(val);
+		
 	}
+	
 
 	private void updateConfigProgress(String val) {
 		Platform.runLater(new Runnable() {
