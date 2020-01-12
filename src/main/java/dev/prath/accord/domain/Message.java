@@ -1,4 +1,9 @@
-package org.prathdev.accord.domain;
+package dev.prath.accord.domain;
+
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
+import java.util.TimeZone;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -75,6 +80,8 @@ public class Message {
 	}
 
 	public String toString() {
-		return "[" + getDatePosted() + "] " + getAuthor().getUsername() + ": " + getMessage();
+		TimeZone tz = Calendar.getInstance().getTimeZone();
+		String date = OffsetDateTime.parse(getDatePosted()).format(DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm").withZone(tz.toZoneId()));
+		return "[" + date + "] " + getAuthor().getUsername() + ": " + getMessage();
 	}
 }
