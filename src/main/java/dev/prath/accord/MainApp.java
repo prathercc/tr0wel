@@ -1,4 +1,4 @@
-package org.prathdev.accord;
+package dev.prath.accord;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -44,7 +44,7 @@ public class MainApp extends Application {
 		Scene scene = new Scene(rootNode);
 		scene.getStylesheets().add("/styles/styles.css");
 
-		stage.setTitle("accord - Authentication Menu");
+		stage.setTitle("accord - Authentication");
 		stage.setScene(scene);
 		stage.setResizable(false);
 		authenticationMenu = stage;

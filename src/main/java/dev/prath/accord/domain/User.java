@@ -1,4 +1,4 @@
-package org.prathdev.accord.domain;
+package dev.prath.accord.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

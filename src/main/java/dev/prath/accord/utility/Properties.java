@@ -1,4 +1,4 @@
-package org.prathdev.accord.utility;
+package dev.prath.accord.utility;
 
 public class Properties {
 	

@@ -1,13 +1,8 @@
-package org.prathdev.accord.controller;
+package dev.prath.accord.controller;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.prathdev.accord.domain.Channel;
-import org.prathdev.accord.domain.DiscordAccount;
-import org.prathdev.accord.domain.Message;
-import org.prathdev.accord.domain.User;
-import org.prathdev.accord.utility.Properties;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -18,6 +13,11 @@ import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import dev.prath.accord.domain.Channel;
+import dev.prath.accord.domain.DiscordAccount;
+import dev.prath.accord.domain.Message;
+import dev.prath.accord.domain.User;
+import dev.prath.accord.utility.Properties;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;

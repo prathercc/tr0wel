@@ -1,4 +1,4 @@
-package org.prathdev.accord.domain;
+package dev.prath.accord.domain;
 
 import java.util.ArrayList;
 import java.util.List;
