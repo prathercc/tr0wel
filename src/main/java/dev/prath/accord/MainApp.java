@@ -6,32 +6,25 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import dev.prath.accord.service.IOService;
 
 public class MainApp extends Application {
 
 	private static final Logger log = LoggerFactory.getLogger(MainApp.class);
 	
 	public static Stage authenticationMenu;
-	public static final Path iniPath = Paths.get(Paths.get(System.getProperty("user.home"), ".accord").toString(),"accord.ini");
+	
+	IOService ioService = new IOService();
 
 	public static void main(String[] args) throws Exception {
 		launch(args);
 	}
 
 	public void start(Stage stage) throws Exception {
-		Path path = Paths.get(System.getProperty("user.home"), ".accord");
-		if(!Files.exists(path)) {
-			Files.createDirectory(path);
-		}
-		if(!Files.exists(iniPath)) {
-			Files.createFile(iniPath);
-		}
+		ioService.checkIniFolderPath();
 
 		log.info("Starting application...");
 
