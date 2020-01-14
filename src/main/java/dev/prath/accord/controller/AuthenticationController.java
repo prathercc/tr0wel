@@ -38,6 +38,8 @@ import dev.prath.accord.domain.Credentials;
 import dev.prath.accord.domain.DiscordAccount;
 import dev.prath.accord.domain.Guild;
 import dev.prath.accord.domain.User;
+import dev.prath.accord.service.AuthenticationService;
+import dev.prath.accord.service.IOService;
 import dev.prath.accord.utility.Properties;
 
 public class AuthenticationController {
@@ -54,22 +56,24 @@ public class AuthenticationController {
 
 	Properties properties = new Properties();
 
+	AuthenticationService service = new AuthenticationService();
+	IOService ioService = new IOService();
+
 	public static Stage configurationStage;
 
 	public void initialize() {
-		StringBuilder builder = new StringBuilder();
-		try {
-			Stream<String> fileStream = Files.lines(MainApp.iniPath);
-			fileStream.forEach(s -> builder.append(s));
-			fileStream.close();
-		} catch (Exception e) {
-			System.err.println(e.toString());
-		}
-		if (builder.toString().length() != 0) {
+		String iniValue = ioService.getIniValue();
+		if (iniValue.length() != 0) {
 			rememberMeCheckBox.setSelected(true);
-			emailTextField.setText(builder.toString());
+			emailTextField.setText(iniValue);
 			emailTextField.setFocusTraversable(false);
 		}
+	}
+
+	public void authenticate() throws InterruptedException {
+		Thread thread = new Thread(getNewAuthTask());
+		thread.setDaemon(true);
+		thread.start();
 	}
 
 	private void launchConfiguration(DiscordAccount discordAccount) {
@@ -100,85 +104,6 @@ public class AuthenticationController {
 		});
 	}
 
-	public void authenticate() throws InterruptedException {
-		Thread thread = new Thread(getNewAuthTask());
-		thread.setDaemon(true);
-		thread.start();
-	}
-
-	private User fetchUserData(DiscordAccount discordAccount) {
-		setProgressText("Fetching user data...");
-		try {
-			RestTemplate restTemplate = new RestTemplate();
-			HttpHeaders headers = new HttpHeaders();
-			headers.set("authorization", discordAccount.getAuthorization());
-			headers.set("user-agent", properties.getUserAgent());
-			HttpEntity<JsonNode> request = new HttpEntity<JsonNode>(headers);
-			restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-			ResponseEntity<User> response = restTemplate.exchange(properties.getDiscordUsersUrl() + "/@me",
-					HttpMethod.GET, request, User.class);
-			return response.getBody();
-		} catch (Exception e) {
-			setProgressText("Error fetching user data for account - " + discordAccount.getCredentials().getEmail());
-			return null;
-		}
-	}
-	
-	private Conversation[] fetchConversations(DiscordAccount discordAccount) {
-		setProgressText("Fetching conversations...");
-		try {
-			RestTemplate restTemplate = new RestTemplate();
-			HttpHeaders headers = new HttpHeaders();
-			headers.set("authorization", discordAccount.getAuthorization());
-			headers.set("user-agent", properties.getUserAgent());
-			HttpEntity<JsonNode> request = new HttpEntity<JsonNode>(headers);
-			restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-			ResponseEntity<Conversation[]> response = restTemplate.exchange(properties.getDiscordUsersUrl() + "/@me/channels",
-					HttpMethod.GET, request, Conversation[].class);
-			return response.getBody();
-		} catch (Exception e) {
-			setProgressText("Error fetching conversations for user - " + discordAccount.getUser().getId());
-			return null;
-		}
-	}
-
-	private Channel[] fetchChannels(Guild guild, DiscordAccount discordAccount) {
-		setProgressText("Fetching channels for guild: " + guild.getId() + "...");
-		try {
-			RestTemplate restTemplate = new RestTemplate();
-			HttpHeaders headers = new HttpHeaders();
-			headers.set("authorization", discordAccount.getAuthorization());
-			headers.set("user-agent", properties.getUserAgent());
-			HttpEntity<JsonNode> request = new HttpEntity<JsonNode>(headers);
-			restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-			ResponseEntity<Channel[]> response = restTemplate.exchange(
-					properties.getDiscordGuildsUrl() + "/" + guild.getId() + "/channels", HttpMethod.GET, request,
-					Channel[].class);
-			return response.getBody();
-		} catch (Exception e) {
-			setProgressText("Error fetching channels from guild id - " + guild.getId());
-			return null;
-		}
-	}
-
-	private Guild[] fetchGuilds(DiscordAccount discordAccount) {
-		setProgressText("Fetching guilds...");
-		try {
-			RestTemplate restTemplate = new RestTemplate();
-			HttpHeaders headers = new HttpHeaders();
-			headers.set("authorization", discordAccount.getAuthorization());
-			headers.set("user-agent", properties.getUserAgent());
-			HttpEntity<JsonNode> request = new HttpEntity<JsonNode>(headers);
-			restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-			ResponseEntity<Guild[]> response = restTemplate.exchange(properties.getDiscordUsersUrl() + "/@me/guilds",
-					HttpMethod.GET, request, Guild[].class);
-			return response.getBody();
-		} catch (Exception e) {
-			setProgressText("Error fetching guilds for user - " + discordAccount.getUser().getId());
-			return null;
-		}
-	}
-
 	private Task<Void> getNewAuthTask() {
 		Task<Void> authenticationTask = new Task<Void>() {
 			@Override
@@ -186,16 +111,9 @@ public class AuthenticationController {
 				toggleControls(true);
 				Credentials credentials = new Credentials(emailTextField.getText(), passwordTextField.getText());
 				DiscordAccount discordAccount = new DiscordAccount(credentials);
-				RestTemplate restTemplate = new RestTemplate();
-				HttpHeaders headers = new HttpHeaders();
-				headers.setContentType(MediaType.APPLICATION_JSON);
-				headers.set("user-agent", properties.getUserAgent());
-				HttpEntity<Credentials> request = new HttpEntity<Credentials>(credentials, headers);
-				restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-				restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
+
 				try {
-					ResponseEntity<Authorization> response = restTemplate.exchange(
-							properties.getDiscordAuthUrl() + "/login", HttpMethod.POST, request, Authorization.class);
+					ResponseEntity<Authorization> response = service.fetchAuthorization(credentials);
 					if (response.getStatusCodeValue() == 200) {
 						Authorization authorization = response.getBody();
 						discordAccount.setAuthorization(authorization);
@@ -240,17 +158,49 @@ public class AuthenticationController {
 
 	private void finalizeIni() {
 		if (rememberMeCheckBox.isSelected()) {
-			try {
-				Files.write(MainApp.iniPath, emailTextField.getText().getBytes());
-			} catch (IOException e) {
-				System.err.println(e.toString());
-			}
+			ioService.setIniValue(emailTextField.getText());
 		} else {
-			try {
-				Files.write(MainApp.iniPath, "".getBytes());
-			} catch (IOException e) {
-				System.err.println(e.toString());
-			}
+			ioService.setIniValue("");
+		}
+	}
+	
+	private User fetchUserData(DiscordAccount discordAccount) {
+		setProgressText("Fetching user data...");
+		try {
+			return service.fetchUserData(discordAccount);
+		} catch (Exception e) {
+			setProgressText("Error fetching user data for account - " + discordAccount.getCredentials().getEmail());
+			return null;
+		}
+	}
+
+	private Conversation[] fetchConversations(DiscordAccount discordAccount) {
+		setProgressText("Fetching conversations...");
+		try {
+			return service.fetchConversations(discordAccount);
+		} catch (Exception e) {
+			setProgressText("Error fetching conversations for user - " + discordAccount.getUser().getId());
+			return null;
+		}
+	}
+
+	private Channel[] fetchChannels(Guild guild, DiscordAccount discordAccount) {
+		setProgressText("Fetching channels for guild: " + guild.getId() + "...");
+		try {
+			return service.fetchChannels(guild, discordAccount);
+		} catch (Exception e) {
+			setProgressText("Error fetching channels from guild id - " + guild.getId());
+			return null;
+		}
+	}
+
+	private Guild[] fetchGuilds(DiscordAccount discordAccount) {
+		setProgressText("Fetching guilds...");
+		try {
+			return service.fetchGuilds(discordAccount, progressText);
+		} catch (Exception e) {
+			setProgressText("Error fetching guilds for user - " + discordAccount.getUser().getId());
+			return null;
 		}
 	}
 }
