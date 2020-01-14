@@ -16,22 +16,12 @@ import javafx.stage.Stage;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.web.client.RestTemplate;
-
-import com.fasterxml.jackson.databind.JsonNode;
-
 import dev.prath.accord.domain.Channel;
 import dev.prath.accord.domain.Conversation;
 import dev.prath.accord.domain.DiscordAccount;
 import dev.prath.accord.domain.Guild;
 import dev.prath.accord.domain.Message;
-import dev.prath.accord.domain.User;
+import dev.prath.accord.service.ConfigurationService;
 import dev.prath.accord.utility.Properties;
 
 public class ConfigurationController {
@@ -51,6 +41,8 @@ public class ConfigurationController {
 
 	Properties properties = new Properties();
 
+	ConfigurationService service = new ConfigurationService();
+	
 	private DiscordAccount discordAccount = null;
 
 	public void setUpConfigurationMenu(DiscordAccount val) {
@@ -118,20 +110,7 @@ public class ConfigurationController {
 
 				while (reachedEnd != true) {
 					try {
-						RestTemplate restTemplate = new RestTemplate();
-						String requestUrl = lastId.length() < 1
-								? properties.getDiscordChannelsUrl() + "/" + selectedConversation.getId()
-										+ "/messages?limit=100"
-								: properties.getDiscordChannelsUrl() + "/" + selectedConversation.getId()
-										+ "/messages?limit=100&before=" + lastId;
-						HttpHeaders headers = new HttpHeaders();
-						headers.set("authorization", discordAccount.getAuthorization());
-						headers.set("user-agent", properties.getUserAgent());
-						HttpEntity<JsonNode> request = new HttpEntity<JsonNode>(headers);
-						restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-						ResponseEntity<Message[]> response = restTemplate.exchange(requestUrl, HttpMethod.GET, request,
-								Message[].class);
-						Message[] responseArr = response.getBody();
+						Message[] responseArr = service.fetchConversationMessages(selectedConversation, discordAccount, lastId);
 						if (responseArr.length < 100) {
 							updateConfigProgress("Completed loading for conversation " + selectedConversation.getId());
 							reachedEnd = true; // If the data length was less than 100, we know we have reached the end
@@ -227,20 +206,7 @@ public class ConfigurationController {
 
 				while (reachedEnd != true) {
 					try {
-						RestTemplate restTemplate = new RestTemplate();
-						String requestUrl = lastId.length() < 1
-								? properties.getDiscordChannelsUrl() + "/" + selectedChannel.getId()
-										+ "/messages?limit=100"
-								: properties.getDiscordChannelsUrl() + "/" + selectedChannel.getId()
-										+ "/messages?limit=100&before=" + lastId;
-						HttpHeaders headers = new HttpHeaders();
-						headers.set("authorization", discordAccount.getAuthorization());
-						headers.set("user-agent", properties.getUserAgent());
-						HttpEntity<JsonNode> request = new HttpEntity<JsonNode>(headers);
-						restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-						ResponseEntity<Message[]> response = restTemplate.exchange(requestUrl, HttpMethod.GET, request,
-								Message[].class);
-						Message[] responseArr = response.getBody();
+						Message[] responseArr = service.fetchChannelMessages(selectedChannel, discordAccount, lastId);
 						if (responseArr.length < 100) {
 							updateConfigProgress("Completed loading for channel " + selectedChannel.getId());
 							reachedEnd = true; // If the data length was less than 100, we know we have reached the end
