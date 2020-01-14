@@ -118,7 +118,7 @@ public class ManageChannelController {
 							listView.getItems().remove(delMsg);
 						}
 						if (listView.getItems().size() != 0) {
-							// Is there are still messages, update the number of msgs text
+							// If there are still messages, update the number of msgs text
 							updateNumOfMessagesText("Found " + listView.getItems().size() + " messages by user.");
 						} else {
 							// No more messages? Pull them off the user selection list
