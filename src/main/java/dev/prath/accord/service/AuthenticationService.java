@@ -21,7 +21,7 @@ import dev.prath.accord.domain.User;
 import dev.prath.accord.utility.Properties;
 import javafx.scene.text.Text;
 
-public class AuthenticationService {
+public class AuthenticationService implements IAuthenticationService {
 
 	Properties properties = new Properties();
 
