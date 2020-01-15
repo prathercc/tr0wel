@@ -21,7 +21,7 @@ import dev.prath.accord.domain.Conversation;
 import dev.prath.accord.domain.DiscordAccount;
 import dev.prath.accord.domain.Guild;
 import dev.prath.accord.domain.Message;
-import dev.prath.accord.service.ConfigurationService;
+import dev.prath.accord.service.MessageService;
 import dev.prath.accord.utility.Properties;
 
 public class ConfigurationController {
@@ -41,7 +41,7 @@ public class ConfigurationController {
 
 	Properties properties = new Properties();
 
-	ConfigurationService service = new ConfigurationService();
+	MessageService service = new MessageService();
 	
 	private DiscordAccount discordAccount = null;
 
