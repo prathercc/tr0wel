@@ -52,20 +52,12 @@ public class ManageChannelController {
 		selectedChannel = channel;
 		discordAccount = acc;
 		listView.setCellFactory(CheckBoxListCell.forListView(Message::getIsSelected));
-
-		for (User user : channel.getParticipatingUsers()) {
-			userSelectionBox.getItems().add(user);
-		}
+		channel.getParticipatingUsers().stream().forEach(user -> userSelectionBox.getItems().add(user));
 	}
 
 	public void selectAll() {
-		if (!selectOrientation)
-			selectOrientation = true;
-		else
-			selectOrientation = false;
-		for (Message m : listView.getItems()) {
-			m.setIsSelected(selectOrientation);
-		}
+		selectOrientation = !selectOrientation ? true : false;
+		listView.getItems().stream().forEach(message -> message.setIsSelected(selectOrientation));
 	}
 
 	public void selectUser() {
@@ -85,7 +77,7 @@ public class ManageChannelController {
 			@Override
 			protected Void call() throws Exception {
 				toggleControls(true);
-				List<Message> msgToDelete = new ArrayList<Message>();
+				List<Message> msgsToDelete = new ArrayList<Message>();
 				for (Message msg : listView.getItems()) {
 					if (msg.getIsSelected().get()) {
 						try {
@@ -100,13 +92,13 @@ public class ManageChannelController {
 							ResponseEntity<String> response = restTemplate.exchange(requestUrl, HttpMethod.DELETE,
 									request, String.class);
 							if (response.getStatusCodeValue() == 204) {
-								updateProgressText("Deletion Success - [" + msg.getId() + "]");
-								msgToDelete.add(msg);
+								updateText(progressText, "Deletion Success - [" + msg.getId() + "]");
+								msgsToDelete.add(msg);
 							}
 							Thread.sleep(250);
 
 						} catch (Exception e) {
-							updateProgressText("Deletion Failure - [" + msg.getId() + "]");
+							updateText(progressText, "Deletion Failure - [" + msg.getId() + "]");
 						}
 					}
 				}
@@ -114,26 +106,24 @@ public class ManageChannelController {
 				Platform.runLater(new Runnable() {
 					@Override
 					public void run() {
-						for (Message delMsg : msgToDelete) {
-							listView.getItems().remove(delMsg);
-						}
+						msgsToDelete.stream().forEach(message -> listView.getItems().remove(message));
+
 						if (listView.getItems().size() != 0) {
 							// If there are still messages, update the number of msgs text
-							updateNumOfMessagesText("Found " + listView.getItems().size() + " messages by user.");
+							updateText(numOfMsgText, "Found " + listView.getItems().size() + " messages by user.");
 						} else {
 							// No more messages? Pull them off the user selection list
 							User userToDelete = (User) userSelectionBox.getValue();
 							selectedChannel.getParticipatingUsers().remove(userToDelete);
 							userSelectionBox.getSelectionModel().clearSelection();
 							userSelectionBox.getItems().clear();
-							for (User user : selectedChannel.getParticipatingUsers()) {
-								userSelectionBox.getItems().add(user);
-							}
-							updateNumOfMessagesText("");
+							selectedChannel.getParticipatingUsers().stream()
+									.forEach(user -> userSelectionBox.getItems().add(user));
+							updateText(numOfMsgText, "");
 						}
 					}
 				});
-				updateProgressText("");
+				updateText(progressText, "");
 				toggleControls(false);
 				return null;
 			}
@@ -150,16 +140,12 @@ public class ManageChannelController {
 					@Override
 					public void run() {
 						listView.getItems().clear();
-
 						if (userSelectionBox.getValue() != null) {
 							User selectedUser = (User) userSelectionBox.getValue();
-
-							for (Message msg : selectedChannel.getMessages()) {
-								if (msg.getAuthor().getId().equalsIgnoreCase(selectedUser.getId())) {
-									listView.getItems().add(msg);
-								}
-							}
-							updateNumOfMessagesText("Found " + listView.getItems().size() + " messages by user.");
+							selectedChannel.getMessages().stream().filter(
+									message -> message.getAuthor().getId().equalsIgnoreCase(selectedUser.getId()))
+									.forEach(message -> listView.getItems().add(message));
+							updateText(numOfMsgText, "Found " + listView.getItems().size() + " messages by user.");
 						}
 					}
 				});
@@ -183,20 +169,11 @@ public class ManageChannelController {
 		});
 	}
 
-	private void updateProgressText(String val) {
+	private void updateText(Text text, String val) {
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
-				progressText.setText(val);
-			}
-		});
-	}
-
-	private void updateNumOfMessagesText(String val) {
-		Platform.runLater(new Runnable() {
-			@Override
-			public void run() {
-				numOfMsgText.setText(val);
+				text.setText(val);
 			}
 		});
 	}
