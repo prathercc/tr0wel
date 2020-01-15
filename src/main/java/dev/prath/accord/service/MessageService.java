@@ -15,7 +15,7 @@ import dev.prath.accord.domain.DiscordAccount;
 import dev.prath.accord.domain.Message;
 import dev.prath.accord.utility.Properties;
 
-public class ConfigurationService {
+public class MessageService {
 	
 	Properties properties = new Properties();
 	
