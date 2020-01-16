@@ -39,7 +39,7 @@ import dev.prath.accord.domain.DiscordAccount;
 import dev.prath.accord.domain.Guild;
 import dev.prath.accord.domain.User;
 import dev.prath.accord.service.AuthenticationService;
-import dev.prath.accord.service.IOService;
+import dev.prath.accord.service.FileService;
 import dev.prath.accord.utility.Properties;
 
 public class AuthenticationController {
@@ -57,7 +57,7 @@ public class AuthenticationController {
 	Properties properties = new Properties();
 
 	AuthenticationService service = new AuthenticationService();
-	IOService ioService = new IOService();
+	FileService ioService = new FileService();
 
 	public static Stage configurationStage;
 
