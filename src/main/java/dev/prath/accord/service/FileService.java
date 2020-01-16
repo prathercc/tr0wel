@@ -8,8 +8,8 @@ import java.util.stream.Stream;
 
 import dev.prath.accord.utility.Properties;
 
-public class IOService {
-	
+public class FileService implements IFileService {
+
 	Properties properties = new Properties();
 
 	public String getIniValue() {
@@ -31,18 +31,17 @@ public class IOService {
 			System.err.println(e.toString());
 		}
 	}
-	
+
 	public void checkIniFolderPath() {
 		try {
 			Path path = Paths.get(System.getProperty("user.home"), ".accord");
-			if(!Files.exists(path)) {
+			if (!Files.exists(path)) {
 				Files.createDirectory(path);
 			}
-			if(!Files.exists(properties.getIniPath())) {
+			if (!Files.exists(properties.getIniPath())) {
 				Files.createFile(properties.getIniPath());
 			}
-		}
-		catch(Exception e) {
+		} catch (Exception e) {
 			System.err.println(e.toString());
 		}
 	}
