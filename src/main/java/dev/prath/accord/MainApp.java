@@ -9,15 +9,16 @@ import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import dev.prath.accord.service.IOService;
+import dev.prath.accord.service.FileService;
 
+//@SpringBootApplication
 public class MainApp extends Application {
 
 	private static final Logger log = LoggerFactory.getLogger(MainApp.class);
 	
 	public static Stage authenticationMenu;
 	
-	IOService ioService = new IOService();
+	FileService ioService = new FileService();
 
 	public static void main(String[] args) throws Exception {
 		launch(args);
