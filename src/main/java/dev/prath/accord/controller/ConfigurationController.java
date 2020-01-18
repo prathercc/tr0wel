@@ -41,9 +41,8 @@ public class ConfigurationController {
 	@FXML
 	private Button manageDmButton;
 
-	Properties properties = new Properties();
 	@Autowired
-	MessageService service = new MessageService();
+	MessageService service;
 	
 	@Autowired
 	AccountService accountService;
@@ -96,32 +95,29 @@ public class ConfigurationController {
 			@Override
 			protected Void call() throws Exception {
 				toggleControls(true);
-				Conversation selectedConversation = (Conversation) dmUserDropDown.getValue();
+				accountService.setSelectedConversation((Conversation) dmUserDropDown.getValue());
 				boolean reachedEnd = false;
 				String lastId = "";
-				List<Message> retList = new ArrayList<Message>();
+				List<Message> messageList = new ArrayList<Message>();
 
-				while (reachedEnd != true) {
+				while (reachedEnd != true && accountService.getSelectedConversation() != null) {
 					try {
-						Message[] responseArr = service.fetchConversationMessages(selectedConversation, lastId);
-						if (responseArr.length < 100) {
-							updateConfigProgress("Completed loading for conversation " + selectedConversation.getId());
+						List<Message> newMessagesList = service.fetchConversationMessages(lastId);
+						if (newMessagesList.size() < 100) {
+							updateConfigProgress("Completed loading for conversation " + accountService.getSelectedConversation().getId());
 							reachedEnd = true; // If the data length was less than 100, we know we have reached the end
 						}
-						for (Message msg : responseArr) {
-							retList.add(msg); // Populate our retList with the additional data
-						}
+						messageList.addAll(newMessagesList); // Populate our messageList with the additional data
 						Thread.sleep(250);
-						lastId = responseArr[responseArr.length - 1].getId(); // Save the last id we are on
+						lastId = newMessagesList.get(newMessagesList.size() - 1).getId(); // Save the last id we are on
 						updateConfigProgress("Loading - [" + lastId + "]");
 					} catch (Exception e) {
-						updateConfigProgress("[" + lastId + "] - Failure!");
-						logger.error(e.toString());
+						updateConfigProgress("[" + (lastId.length() > 0 ? lastId : "Last Id not found") + "] - Failure!");
 					}
 				}
 				updateConfigProgress("");
 				toggleControls(false);
-				launchManageConversation(retList);
+				launchManageConversation(messageList);
 				return null;
 			}
 		};
@@ -182,31 +178,29 @@ public class ConfigurationController {
 			@Override
 			protected Void call() throws Exception {
 				toggleControls(true);
-				Channel selectedChannel = (Channel) channelSelectionBox.getValue();
+				accountService.setSelectedChannel((Channel) channelSelectionBox.getValue());
 				boolean reachedEnd = false;
 				String lastId = "";
-				List<Message> retList = new ArrayList<Message>();
+				List<Message> messageList = new ArrayList<Message>();
 
 				while (reachedEnd != true) {
 					try {
-						Message[] responseArr = service.fetchChannelMessages(selectedChannel, lastId);
-						if (responseArr.length < 100) {
-							updateConfigProgress("Completed loading for channel " + selectedChannel.getId());
+						List<Message> newMessagesList = service.fetchChannelMessages(lastId);
+						if (newMessagesList.size() < 100) {
+							updateConfigProgress("Completed loading for channel " + accountService.getSelectedChannel().getId());
 							reachedEnd = true; // If the data length was less than 100, we know we have reached the end
 						}
-						for (Message msg : responseArr) {
-							retList.add(msg); // Populate our retList with the additional data
-						}
+						messageList.addAll(newMessagesList); // Populate our messageList with the additional data
 						Thread.sleep(250);
-						lastId = responseArr[responseArr.length - 1].getId(); // Save the last id we are on
+						lastId = newMessagesList.get(newMessagesList.size() - 1).getId(); // Save the last id we are on
 						updateConfigProgress("Loading - [" + lastId + "]");
 					} catch (Exception e) {
-						updateConfigProgress("[" + lastId + "] - Failure!");
+						updateConfigProgress("[" + (lastId.length() > 0 ? lastId : "Last Id not found") + "] - Failure!");
 					}
 				}
 				updateConfigProgress("");
 				toggleControls(false);
-				launchManageChannel(retList);
+				launchManageChannel(messageList);
 				return null;
 			}
 		};

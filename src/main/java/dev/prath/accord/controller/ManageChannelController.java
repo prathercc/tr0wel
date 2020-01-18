@@ -3,11 +3,15 @@ package dev.prath.accord.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+import dev.prath.accord.FxLauncher;
 import dev.prath.accord.domain.Message;
+import dev.prath.accord.domain.Response;
 import dev.prath.accord.domain.User;
 import dev.prath.accord.service.AccountService;
 import dev.prath.accord.service.DisposalService;
@@ -35,8 +39,6 @@ public class ManageChannelController {
 	@FXML
 	private Text progressText;
 
-	Properties properties = new Properties();
-	
 	@Autowired
 	AccountService accountService;
 	
@@ -44,6 +46,8 @@ public class ManageChannelController {
 	DisposalService disposalService;
 
 	private boolean selectOrientation = false;
+	
+	private static final Logger logger = LoggerFactory.getLogger(ManageChannelController.class);
 	
 	public void initialize() {
 		listView.setCellFactory(CheckBoxListCell.forListView(Message::getIsSelected));
@@ -76,13 +80,12 @@ public class ManageChannelController {
 				for (Message msg : listView.getItems()) {
 					if (msg.getIsSelected().get()) {
 						try {
-							ResponseEntity<String> response = disposalService.deleteChannelMessage(msg);
-							if (response.getStatusCodeValue() == 204) {
+							var response = disposalService.deleteChannelMessage(msg);
+							if (response == Response.SUCCESS) {
 								updateText(progressText, "Deletion Success - [" + msg.getId() + "]");
 								msgsToDelete.add(msg);
 							}
 							Thread.sleep(250);
-
 						} catch (Exception e) {
 							updateText(progressText, "Deletion Failure - [" + msg.getId() + "]");
 						}

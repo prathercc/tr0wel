@@ -3,11 +3,15 @@ package dev.prath.accord.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+import dev.prath.accord.FxLauncher;
 import dev.prath.accord.domain.Message;
+import dev.prath.accord.domain.Response;
 import dev.prath.accord.service.AccountService;
 import dev.prath.accord.service.DisposalService;
 import dev.prath.accord.utility.Properties;
@@ -32,13 +36,13 @@ public class ManageConversationController {
 	@FXML
 	private Text progressText;
 
-	Properties properties = new Properties();
-
 	@Autowired
 	AccountService accountService;
 
 	@Autowired
 	DisposalService disposalService;
+
+	private static final Logger logger = LoggerFactory.getLogger(ManageConversationController.class);
 
 	private boolean selectOrientation = false;
 
@@ -48,7 +52,7 @@ public class ManageConversationController {
 				.filter(message -> message.getAuthor().getId()
 						.equalsIgnoreCase(accountService.getDiscordAccount().getUser().getId()))
 				.forEach(message -> listView.getItems().add(message));
-		updateNumOfMessagesText("Found " + listView.getItems().size() + " messages by you in this conversation");
+		updateText(numOfMsgText, "Found " + listView.getItems().size() + " messages by you in this conversation");
 	}
 
 	public void selectAll() {
@@ -71,15 +75,15 @@ public class ManageConversationController {
 				for (Message msg : listView.getItems()) {
 					if (msg.getIsSelected().get()) {
 						try {
-							ResponseEntity<String> response = disposalService.deleteConversationMessage(msg);
-							if (response.getStatusCodeValue() == 204) {
-								updateProgressText("Deletion Success - [" + msg.getId() + "]");
+							var response = disposalService.deleteConversationMessage(msg);
+							if (response == Response.SUCCESS) {
+								updateText(progressText, "Deletion Success - [" + msg.getId() + "]");
 								msgToDelete.add(msg);
 							}
 							Thread.sleep(250);
 
 						} catch (Exception e) {
-							updateProgressText("Deletion Failure - [" + msg.getId() + "]");
+							updateText(progressText, "Deletion Failure - [" + msg.getId() + "]");
 						}
 					}
 				}
@@ -88,11 +92,11 @@ public class ManageConversationController {
 					@Override
 					public void run() {
 						msgToDelete.stream().forEach(message -> listView.getItems().remove(message));
-						updateNumOfMessagesText(
+						updateText(numOfMsgText,
 								"Found " + listView.getItems().size() + " messages by you in this conversation");
 					}
 				});
-				updateProgressText("");
+				updateText(progressText, "");
 				toggleControls(false);
 				return null;
 			}
@@ -111,20 +115,11 @@ public class ManageConversationController {
 		});
 	}
 
-	private void updateProgressText(String val) {
+	private void updateText(Text text, String val) {
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
-				progressText.setText(val);
-			}
-		});
-	}
-
-	private void updateNumOfMessagesText(String val) {
-		Platform.runLater(new Runnable() {
-			@Override
-			public void run() {
-				numOfMsgText.setText(val);
+				text.setText(val);
 			}
 		});
 	}
