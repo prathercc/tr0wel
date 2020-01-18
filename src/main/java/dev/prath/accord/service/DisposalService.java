@@ -1,5 +1,7 @@
 package dev.prath.accord.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -11,38 +13,47 @@ import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import dev.prath.accord.FxLauncher;
 import dev.prath.accord.domain.Message;
+import dev.prath.accord.domain.Response;
 import dev.prath.accord.utility.Properties;
 
 @Service
 public class DisposalService {
 
-	Properties properties = new Properties();
+	private static final Logger logger = LoggerFactory.getLogger(DisposalService.class);
 
 	@Autowired
 	AccountService accountService;
 
-	public ResponseEntity<String> deleteChannelMessage(Message msg) {
-		RestTemplate restTemplate = new RestTemplate();
-		String requestUrl = properties.getDiscordChannelsUrl() + "/" + accountService.getSelectedChannel().getId()
-				+ "/messages/" + msg.getId();
-		HttpHeaders headers = new HttpHeaders();
-		headers.set("authorization", accountService.getDiscordAccount().getAuthorization());
-		headers.set("user-agent", properties.getUserAgent());
-		HttpEntity<JsonNode> request = new HttpEntity<JsonNode>(headers);
-		restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-		return restTemplate.exchange(requestUrl, HttpMethod.DELETE, request, String.class);
+	public DisposalService() {
+		logger.info("DisposalService has been initialized.");
 	}
 
-	public ResponseEntity<String> deleteConversationMessage(Message msg) {
+	public Response deleteChannelMessage(Message msg) {
 		RestTemplate restTemplate = new RestTemplate();
-		String requestUrl = properties.getDiscordChannelsUrl() + "/" + accountService.getSelectedConversation().getId()
+		String requestUrl = Properties.discordChannelsUrl + "/" + accountService.getSelectedChannel().getId()
 				+ "/messages/" + msg.getId();
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("authorization", accountService.getDiscordAccount().getAuthorization());
-		headers.set("user-agent", properties.getUserAgent());
+		headers.set("user-agent", Properties.userAgent);
 		HttpEntity<JsonNode> request = new HttpEntity<JsonNode>(headers);
 		restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-		return restTemplate.exchange(requestUrl, HttpMethod.DELETE, request, String.class);
+		var response = restTemplate.exchange(requestUrl, HttpMethod.DELETE, request, String.class);
+		return response.getStatusCodeValue() == 204 ? Response.SUCCESS : Response.FAILURE;
+
+	}
+
+	public Response deleteConversationMessage(Message msg) {
+		RestTemplate restTemplate = new RestTemplate();
+		String requestUrl = Properties.discordChannelsUrl + "/" + accountService.getSelectedConversation().getId()
+				+ "/messages/" + msg.getId();
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("authorization", accountService.getDiscordAccount().getAuthorization());
+		headers.set("user-agent", Properties.userAgent);
+		HttpEntity<JsonNode> request = new HttpEntity<JsonNode>(headers);
+		restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+		var response = restTemplate.exchange(requestUrl, HttpMethod.DELETE, request, String.class);
+		return response.getStatusCodeValue() == 204 ? Response.SUCCESS : Response.FAILURE;
 	}
 }

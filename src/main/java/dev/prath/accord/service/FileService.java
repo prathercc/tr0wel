@@ -6,34 +6,41 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.stream.Stream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import dev.prath.accord.FxLauncher;
 import dev.prath.accord.utility.Properties;
+
 @Service
 public class FileService {
 
-	Properties properties = new Properties();
+	private static final Logger logger = LoggerFactory.getLogger(FileService.class);
+
 	public FileService() {
-		System.out.println("Started filedServices");
+		logger.info("FileService has been initialized.");
 	}
 
 	public String getIniValue() {
 		StringBuilder builder = new StringBuilder();
 		try {
-			Stream<String> fileStream = Files.lines(properties.getIniPath());
+			Stream<String> fileStream = Files.lines(Properties.iniPath);
 			fileStream.forEach(s -> builder.append(s));
 			fileStream.close();
 		} catch (Exception e) {
-			System.err.println(e.toString());
+			logger.error("FileService could not read from path: " + Properties.iniPath.toString());
 		}
+		logger.info("FileService is returning a value from path: " + Properties.iniPath.toString());
 		return builder.toString();
 	}
 
 	public void setIniValue(String val) {
 		try {
-			Files.write(properties.getIniPath(), val.getBytes());
+			Files.write(Properties.iniPath, val.getBytes());
+			logger.info("FileService successfully wrote value: " + val + ", to path: " + Properties.iniPath.toString());
 		} catch (IOException e) {
-			System.err.println(e.toString());
+			logger.error("FileService could not write value: " + val + " to path: " + Properties.iniPath.toString());
 		}
 	}
 
@@ -42,13 +49,14 @@ public class FileService {
 			Path path = Paths.get(System.getProperty("user.home"), ".accord");
 			if (!Files.exists(path)) {
 				Files.createDirectory(path);
+				logger.info("FileService has created directory: " + path.toString());
 			}
-			if (!Files.exists(properties.getIniPath())) {
-				Files.createFile(properties.getIniPath());
+			if (!Files.exists(Properties.iniPath)) {
+				Files.createFile(Properties.iniPath);
+				logger.info("FileService has created file: " + Properties.iniPath.toString());
 			}
 		} catch (Exception e) {
-			System.err.println(e.toString());
+			logger.error("FileService could not verify ini file/directory exist");
 		}
 	}
-
 }

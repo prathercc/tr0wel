@@ -1,5 +1,7 @@
 package dev.prath.accord.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -12,6 +14,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import dev.prath.accord.FxLauncher;
 import dev.prath.accord.domain.Authorization;
 import dev.prath.accord.domain.Channel;
 import dev.prath.accord.domain.Conversation;
@@ -23,18 +26,22 @@ import dev.prath.accord.utility.Properties;
 import javafx.scene.text.Text;
 @Service
 public class AuthenticationService {
+	
+	private static final Logger logger = LoggerFactory.getLogger(AuthenticationService.class);
 
-	Properties properties = new Properties();
-
+	public AuthenticationService() {
+		logger.info("AuthenticationService has been initialized.");
+	}
+	
 	public ResponseEntity<Authorization> fetchAuthorization(Credentials credentials) {
 		RestTemplate restTemplate = new RestTemplate();
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
-		headers.set("user-agent", properties.getUserAgent());
+		headers.set("user-agent", Properties.userAgent);
 		HttpEntity<Credentials> request = new HttpEntity<Credentials>(credentials, headers);
 		restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
 		restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
-		ResponseEntity<Authorization> response = restTemplate.exchange(properties.getDiscordAuthUrl() + "/login",
+		ResponseEntity<Authorization> response = restTemplate.exchange(Properties.discordAuthUrl + "/login",
 				HttpMethod.POST, request, Authorization.class);
 		return response;
 	}
@@ -43,10 +50,10 @@ public class AuthenticationService {
 		RestTemplate restTemplate = new RestTemplate();
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("authorization", discordAccount.getAuthorization());
-		headers.set("user-agent", properties.getUserAgent());
+		headers.set("user-agent", Properties.userAgent);
 		HttpEntity<JsonNode> request = new HttpEntity<JsonNode>(headers);
 		restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-		ResponseEntity<User> response = restTemplate.exchange(properties.getDiscordUsersUrl() + "/@me", HttpMethod.GET,
+		ResponseEntity<User> response = restTemplate.exchange(Properties.discordUsersUrl + "/@me", HttpMethod.GET,
 				request, User.class);
 		return response.getBody();
 	}
@@ -55,11 +62,11 @@ public class AuthenticationService {
 		RestTemplate restTemplate = new RestTemplate();
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("authorization", discordAccount.getAuthorization());
-		headers.set("user-agent", properties.getUserAgent());
+		headers.set("user-agent", Properties.userAgent);
 		HttpEntity<JsonNode> request = new HttpEntity<JsonNode>(headers);
 		restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
 		ResponseEntity<Conversation[]> response = restTemplate.exchange(
-				properties.getDiscordUsersUrl() + "/@me/channels", HttpMethod.GET, request, Conversation[].class);
+				Properties.discordUsersUrl + "/@me/channels", HttpMethod.GET, request, Conversation[].class);
 		return response.getBody();
 	}
 
@@ -67,11 +74,11 @@ public class AuthenticationService {
 		RestTemplate restTemplate = new RestTemplate();
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("authorization", discordAccount.getAuthorization());
-		headers.set("user-agent", properties.getUserAgent());
+		headers.set("user-agent", Properties.userAgent);
 		HttpEntity<JsonNode> request = new HttpEntity<JsonNode>(headers);
 		restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
 		ResponseEntity<Channel[]> response = restTemplate.exchange(
-				properties.getDiscordGuildsUrl() + "/" + guild.getId() + "/channels", HttpMethod.GET, request,
+				Properties.discordGuildsUrl + "/" + guild.getId() + "/channels", HttpMethod.GET, request,
 				Channel[].class);
 		return response.getBody();
 	}
@@ -80,10 +87,10 @@ public class AuthenticationService {
 		RestTemplate restTemplate = new RestTemplate();
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("authorization", discordAccount.getAuthorization());
-		headers.set("user-agent", properties.getUserAgent());
+		headers.set("user-agent", Properties.userAgent);
 		HttpEntity<JsonNode> request = new HttpEntity<JsonNode>(headers);
 		restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-		ResponseEntity<Guild[]> response = restTemplate.exchange(properties.getDiscordUsersUrl() + "/@me/guilds",
+		ResponseEntity<Guild[]> response = restTemplate.exchange(Properties.discordUsersUrl + "/@me/guilds",
 				HttpMethod.GET, request, Guild[].class);
 		return response.getBody();
 	}
