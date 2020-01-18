@@ -13,5 +13,4 @@ public class Main {
 		springContext = SpringApplication.run(Main.class, args);
 		FxLauncher.startFxApplication(args);
 	}
-
 }

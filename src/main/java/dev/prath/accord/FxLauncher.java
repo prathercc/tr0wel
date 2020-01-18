@@ -23,7 +23,6 @@ public class FxLauncher extends Application {
 		fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/authenticationMenu.fxml"));
 		fxmlLoader.setControllerFactory(Main.springContext::getBean);
 		rootNode = fxmlLoader.load();
-		
 		stage.setTitle("accord - Authentication");
 		stage.setScene(new Scene(rootNode));
 		stage.setResizable(false);
@@ -35,10 +34,6 @@ public class FxLauncher extends Application {
 		logger.warn("All JavaFx windows are now closed! Stopping Spring Boot...");
 		Main.springContext.close();
 		logger.info("Spring Boot has been shut down.");
-	}
-	@Override
-	public void init() throws IOException {
-
 	}
 	public static void startFxApplication(String[] args) {
 		launch();
