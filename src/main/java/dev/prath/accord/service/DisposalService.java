@@ -11,51 +11,38 @@ import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import dev.prath.accord.domain.Channel;
-import dev.prath.accord.domain.Conversation;
 import dev.prath.accord.domain.Message;
 import dev.prath.accord.utility.Properties;
 
 @Service
-public class MessageService {
-	
+public class DisposalService {
+
 	Properties properties = new Properties();
-	
+
 	@Autowired
 	AccountService accountService;
-	
-	public Message[] fetchConversationMessages(Conversation selectedConversation, String lastId) {
+
+	public ResponseEntity<String> deleteChannelMessage(Message msg) {
 		RestTemplate restTemplate = new RestTemplate();
-		String requestUrl = lastId.length() < 1
-				? properties.getDiscordChannelsUrl() + "/" + selectedConversation.getId()
-						+ "/messages?limit=100"
-				: properties.getDiscordChannelsUrl() + "/" + selectedConversation.getId()
-						+ "/messages?limit=100&before=" + lastId;
+		String requestUrl = properties.getDiscordChannelsUrl() + "/" + accountService.getSelectedChannel().getId()
+				+ "/messages/" + msg.getId();
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("authorization", accountService.getDiscordAccount().getAuthorization());
 		headers.set("user-agent", properties.getUserAgent());
 		HttpEntity<JsonNode> request = new HttpEntity<JsonNode>(headers);
 		restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-		ResponseEntity<Message[]> response = restTemplate.exchange(requestUrl, HttpMethod.GET, request,
-				Message[].class);
-		return response.getBody();
-	}
-	
-	public Message[] fetchChannelMessages(Channel selectedChannel, String lastId) {
-		RestTemplate restTemplate = new RestTemplate();
-		String requestUrl = lastId.length() < 1
-				? properties.getDiscordChannelsUrl() + "/" + selectedChannel.getId()
-						+ "/messages?limit=100"
-				: properties.getDiscordChannelsUrl() + "/" + selectedChannel.getId()
-						+ "/messages?limit=100&before=" + lastId;
-		HttpHeaders headers = new HttpHeaders();
-		headers.set("authorization", accountService.getDiscordAccount().getAuthorization());
-		headers.set("user-agent", properties.getUserAgent());
-		HttpEntity<JsonNode> request = new HttpEntity<JsonNode>(headers);
-		restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-		ResponseEntity<Message[]> response = restTemplate.exchange(requestUrl, HttpMethod.GET, request,
-				Message[].class);
-		return response.getBody();
+		return restTemplate.exchange(requestUrl, HttpMethod.DELETE, request, String.class);
 	}
 
+	public ResponseEntity<String> deleteConversationMessage(Message msg) {
+		RestTemplate restTemplate = new RestTemplate();
+		String requestUrl = properties.getDiscordChannelsUrl() + "/" + accountService.getSelectedConversation().getId()
+				+ "/messages/" + msg.getId();
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("authorization", accountService.getDiscordAccount().getAuthorization());
+		headers.set("user-agent", properties.getUserAgent());
+		HttpEntity<JsonNode> request = new HttpEntity<JsonNode>(headers);
+		restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+		return restTemplate.exchange(requestUrl, HttpMethod.DELETE, request, String.class);
+	}
 }

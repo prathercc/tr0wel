@@ -1,29 +1,31 @@
 
 package dev.prath.accord.controller;
 
-import javafx.application.Platform;
-import javafx.concurrent.Task;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.text.Text;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import dev.prath.accord.domain.Channel;
 import dev.prath.accord.domain.Conversation;
 import dev.prath.accord.domain.DiscordAccount;
 import dev.prath.accord.domain.Guild;
 import dev.prath.accord.domain.Message;
+import dev.prath.accord.service.AccountService;
 import dev.prath.accord.service.MessageService;
+import dev.prath.accord.service.StageService;
 import dev.prath.accord.utility.Properties;
-
+import javafx.application.Platform;
+import javafx.concurrent.Task;
+import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.text.Text;
+import javafx.stage.Stage;
+@Component
 public class ConfigurationController {
 
 	@FXML
@@ -40,19 +42,21 @@ public class ConfigurationController {
 	private Button manageDmButton;
 
 	Properties properties = new Properties();
-
+	@Autowired
 	MessageService service = new MessageService();
 	
-	private DiscordAccount discordAccount = null;
+	@Autowired
+	AccountService accountService;
+	
+	@Autowired
+	StageService stageService;
+	
+	private static final Logger logger = LoggerFactory.getLogger(ConfigurationController.class);
 
-	public void setUpConfigurationMenu(DiscordAccount val) {
-		discordAccount = val;
-		for (Guild guild : discordAccount.getGuilds()) {
-			guildSelectionBox.getItems().add(guild);
-		}
-		for (Conversation convo : discordAccount.getConversations()) {
-			dmUserDropDown.getItems().add(convo);
-		}
+	public void initialize() {
+		DiscordAccount discordAccount = accountService.getDiscordAccount();
+		discordAccount.getGuilds().stream().forEach(guild -> guildSelectionBox.getItems().add(guild));
+		discordAccount.getConversations().stream().forEach(conversation -> dmUserDropDown.getItems().add(conversation));
 	}
 
 	/* Conversation */
@@ -64,19 +68,8 @@ public class ConfigurationController {
 				Conversation selectedConversation = (Conversation) dmUserDropDown.getValue();
 				selectedConversation.setMessages(conversationMessages);
 				try {
-					String fxml = "/fxml/manageConversationMenu.fxml";
-					FXMLLoader loader = new FXMLLoader();
-					loader.setLocation(getClass().getResource(fxml));
-					Parent rootNode = (Parent) loader.load(getClass().getResourceAsStream(fxml));
-					Scene scene = new Scene(rootNode);
-					Stage stage = new Stage();
-					ManageConversationController controller = loader.getController();
-					controller.setUpMessageData(discordAccount, selectedConversation);
-					stage.setTitle("accord - Conversation Manager");
-					stage.setScene(scene);
-					stage.setResizable(false);
-					stage.initModality(Modality.WINDOW_MODAL);
-					stage.initOwner(AuthenticationController.configurationStage);
+					accountService.setSelectedConversation(selectedConversation);
+					Stage stage = stageService.getNewStageAsDialog("accord - Conversation Manager", "/fxml/manageConversationMenu.fxml", AuthenticationController.configurationStage);
 					stage.show();
 				} catch (Exception e) {
 				}
@@ -110,7 +103,7 @@ public class ConfigurationController {
 
 				while (reachedEnd != true) {
 					try {
-						Message[] responseArr = service.fetchConversationMessages(selectedConversation, discordAccount, lastId);
+						Message[] responseArr = service.fetchConversationMessages(selectedConversation, lastId);
 						if (responseArr.length < 100) {
 							updateConfigProgress("Completed loading for conversation " + selectedConversation.getId());
 							reachedEnd = true; // If the data length was less than 100, we know we have reached the end
@@ -123,6 +116,7 @@ public class ConfigurationController {
 						updateConfigProgress("Loading - [" + lastId + "]");
 					} catch (Exception e) {
 						updateConfigProgress("[" + lastId + "] - Failure!");
+						logger.error(e.toString());
 					}
 				}
 				updateConfigProgress("");
@@ -148,19 +142,8 @@ public class ConfigurationController {
 				Channel selectedChannel = (Channel) channelSelectionBox.getValue();
 				selectedChannel.setMessages(channelMessages);
 				try {
-					String fxml = "/fxml/manageChannelMenu.fxml";
-					FXMLLoader loader = new FXMLLoader();
-					loader.setLocation(getClass().getResource(fxml));
-					Parent rootNode = (Parent) loader.load(getClass().getResourceAsStream(fxml));
-					Scene scene = new Scene(rootNode);
-					Stage stage = new Stage();
-					ManageChannelController controller = loader.getController();
-					controller.setUpMessageData(discordAccount, selectedChannel);
-					stage.setTitle("accord - Channel Manager Menu");
-					stage.setScene(scene);
-					stage.setResizable(false);
-					stage.initModality(Modality.WINDOW_MODAL);
-					stage.initOwner(AuthenticationController.configurationStage);
+					accountService.setSelectedChannel(selectedChannel);
+					Stage stage = stageService.getNewStageAsDialog("accord - Channel Manager Menu", "/fxml/manageChannelMenu.fxml", AuthenticationController.configurationStage);
 					stage.show();
 				} catch (Exception e) {
 				}
@@ -206,7 +189,7 @@ public class ConfigurationController {
 
 				while (reachedEnd != true) {
 					try {
-						Message[] responseArr = service.fetchChannelMessages(selectedChannel, discordAccount, lastId);
+						Message[] responseArr = service.fetchChannelMessages(selectedChannel, lastId);
 						if (responseArr.length < 100) {
 							updateConfigProgress("Completed loading for channel " + selectedChannel.getId());
 							reachedEnd = true; // If the data length was less than 100, we know we have reached the end

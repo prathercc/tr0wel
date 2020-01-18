@@ -3,30 +3,23 @@ package dev.prath.accord.controller;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
-import dev.prath.accord.domain.Channel;
-import dev.prath.accord.domain.Conversation;
-import dev.prath.accord.domain.DiscordAccount;
 import dev.prath.accord.domain.Message;
-import dev.prath.accord.domain.User;
+import dev.prath.accord.service.AccountService;
+import dev.prath.accord.service.DisposalService;
 import dev.prath.accord.utility.Properties;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.cell.CheckBoxListCell;
 import javafx.scene.text.Text;
 
+@Component
 public class ManageConversationController {
 	@FXML
 	private ListView<Message> listView;
@@ -41,33 +34,26 @@ public class ManageConversationController {
 
 	Properties properties = new Properties();
 
-	Conversation selectedConversation = null;
-	DiscordAccount discordAccount = null;
+	@Autowired
+	AccountService accountService;
+
+	@Autowired
+	DisposalService disposalService;
 
 	private boolean selectOrientation = false;
 
-	public void setUpMessageData(DiscordAccount acc, Conversation conversation) {
-		selectedConversation = conversation;
-		discordAccount = acc;
+	public void initialize() {
 		listView.setCellFactory(CheckBoxListCell.forListView(Message::getIsSelected));
-
-		for (Message m : selectedConversation.getMessages()) {
-			if(m.getAuthor().getId().equalsIgnoreCase(acc.getUser().getId())) {
-				listView.getItems().add(m); // Only display messages that belong to the logged in user
-			}
-			
-		}
+		accountService.getSelectedConversation().getMessages().stream()
+				.filter(message -> message.getAuthor().getId()
+						.equalsIgnoreCase(accountService.getDiscordAccount().getUser().getId()))
+				.forEach(message -> listView.getItems().add(message));
 		updateNumOfMessagesText("Found " + listView.getItems().size() + " messages by you in this conversation");
 	}
 
 	public void selectAll() {
-		if (!selectOrientation)
-			selectOrientation = true;
-		else
-			selectOrientation = false;
-		for (Message m : listView.getItems()) {
-			m.setIsSelected(selectOrientation);
-		}
+		selectOrientation = !selectOrientation ? true : false;
+		listView.getItems().stream().forEach(message -> message.setIsSelected(selectOrientation));
 	}
 
 	public void deleteSelections() {
@@ -85,16 +71,7 @@ public class ManageConversationController {
 				for (Message msg : listView.getItems()) {
 					if (msg.getIsSelected().get()) {
 						try {
-							RestTemplate restTemplate = new RestTemplate();
-							String requestUrl = properties.getDiscordChannelsUrl() + "/" + selectedConversation.getId()
-									+ "/messages/" + msg.getId();
-							HttpHeaders headers = new HttpHeaders();
-							headers.set("authorization", discordAccount.getAuthorization());
-							headers.set("user-agent", properties.getUserAgent());
-							HttpEntity<JsonNode> request = new HttpEntity<JsonNode>(headers);
-							restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-							ResponseEntity<String> response = restTemplate.exchange(requestUrl, HttpMethod.DELETE,
-									request, String.class);
+							ResponseEntity<String> response = disposalService.deleteConversationMessage(msg);
 							if (response.getStatusCodeValue() == 204) {
 								updateProgressText("Deletion Success - [" + msg.getId() + "]");
 								msgToDelete.add(msg);
@@ -110,10 +87,9 @@ public class ManageConversationController {
 				Platform.runLater(new Runnable() {
 					@Override
 					public void run() {
-						for (Message delMsg : msgToDelete) {
-							listView.getItems().remove(delMsg);
-						}
-						updateNumOfMessagesText("Found " + listView.getItems().size() + " messages by you in this conversation");
+						msgToDelete.stream().forEach(message -> listView.getItems().remove(message));
+						updateNumOfMessagesText(
+								"Found " + listView.getItems().size() + " messages by you in this conversation");
 					}
 				});
 				updateProgressText("");

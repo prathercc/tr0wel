@@ -6,11 +6,16 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.stream.Stream;
 
-import dev.prath.accord.utility.Properties;
+import org.springframework.stereotype.Service;
 
-public class FileService implements IFileService {
+import dev.prath.accord.utility.Properties;
+@Service
+public class FileService {
 
 	Properties properties = new Properties();
+	public FileService() {
+		System.out.println("Started filedServices");
+	}
 
 	public String getIniValue() {
 		StringBuilder builder = new StringBuilder();

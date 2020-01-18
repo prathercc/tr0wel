@@ -7,6 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -20,8 +21,8 @@ import dev.prath.accord.domain.Guild;
 import dev.prath.accord.domain.User;
 import dev.prath.accord.utility.Properties;
 import javafx.scene.text.Text;
-
-public class AuthenticationService implements IAuthenticationService {
+@Service
+public class AuthenticationService {
 
 	Properties properties = new Properties();
 

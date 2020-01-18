@@ -1,13 +1,32 @@
 package dev.prath.accord.service;
 
-import dev.prath.accord.domain.DiscordAccount;
+import org.springframework.stereotype.Service;
 
-public class AccountService implements IAccountService {
+import dev.prath.accord.domain.Channel;
+import dev.prath.accord.domain.Conversation;
+import dev.prath.accord.domain.DiscordAccount;
+@Service
+public class AccountService {
 	
 	private DiscordAccount discordAccount;
 	
-	public AccountService(DiscordAccount val) {
-		discordAccount = val;
+	private Conversation selectedConversation;
+	
+	private Channel selectedChannel;
+	
+	public void setSelectedConversation(Conversation val) {
+		selectedConversation = val;
+	}
+	public Conversation getSelectedConversation() {
+		return selectedConversation;
+	}
+	
+	public void setSelectedChannel(Channel val) {
+		selectedChannel = val;
+	}
+	
+	public Channel getSelectedChannel() {
+		return selectedChannel;
 	}
 	
 	public DiscordAccount getDiscordAccount() {

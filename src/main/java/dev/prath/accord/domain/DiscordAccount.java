@@ -10,6 +10,10 @@ public class DiscordAccount {
 	private Credentials credentials = null;
 	private List<Conversation> conversations = new ArrayList<Conversation>();
 	
+	public DiscordAccount() {
+		
+	}
+	
 	public DiscordAccount(Credentials creds) {
 		credentials = creds;
 	}

@@ -1,36 +1,11 @@
 package dev.prath.accord.controller;
 
-import javafx.application.Platform;
-import javafx.concurrent.Task;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
-import javafx.scene.text.Text;
-import javafx.stage.Stage;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.util.stream.Stream;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.StringHttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
-import dev.prath.accord.MainApp;
-import dev.prath.accord.controller.ConfigurationController;
 import dev.prath.accord.domain.Authorization;
 import dev.prath.accord.domain.Channel;
 import dev.prath.accord.domain.Conversation;
@@ -38,10 +13,21 @@ import dev.prath.accord.domain.Credentials;
 import dev.prath.accord.domain.DiscordAccount;
 import dev.prath.accord.domain.Guild;
 import dev.prath.accord.domain.User;
+import dev.prath.accord.service.AccountService;
 import dev.prath.accord.service.AuthenticationService;
 import dev.prath.accord.service.FileService;
+import dev.prath.accord.service.StageService;
 import dev.prath.accord.utility.Properties;
-
+import javafx.application.Platform;
+import javafx.concurrent.Task;
+import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
+import javafx.scene.text.Text;
+import javafx.stage.Stage;
+@Component
 public class AuthenticationController {
 	@FXML
 	private TextField emailTextField;
@@ -53,15 +39,27 @@ public class AuthenticationController {
 	private Text progressText;
 	@FXML
 	private CheckBox rememberMeCheckBox;
-
+	
+	private static final Logger logger = LoggerFactory.getLogger(AuthenticationController.class);
+	
 	Properties properties = new Properties();
+	
+	@Autowired
+	AuthenticationService service;
+	
+	@Autowired
+	AccountService accountService;
 
-	AuthenticationService service = new AuthenticationService();
-	FileService ioService = new FileService();
+	@Autowired
+	FileService ioService;
+	
+	@Autowired
+	StageService stageService;
 
 	public static Stage configurationStage;
 
 	public void initialize() {
+		ioService.checkIniFolderPath();
 		String iniValue = ioService.getIniValue();
 		if (iniValue.length() != 0) {
 			rememberMeCheckBox.setSelected(true);
@@ -76,27 +74,17 @@ public class AuthenticationController {
 		thread.start();
 	}
 
-	private void launchConfiguration(DiscordAccount discordAccount) {
+	private void launchConfiguration() {
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
 				finalizeIni();
 				setProgressText("Launching configuration menu...");
 				try {
-					String fxml = "/fxml/configurationMenu.fxml";
-					FXMLLoader loader = new FXMLLoader();
-					loader.setLocation(getClass().getResource(fxml));
-					Parent rootNode = (Parent) loader.load(getClass().getResourceAsStream(fxml));
-					Scene scene = new Scene(rootNode);
-					Stage stage = new Stage();
-					ConfigurationController controller = loader.getController();
-					controller.setUpConfigurationMenu(discordAccount);
-					stage.setTitle("accord - Configuration Menu");
-					stage.setScene(scene);
-					stage.setResizable(false);
+					Stage stage = stageService.getNewStage("accord - Configuration Menu", "/fxml/configurationMenu.fxml");
 					configurationStage = stage;
 					stage.show();
-					dev.prath.accord.MainApp.authenticationMenu.hide();
+					dev.prath.accord.FxLauncher.authenticationMenu.hide();
 				} catch (Exception e) {
 					setProgressText("Error launching configuration menu!");
 				}
@@ -123,7 +111,8 @@ public class AuthenticationController {
 							guild.setChannels(fetchChannels(guild, discordAccount));
 						}
 						discordAccount.setUser(fetchUserData(discordAccount));
-						launchConfiguration(discordAccount);
+						accountService.updateDiscordAccount(discordAccount);
+						launchConfiguration();
 					}
 				} catch (Exception e) {
 					toggleControls(false);

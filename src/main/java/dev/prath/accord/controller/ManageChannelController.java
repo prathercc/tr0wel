@@ -3,20 +3,14 @@ package dev.prath.accord.controller;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
-import dev.prath.accord.domain.Channel;
-import dev.prath.accord.domain.DiscordAccount;
 import dev.prath.accord.domain.Message;
 import dev.prath.accord.domain.User;
+import dev.prath.accord.service.AccountService;
+import dev.prath.accord.service.DisposalService;
 import dev.prath.accord.utility.Properties;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -26,7 +20,7 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.cell.CheckBoxListCell;
 import javafx.scene.text.Text;
-
+@Component
 public class ManageChannelController {
 	@FXML
 	private ListView<Message> listView;
@@ -42,17 +36,18 @@ public class ManageChannelController {
 	private Text progressText;
 
 	Properties properties = new Properties();
-
-	Channel selectedChannel = null;
-	DiscordAccount discordAccount = null;
+	
+	@Autowired
+	AccountService accountService;
+	
+	@Autowired
+	DisposalService disposalService;
 
 	private boolean selectOrientation = false;
-
-	public void setUpMessageData(DiscordAccount acc, Channel channel) {
-		selectedChannel = channel;
-		discordAccount = acc;
+	
+	public void initialize() {
 		listView.setCellFactory(CheckBoxListCell.forListView(Message::getIsSelected));
-		channel.getParticipatingUsers().stream().forEach(user -> userSelectionBox.getItems().add(user));
+		accountService.getSelectedChannel().getParticipatingUsers().stream().forEach(user -> userSelectionBox.getItems().add(user));
 	}
 
 	public void selectAll() {
@@ -81,16 +76,7 @@ public class ManageChannelController {
 				for (Message msg : listView.getItems()) {
 					if (msg.getIsSelected().get()) {
 						try {
-							RestTemplate restTemplate = new RestTemplate();
-							String requestUrl = properties.getDiscordChannelsUrl() + "/" + selectedChannel.getId()
-									+ "/messages/" + msg.getId();
-							HttpHeaders headers = new HttpHeaders();
-							headers.set("authorization", discordAccount.getAuthorization());
-							headers.set("user-agent", properties.getUserAgent());
-							HttpEntity<JsonNode> request = new HttpEntity<JsonNode>(headers);
-							restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-							ResponseEntity<String> response = restTemplate.exchange(requestUrl, HttpMethod.DELETE,
-									request, String.class);
+							ResponseEntity<String> response = disposalService.deleteChannelMessage(msg);
 							if (response.getStatusCodeValue() == 204) {
 								updateText(progressText, "Deletion Success - [" + msg.getId() + "]");
 								msgsToDelete.add(msg);
@@ -114,10 +100,10 @@ public class ManageChannelController {
 						} else {
 							// No more messages? Pull them off the user selection list
 							User userToDelete = (User) userSelectionBox.getValue();
-							selectedChannel.getParticipatingUsers().remove(userToDelete);
+							accountService.getSelectedChannel().getParticipatingUsers().remove(userToDelete);
 							userSelectionBox.getSelectionModel().clearSelection();
 							userSelectionBox.getItems().clear();
-							selectedChannel.getParticipatingUsers().stream()
+							accountService.getSelectedChannel().getParticipatingUsers().stream()
 									.forEach(user -> userSelectionBox.getItems().add(user));
 							updateText(numOfMsgText, "");
 						}
@@ -142,7 +128,7 @@ public class ManageChannelController {
 						listView.getItems().clear();
 						if (userSelectionBox.getValue() != null) {
 							User selectedUser = (User) userSelectionBox.getValue();
-							selectedChannel.getMessages().stream().filter(
+							accountService.getSelectedChannel().getMessages().stream().filter(
 									message -> message.getAuthor().getId().equalsIgnoreCase(selectedUser.getId()))
 									.forEach(message -> listView.getItems().add(message));
 							updateText(numOfMsgText, "Found " + listView.getItems().size() + " messages by user.");

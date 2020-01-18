@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<VBox prefHeight="202.0" prefWidth="399.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dev.prath.accord.controller.ConfigurationController">
+<VBox prefHeight="202.0" prefWidth="399.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dev.prath.accord.controller.ConfigurationController">
   <children>
     <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="123.0" prefWidth="368.0" VBox.vgrow="ALWAYS">
          <children>
@@ -23,16 +23,14 @@
             <Separator layoutX="207.0" layoutY="3.0" orientation="VERTICAL" prefHeight="182.0" prefWidth="6.0" />
             <Text layoutX="254.0" layoutY="54.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Select Conversation" />
             <Button fx:id="manageDmButton" disable="true" focusTraversable="false" layoutX="240.0" layoutY="113.0" mnemonicParsing="false" onAction="#manageConversation" text="Manage Conversation" />
-            <ImageView fitHeight="46.0" fitWidth="172.0" layoutX="24.0" layoutY="3.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="channelLogo" fitHeight="46.0" fitWidth="172.0" layoutX="24.0" layoutY="3.0" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@/images/channelManage.png" />
-               </image>
-            </ImageView>
-            <ImageView fitHeight="46.0" fitWidth="172.0" layoutX="220.0" layoutY="3.0" pickOnBounds="true" preserveRatio="true">
+                  <Image url="@../images/channelManage.png" />
+               </image></ImageView>
+            <ImageView fx:id="convoLogo" fitHeight="46.0" fitWidth="172.0" layoutX="220.0" layoutY="3.0" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@/images/channelDirectMessages.png" />
-               </image>
-            </ImageView>
+                  <Image url="@../images/channelDirectMessages.png" />
+               </image></ImageView>
          </children>
     </AnchorPane>
   </children>
