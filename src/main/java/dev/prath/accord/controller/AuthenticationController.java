@@ -79,7 +79,7 @@ public class AuthenticationController {
 				finalizeIni();
 				setProgressText("Launching configuration menu...");
 				try {
-					Stage stage = stageService.getNewStage("accord - Configuration Menu", "/fxml/configurationMenu.fxml");
+					Stage stage = stageService.getNewStage("accord - Configuration Menu", "/fxml/ConfigurationMenu/ConfigurationMenu.fxml");
 					configurationStage = stage;
 					stage.show();
 					dev.prath.accord.FxLauncher.authenticationMenu.hide();
