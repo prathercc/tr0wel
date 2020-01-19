@@ -1,5 +1,7 @@
 package dev.prath.accord.controller;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+
 @Component
 public class AuthenticationController {
 	@FXML
@@ -39,18 +42,18 @@ public class AuthenticationController {
 	private Text progressText;
 	@FXML
 	private CheckBox rememberMeCheckBox;
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(AuthenticationController.class);
-	
+
 	@Autowired
 	AuthenticationService service;
-	
+
 	@Autowired
 	AccountService accountService;
 
 	@Autowired
 	FileService ioService;
-	
+
 	@Autowired
 	StageService stageService;
 
@@ -76,14 +79,15 @@ public class AuthenticationController {
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
-				finalizeIni();
+				ioService.setIniValue(rememberMeCheckBox.isSelected() ? emailTextField.getText() : "");
 				setProgressText("Launching configuration menu...");
-				try {
-					Stage stage = stageService.getNewStage("accord - Configuration Menu", "/fxml/ConfigurationMenu/ConfigurationMenu.fxml");
+				Stage stage = stageService.getNewStage("accord - Configuration Menu",
+						"/fxml/ConfigurationMenu/ConfigurationMenu.fxml");
+				if (stage != null) {
 					configurationStage = stage;
 					stage.show();
 					dev.prath.accord.FxLauncher.authenticationMenu.hide();
-				} catch (Exception e) {
+				} else {
 					setProgressText("Error launching configuration menu!");
 				}
 			}
@@ -96,23 +100,11 @@ public class AuthenticationController {
 			protected Void call() throws Exception {
 				toggleControls(true);
 				Credentials credentials = new Credentials(emailTextField.getText(), passwordTextField.getText());
-				DiscordAccount discordAccount = new DiscordAccount(credentials);
-
-				try {
-					ResponseEntity<Authorization> response = service.fetchAuthorization(credentials);
-					if (response.getStatusCodeValue() == 200) {
-						Authorization authorization = response.getBody();
-						discordAccount.setAuthorization(authorization);
-						discordAccount.setConversations(fetchConversations(discordAccount));
-						discordAccount.setGuilds(fetchGuilds(discordAccount));
-						for (Guild guild : discordAccount.getGuilds()) {
-							guild.setChannels(fetchChannels(guild, discordAccount));
-						}
-						discordAccount.setUser(fetchUserData(discordAccount));
-						accountService.updateDiscordAccount(discordAccount);
-						launchConfiguration();
-					}
-				} catch (Exception e) {
+				DiscordAccount discordAccount = createDiscordAccount(credentials);
+				if (discordAccount != null) {
+					accountService.updateDiscordAccount(discordAccount);
+					launchConfiguration();
+				} else {
 					toggleControls(false);
 					setProgressText("User authentication failed!");
 				}
@@ -143,51 +135,23 @@ public class AuthenticationController {
 		});
 	}
 
-	private void finalizeIni() {
-		if (rememberMeCheckBox.isSelected()) {
-			ioService.setIniValue(emailTextField.getText());
-		} else {
-			ioService.setIniValue("");
+	private DiscordAccount createDiscordAccount(Credentials credentials) {
+		DiscordAccount discordAccount = new DiscordAccount(credentials);
+		Authorization authorization = service.fetchAuthorization(credentials);
+		if (authorization != null) {
+			discordAccount.setAuthorization(authorization);
+			setProgressText("Fetching user data...");
+			User userdata = service.fetchUserData(discordAccount);
+			discordAccount.setUser(userdata);
+			setProgressText("Fetching conversations...");
+			List<Conversation> conversations = service.fetchConversations(discordAccount);
+			discordAccount.setConversations(conversations);
+			setProgressText("Fetching guilds...");
+			List<Guild> guilds = service.fetchGuilds(discordAccount);
+			guilds.stream().forEach(guild -> guild.setChannels(service.fetchChannels(guild, discordAccount)));
+			discordAccount.setGuilds(guilds);
+			return userdata != null ? discordAccount : null;
 		}
-	}
-	
-	private User fetchUserData(DiscordAccount discordAccount) {
-		setProgressText("Fetching user data...");
-		try {
-			return service.fetchUserData(discordAccount);
-		} catch (Exception e) {
-			setProgressText("Error fetching user data for account - " + discordAccount.getCredentials().getEmail());
-			return null;
-		}
-	}
-
-	private Conversation[] fetchConversations(DiscordAccount discordAccount) {
-		setProgressText("Fetching conversations...");
-		try {
-			return service.fetchConversations(discordAccount);
-		} catch (Exception e) {
-			setProgressText("Error fetching conversations for user - " + discordAccount.getUser().getId());
-			return null;
-		}
-	}
-
-	private Channel[] fetchChannels(Guild guild, DiscordAccount discordAccount) {
-		setProgressText("Fetching channels for guild: " + guild.getId() + "...");
-		try {
-			return service.fetchChannels(guild, discordAccount);
-		} catch (Exception e) {
-			setProgressText("Error fetching channels from guild id - " + guild.getId());
-			return null;
-		}
-	}
-
-	private Guild[] fetchGuilds(DiscordAccount discordAccount) {
-		setProgressText("Fetching guilds...");
-		try {
-			return service.fetchGuilds(discordAccount, progressText);
-		} catch (Exception e) {
-			setProgressText("Error fetching guilds for user - " + discordAccount.getUser().getId());
-			return null;
-		}
+		return null;
 	}
 }

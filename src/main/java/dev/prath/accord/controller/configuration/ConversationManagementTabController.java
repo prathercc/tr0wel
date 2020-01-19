@@ -20,8 +20,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+
 @Component
 public class ConversationManagementTabController {
+	
 	@FXML
 	private ChoiceBox<Conversation> dmUserDropDown;
 	@FXML
@@ -29,22 +31,20 @@ public class ConversationManagementTabController {
 
 	@Autowired
 	MessageService service;
-	
+
 	@Autowired
 	AccountService accountService;
-	
+
 	@Autowired
 	StageService stageService;
-	
+
 	@FXML
 	private Text configProgressText;
-	
+
 	public void initialize() {
 		DiscordAccount discordAccount = accountService.getDiscordAccount();
 		discordAccount.getConversations().stream().forEach(conversation -> dmUserDropDown.getItems().add(conversation));
 	}
-	
-	/* Conversation */
 
 	private void launchManageConversation(List<Message> conversationMessages) {
 		Platform.runLater(new Runnable() {
@@ -52,11 +52,11 @@ public class ConversationManagementTabController {
 			public void run() {
 				Conversation selectedConversation = (Conversation) dmUserDropDown.getValue();
 				selectedConversation.setMessages(conversationMessages);
-				try {
-					accountService.setSelectedConversation(selectedConversation);
-					Stage stage = stageService.getNewStageAsDialog("accord - Conversation Manager", "/fxml/manageConversationMenu.fxml", AuthenticationController.configurationStage);
+				accountService.setSelectedConversation(selectedConversation);
+				Stage stage = stageService.getNewStageAsDialog("accord - Conversation Manager",
+						"/fxml/manageConversationMenu.fxml", AuthenticationController.configurationStage);
+				if(stage != null) {
 					stage.show();
-				} catch (Exception e) {
 				}
 			}
 		});
@@ -85,21 +85,17 @@ public class ConversationManagementTabController {
 				boolean reachedEnd = false;
 				String lastId = "";
 				List<Message> messageList = new ArrayList<Message>();
-
-				while (reachedEnd != true && accountService.getSelectedConversation() != null) {
-					try {
-						List<Message> newMessagesList = service.fetchConversationMessages(lastId);
-						if (newMessagesList.size() < 100) {
-							updateConfigProgress("Completed loading for conversation " + accountService.getSelectedConversation().getId());
-							reachedEnd = true; // If the data length was less than 100, we know we have reached the end
-						}
-						messageList.addAll(newMessagesList); // Populate our messageList with the additional data
-						Thread.sleep(250);
-						lastId = newMessagesList.get(newMessagesList.size() - 1).getId(); // Save the last id we are on
-						updateConfigProgress("Loading - [" + lastId + "]");
-					} catch (Exception e) {
-						updateConfigProgress("[" + (lastId.length() > 0 ? lastId : "Last Id not found") + "] - Failure!");
+				while (reachedEnd != true) {
+					List<Message> newMessagesList = service.fetchConversationMessages(lastId);
+					if (newMessagesList.size() < 100) {
+						updateConfigProgress("Completed loading for conversation "
+								+ accountService.getSelectedConversation().getId());
+						reachedEnd = true; // If the data length was less than 100, we know we have reached the end
 					}
+					messageList.addAll(newMessagesList); // Populate our messageList with the additional data
+					Thread.sleep(250);
+					lastId = newMessagesList.get(newMessagesList.size() - 1).getId(); // Save the last id we are on
+					updateConfigProgress(newMessagesList.size() != 0 ? "Loading - [" + lastId + "]" : "[" + (lastId.length() > 0 ? lastId : "Last Id not found") + "] - Failure!");
 				}
 				updateConfigProgress("");
 				toggleControls(false);
@@ -109,9 +105,8 @@ public class ConversationManagementTabController {
 		};
 		return messageTask;
 	}
-	
+
 	private void toggleControls(boolean val) {
-		/* Conversation Controls */
 		if (!val && dmUserDropDown.getValue() != null) {
 			manageDmButton.setDisable(val); // Only re-enable if there is a conversation selected
 		}
@@ -119,9 +114,8 @@ public class ConversationManagementTabController {
 			manageDmButton.setDisable(val);
 		}
 		dmUserDropDown.setDisable(val);
-		/**********************/
 	}
-	
+
 	private void updateConfigProgress(String val) {
 		Platform.runLater(new Runnable() {
 			@Override
