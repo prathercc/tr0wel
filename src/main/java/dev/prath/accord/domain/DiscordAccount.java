@@ -9,35 +9,35 @@ public class DiscordAccount {
 	private User user = new User();
 	private Credentials credentials = null;
 	private List<Conversation> conversations = new ArrayList<Conversation>();
-	
+
 	public DiscordAccount() {
-		
+
 	}
-	
+
 	public DiscordAccount(Credentials creds) {
 		credentials = creds;
 	}
-	
-	public List<Conversation> getConversations(){
+
+	public List<Conversation> getConversations() {
 		return conversations;
 	}
-	
-	public void setConversations(Conversation[] val) {
-		for(Conversation c: val) {
-			conversations.add(c);
-		}
+
+	public void setConversations(List<Conversation> val) {
+		conversations = val;
 	}
-	
+
 	public Credentials getCredentials() {
 		return credentials;
 	}
+
 	public void setCredentials(Credentials creds) {
 		credentials = creds;
 	}
-	
+
 	public User getUser() {
 		return user;
 	}
+
 	public void setUser(User val) {
 		user = val;
 	}
@@ -46,10 +46,8 @@ public class DiscordAccount {
 		return guilds;
 	}
 
-	public void setGuilds(Guild[] val) {
-		for (Guild g : val) {
-			guilds.add(g);
-		}
+	public void setGuilds(List<Guild> val) {
+		guilds = val;
 	}
 
 	public String getAuthorization() {
@@ -63,11 +61,12 @@ public class DiscordAccount {
 	public String toString() {
 		String guildString = "[";
 		int counter = 0;
-		for(Guild g: guilds) {
+		for (Guild g : guilds) {
 			guildString = counter == 0 ? guildString + g.toString() + "]" : guildString + " | [" + g.toString() + "]";
 			counter++;
 		}
-		
-		return user.toString() + " | Email: " + credentials.getEmail() + " | Password: " + credentials.getPassword() + " | Authorization: " + getAuthorization() + " | Guilds: " + guildString;
+
+		return user.toString() + " | Email: " + credentials.getEmail() + " | Password: " + credentials.getPassword()
+				+ " | Authorization: " + getAuthorization() + " | Guilds: " + guildString;
 	}
 }
