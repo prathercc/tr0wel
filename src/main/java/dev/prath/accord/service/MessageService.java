@@ -1,7 +1,9 @@
 package dev.prath.accord.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,9 +18,6 @@ import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import dev.prath.accord.FxLauncher;
-import dev.prath.accord.domain.Channel;
-import dev.prath.accord.domain.Conversation;
 import dev.prath.accord.domain.Message;
 import dev.prath.accord.utility.Properties;
 
@@ -35,45 +34,52 @@ public class MessageService {
 	}
 
 	public List<Message> fetchConversationMessages(String lastId) {
-		RestTemplate restTemplate = new RestTemplate();
-		String requestUrl = lastId.length() < 1
-				? Properties.discordChannelsUrl + "/" + accountService.getSelectedConversation().getId()
-						+ "/messages?limit=100"
-				: Properties.discordChannelsUrl + "/" + accountService.getSelectedConversation().getId()
-						+ "/messages?limit=100&before=" + lastId;
-		HttpHeaders headers = new HttpHeaders();
-		headers.set("authorization", accountService.getDiscordAccount().getAuthorization());
-		headers.set("user-agent", Properties.userAgent);
-		HttpEntity<JsonNode> request = new HttpEntity<JsonNode>(headers);
-		restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-		ResponseEntity<Message[]> response = restTemplate.exchange(requestUrl, HttpMethod.GET, request,
-				Message[].class);
-		List<Message> retList = new ArrayList<Message>();
-		for (Message msg : response.getBody()) {
-			retList.add(msg);
+		var conversationId = accountService.getSelectedConversation().getId();
+		var sessionAuthorization = accountService.getDiscordAccount().getAuthorization();
+		try {
+			RestTemplate restTemplate = new RestTemplate();
+			String requestUrl = lastId.length() < 1
+					? Properties.discordChannelsUrl + "/" + conversationId + "/messages?limit=100"
+					: Properties.discordChannelsUrl + "/" + conversationId + "/messages?limit=100&before=" + lastId;
+			HttpHeaders headers = new HttpHeaders();
+			headers.set("authorization", sessionAuthorization);
+			headers.set("user-agent", Properties.userAgent);
+			HttpEntity<JsonNode> request = new HttpEntity<JsonNode>(headers);
+			restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+			ResponseEntity<Message[]> response = restTemplate.exchange(requestUrl, HttpMethod.GET, request,
+					Message[].class);
+			logger.info("MessageService is returning a list of messages for conversation:" + conversationId
+					+ ", starting at message id: " + lastId);
+			return Arrays.stream(response.getBody()).collect(Collectors.toList());
 		}
-		logger.info("MessageService is returning a list of messages for conversation:" + accountService.getSelectedConversation().getId() + ", starting at message id: " + lastId);
-		return retList;
+		catch(Exception e) {
+			logger.error("MessageService could not fetch messages for conversation " + conversationId + ", with last message id: " + lastId);
+			return new ArrayList<Message>();
+		}
 	}
 
 	public List<Message> fetchChannelMessages(String lastId) {
-		RestTemplate restTemplate = new RestTemplate();
-		String requestUrl = lastId.length() < 1
-				? Properties.discordChannelsUrl + "/" + accountService.getSelectedChannel().getId() + "/messages?limit=100"
-				: Properties.discordChannelsUrl + "/" + accountService.getSelectedChannel().getId() + "/messages?limit=100&before="
-						+ lastId;
-		HttpHeaders headers = new HttpHeaders();
-		headers.set("authorization", accountService.getDiscordAccount().getAuthorization());
-		headers.set("user-agent", Properties.userAgent);
-		HttpEntity<JsonNode> request = new HttpEntity<JsonNode>(headers);
-		restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-		ResponseEntity<Message[]> response = restTemplate.exchange(requestUrl, HttpMethod.GET, request,
-				Message[].class);
-		List<Message> retList = new ArrayList<Message>();
-		for (Message msg : response.getBody()) {
-			retList.add(msg);
+		var channelId = accountService.getSelectedChannel().getId();
+		var sessionAuthorization = accountService.getDiscordAccount().getAuthorization();
+		try {
+			RestTemplate restTemplate = new RestTemplate();
+			String requestUrl = lastId.length() < 1
+					? Properties.discordChannelsUrl + "/" + channelId + "/messages?limit=100"
+					: Properties.discordChannelsUrl + "/" + channelId + "/messages?limit=100&before=" + lastId;
+			HttpHeaders headers = new HttpHeaders();
+			headers.set("authorization", sessionAuthorization);
+			headers.set("user-agent", Properties.userAgent);
+			HttpEntity<JsonNode> request = new HttpEntity<JsonNode>(headers);
+			restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+			ResponseEntity<Message[]> response = restTemplate.exchange(requestUrl, HttpMethod.GET, request,
+					Message[].class);
+			logger.info("MessageService is returning a list of messages for channel:" + channelId
+					+ ", starting at message id: " + lastId);
+			return Arrays.stream(response.getBody()).collect(Collectors.toList());
 		}
-		logger.info("MessageService is returning a list of messages for channel:" + accountService.getSelectedChannel().getId() + ", starting at message id: " + lastId);
-		return retList;
+		catch(Exception e) {
+			logger.error("MessageService could not fetch messages for channel " + channelId + ", with last message id: " + lastId);
+			return new ArrayList<Message>();
+		}
 	}
 }
