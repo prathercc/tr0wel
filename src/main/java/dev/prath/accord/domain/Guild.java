@@ -23,12 +23,8 @@ public class Guild {
 		return channels;
 	}
 
-	public void setChannels(Channel[] val) {
-		for (Channel c : val) {
-			if(c.getType() == 0) {
-				channels.add(c);
-			}
-		}
+	public void setChannels(List<Channel> val) {
+		val.stream().filter(channel -> channel.getType() == 0).forEach(channel -> channels.add(channel));
 	}
 
 	public String getId() {
