@@ -2,7 +2,9 @@ package dev.prath.accord.domain;
 
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.TimeZone;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -28,13 +30,24 @@ public class Message {
 
 	@JsonProperty("timestamp")
 	private String datePosted = "";
-	
+
+	@JsonProperty("attachments")
+	private List<Attachment> attachments = new ArrayList<Attachment>();
+
 	private BooleanProperty isSelected = new SimpleBooleanProperty();
-	
+
+	public void setEmbeddedObjects(List<Attachment> val) {
+		attachments = val;
+	}
+
+	public List<Attachment> getEmbeddedObjects() {
+		return attachments;
+	}
+
 	public final BooleanProperty getIsSelected() {
 		return isSelected;
 	}
-	
+
 	public final void setIsSelected(final boolean val) {
 		getIsSelected().set(val);
 	}
@@ -81,7 +94,9 @@ public class Message {
 
 	public String toString() {
 		TimeZone tz = Calendar.getInstance().getTimeZone();
-		String date = OffsetDateTime.parse(getDatePosted()).format(DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm").withZone(tz.toZoneId()));
-		return "[" + date + "] " + getAuthor().getUsername() + ": " + getMessage();
+		String date = OffsetDateTime.parse(getDatePosted())
+				.format(DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm").withZone(tz.toZoneId()));
+		String attachmentString = attachments.size() == 1 ? " " + attachments.get(0).getUrl() : "";
+		return "[" + date + "] " + getAuthor().getUsername() + ": " + getMessage() + attachmentString;
 	}
 }
