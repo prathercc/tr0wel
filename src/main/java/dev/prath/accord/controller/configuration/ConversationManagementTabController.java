@@ -88,7 +88,7 @@ public class ConversationManagementTabController {
 				while (reachedEnd != true) {
 					List<Message> newMessagesList = service.fetchConversationMessages(lastId);
 					if (newMessagesList.size() < 100) {
-						updateConfigProgress("Completed loading for conversation "
+						updateConfigProgress("Loaded conversation "
 								+ accountService.getSelectedConversation().getId());
 						reachedEnd = true; // If the data length was less than 100, we know we have reached the end
 					}

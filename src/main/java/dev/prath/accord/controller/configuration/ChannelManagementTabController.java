@@ -107,12 +107,12 @@ public class ChannelManagementTabController {
 					List<Message> newMessagesList = service.fetchChannelMessages(lastId);
 					if (newMessagesList.size() < 100) {
 						updateConfigProgress(
-								"Completed loading for channel " + selectedChannel.getId());
+								"Loaded channel " + selectedChannel.getId());
 						reachedEnd = true; // If the data length was less than 100, we know we have reached the end
 					}
 					messageList.addAll(newMessagesList); // Populate our messageList with the additional data
 					Thread.sleep(250);
-					lastId = newMessagesList.get(newMessagesList.size() - 1).getId(); // Save the last id we are on
+					lastId = newMessagesList.size() != 0 ? newMessagesList.get(newMessagesList.size() - 1).getId() : ""; // Save the last id we are on
 					updateConfigProgress(newMessagesList.size() != 0 ? "Loading - [" + lastId + "]"
 							: "[" + (lastId.length() > 0 ? lastId : "Last Id not found") + "] - Failure!");
 				}
