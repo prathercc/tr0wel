@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import dev.prath.accord.FxLauncher;
 import dev.prath.accord.domain.Channel;
 import dev.prath.accord.domain.Conversation;
 import dev.prath.accord.domain.DiscordAccount;

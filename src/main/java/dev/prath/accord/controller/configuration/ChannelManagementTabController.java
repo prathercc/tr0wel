@@ -83,7 +83,6 @@ public class ChannelManagementTabController {
 		manageChannelButton.setDisable(false);
 	}
 
-	@SuppressWarnings("unchecked")
 	public void selectGuild() {
 		channelSelectionBox.setDisable(false);
 		channelSelectionBox.getItems().clear();
