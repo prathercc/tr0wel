@@ -8,16 +8,26 @@
 <?import javafx.scene.text.Text?>
 
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="129.0" prefWidth="262.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <AnchorPane prefHeight="473.0" prefWidth="600.0">
-         <children>
-            <CheckBox fx:id="exportFromUsersCheckbox" layoutX="14.0" layoutY="29.0" mnemonicParsing="false" text="Export From Users:" />
-            <ListView fx:id="participatingUsersList" layoutX="14.0" layoutY="48.0" prefHeight="49.0" prefWidth="159.0" />
-            <CheckBox fx:id="exportedSelectedCheckbox" layoutX="14.0" layoutY="6.0" mnemonicParsing="false" text="Export Selected Messages" />
-            <Button fx:id="exportButton" layoutX="195.0" layoutY="38.0" mnemonicParsing="false" text="Export" />
-            <Text fx:id="progressText" layoutX="14.0" layoutY="118.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Progress..." />
-         </children>
-      </AnchorPane>
-   </children>
+<VBox maxHeight="-Infinity" maxWidth="-Infinity"
+	minHeight="-Infinity" minWidth="-Infinity" prefHeight="129.0"
+	prefWidth="262.0" xmlns="http://javafx.com/javafx/11.0.1"
+	xmlns:fx="http://javafx.com/fxml/1"
+	fx:controller="dev.prath.accord.controller.conversation.ExportTabController">
+	<children>
+		<AnchorPane prefHeight="473.0" prefWidth="600.0">
+			<children>
+				<CheckBox fx:id="exportFromUsersCheckbox" layoutX="14.0"
+					layoutY="29.0" mnemonicParsing="false" text="Export From Users:" />
+				<ListView fx:id="participatingUsersList" layoutX="14.0"
+					layoutY="48.0" prefHeight="49.0" prefWidth="159.0" />
+				<CheckBox fx:id="exportedSelectedCheckbox" layoutX="14.0"
+					layoutY="6.0" mnemonicParsing="false"
+					text="Export Selected Messages" />
+				<Button fx:id="exportButton" layoutX="195.0" layoutY="38.0"
+					mnemonicParsing="false" text="Export" />
+				<Text fx:id="progressText" layoutX="14.0" layoutY="118.0"
+					strokeType="OUTSIDE" strokeWidth="0.0" text="Progress..." />
+			</children>
+		</AnchorPane>
+	</children>
 </VBox>

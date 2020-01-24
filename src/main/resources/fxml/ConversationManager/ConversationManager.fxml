@@ -10,16 +10,16 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<VBox prefHeight="387.0" prefWidth="582.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dev.prath.accord.controller.ManageConversationController">
+<VBox prefHeight="387.0" prefWidth="582.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dev.prath.accord.controller.conversation.ConversationManagerController">
   <children>
     <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
          <children>
-            <ListView fx:id="listView" layoutX="18.0" layoutY="158.0" prefHeight="186.0" prefWidth="547.0" />
+            <ListView fx:id="conversationListView" layoutX="18.0" layoutY="158.0" prefHeight="186.0" prefWidth="547.0" />
             <Button fx:id="selectAllButton" layoutX="34.0" layoutY="353.0" mnemonicParsing="false" onAction="#selectAll" text="Select All" />
             <Text fx:id="numOfMsgText" layoutX="118.0" layoutY="370.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Found x amount" />
             <TabPane prefHeight="158.0" prefWidth="582.0" tabClosingPolicy="UNAVAILABLE">
               <tabs>
-                <Tab text="Export">
+                <Tab fx:id="exportTab" text="Export">
                   <content>
                     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                            <children>
@@ -29,7 +29,7 @@
                         </AnchorPane>
                   </content>
                 </Tab>
-                <Tab text="Edit">
+                <Tab fx:id="editTab" text="Edit">
                   <content>
                     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                            <children>
@@ -39,7 +39,7 @@
                         </AnchorPane>
                   </content>
                 </Tab>
-                  <Tab text="Delete">
+                  <Tab fx:id="deleteTab" text="Delete">
                     <content>
                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                            <children>
