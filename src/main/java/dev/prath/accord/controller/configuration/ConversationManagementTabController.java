@@ -54,7 +54,7 @@ public class ConversationManagementTabController {
 				selectedConversation.setMessages(conversationMessages);
 				accountService.setSelectedConversation(selectedConversation);
 				Stage stage = stageService.getNewStageAsDialog("accord - Conversation Manager",
-						"/fxml/manageConversationMenu.fxml", AuthenticationController.configurationStage);
+						"/fxml/ConversationManager/ConversationManager.fxml", AuthenticationController.configurationStage);
 				if(stage != null) {
 					stage.show();
 				}

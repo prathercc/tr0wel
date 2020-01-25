@@ -61,7 +61,7 @@ public class ChannelManagementTabController {
 				selectedChannel.setMessages(channelMessages);
 				accountService.setSelectedChannel(selectedChannel);
 				Stage stage = stageService.getNewStageAsDialog("accord - Channel Manager Menu",
-						"/fxml/manageChannelMenu.fxml", AuthenticationController.configurationStage);
+						"/fxml/ChannelManager/ChannelManager.fxml", AuthenticationController.configurationStage);
 				if(stage != null) {
 					stage.show();
 				}
