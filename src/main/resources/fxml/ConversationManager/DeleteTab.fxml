@@ -5,19 +5,22 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-
 <VBox maxHeight="-Infinity" maxWidth="-Infinity"
-	minHeight="-Infinity" minWidth="-Infinity" prefHeight="77.0"
-	prefWidth="206.0" xmlns="http://javafx.com/javafx/11.0.1"
+	minHeight="-Infinity" minWidth="-Infinity" prefHeight="110.0"
+	prefWidth="237.0" xmlns="http://javafx.com/javafx/11.0.1"
 	xmlns:fx="http://javafx.com/fxml/1"
-	fx:controller="dev.prath.accord.controller.conversation.DeleteTabController">
+	fx:controller="dev.prath.accord.controller.conversation.ConversationDeleteTabController">
 	<children>
-		<AnchorPane prefHeight="453.0" prefWidth="600.0">
+		<AnchorPane prefHeight="120.0" prefWidth="237.0">
 			<children>
-				<Button fx:id="deleteSelectionsButton" layoutX="50.0"
-					layoutY="14.0" mnemonicParsing="false" text="Delete Selections" />
-				<Text fx:id="progressText" layoutX="14.0" layoutY="63.0"
-					strokeType="OUTSIDE" strokeWidth="0.0" text="Progress..." />
+				<Button fx:id="deleteSelectionsButton" layoutX="65.0"
+					layoutY="38.0" mnemonicParsing="false" onAction="#deleteSelections"
+					text="Delete Selections" />
+				<Text fx:id="progressText" layoutX="14.0" layoutY="90.0"
+					strokeType="OUTSIDE" strokeWidth="0.0" />
+				<Text fill="#8d8888" layoutX="7.0" layoutY="18.0"
+					strokeType="OUTSIDE" strokeWidth="0.0"
+					text="Note: Deleted messages are gone forever!" />
 			</children>
 		</AnchorPane>
 	</children>
