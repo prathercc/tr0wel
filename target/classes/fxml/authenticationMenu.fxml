@@ -21,7 +21,7 @@
             <Label layoutX="74.0" layoutY="8.0" text="Sign In" />
             <Text fx:id="progressText" layoutX="25.0" layoutY="171.0" strokeType="OUTSIDE" strokeWidth="0.0" />
             <CheckBox fx:id="rememberMeCheckBox" layoutX="25.0" layoutY="101.0" mnemonicParsing="false" text="Remember me" />
-            <ImageView fx:id="prathLogo" fitHeight="150.0" fitWidth="139.0" layoutX="198.0" layoutY="7.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="prathLogo" fitHeight="150.0" fitWidth="139.0" layoutX="198.0" layoutY="7.0" opacity="0.43" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../images/prathdev.png" />
                </image></ImageView>
