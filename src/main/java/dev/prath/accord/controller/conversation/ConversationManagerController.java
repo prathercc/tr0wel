@@ -4,7 +4,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import dev.prath.accord.controller.ManageConversationController;
 import dev.prath.accord.domain.Message;
 import dev.prath.accord.service.AccountService;
 import dev.prath.accord.service.DisposalService;
@@ -25,7 +24,7 @@ public class ConversationManagerController {
 	@FXML
 	private Tab deleteTab;
 	@FXML
-	protected ListView<Message> conversationListView;
+	private ListView<Message> conversationListView;
 	@FXML
 	private Button selectAllButton;
 	@FXML
@@ -37,7 +36,7 @@ public class ConversationManagerController {
 	@Autowired
 	DisposalService disposalService;
 
-	private static final Logger logger = LoggerFactory.getLogger(ManageConversationController.class);
+	private static final Logger logger = LoggerFactory.getLogger(ConversationManagerController.class);
 
 	private boolean selectOrientation = false;
 	
@@ -48,6 +47,9 @@ public class ConversationManagerController {
 		conversationMessages.stream().filter(message -> message.getAuthor().getId().equalsIgnoreCase(sessionUID))
 				.forEach(message -> conversationListView.getItems().add(message));
 		updateText(numOfMsgText, "Found " + conversationListView.getItems().size() + " messages by you in this conversation");
+		ConversationDeleteTabController.setParentControls(conversationListView, new Tab[] {exportTab, editTab,deleteTab}, selectAllButton, numOfMsgText);
+		ConversationEditTabController.setParentControls(conversationListView, new Tab[] {exportTab, editTab,deleteTab}, selectAllButton, numOfMsgText);
+		ConversationExportTabController.setParentControls(conversationListView, new Tab[] {exportTab, editTab,deleteTab}, selectAllButton, numOfMsgText);
 	}
 	
 	public void selectAll() {
@@ -63,5 +65,6 @@ public class ConversationManagerController {
 			}
 		});
 	}
+	
 
 }
