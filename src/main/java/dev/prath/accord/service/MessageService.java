@@ -48,8 +48,6 @@ public class MessageService {
 			restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
 			ResponseEntity<Message[]> response = restTemplate.exchange(requestUrl, HttpMethod.GET, request,
 					Message[].class);
-			logger.info("MessageService is returning a list of messages for conversation:" + conversationId
-					+ ", starting at message id: " + lastId);
 			return Arrays.stream(response.getBody()).collect(Collectors.toList());
 		}
 		catch(Exception e) {
@@ -73,8 +71,6 @@ public class MessageService {
 			restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
 			ResponseEntity<Message[]> response = restTemplate.exchange(requestUrl, HttpMethod.GET, request,
 					Message[].class);
-			logger.info("MessageService is returning a list of messages for channel:" + channelId
-					+ ", starting at message id: " + lastId);
 			return Arrays.stream(response.getBody()).collect(Collectors.toList());
 		}
 		catch(Exception e) {
