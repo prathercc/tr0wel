@@ -41,6 +41,7 @@ public class DisposalService {
 			return response.getStatusCodeValue() == 204;
 		}
 		catch(Exception e) {
+			logger.error("DisposalService could not delete Message: " + msg.getId());
 			return false;
 		}
 	}
@@ -59,6 +60,7 @@ public class DisposalService {
 			return response.getStatusCodeValue() == 204;
 		}
 		catch(Exception e) {
+			logger.error("DisposalService could not delete Message: " + msg.getId());
 			return false;
 		}
 		

@@ -37,6 +37,7 @@ public class StageService {
 			return stage;
 		}
 		catch(Exception e) {
+			logger.error("StageService could not return a new Stage!");
 			return null;
 		}
 		
@@ -59,6 +60,7 @@ public class StageService {
 			return stage;
 		}
 		catch(Exception e) {
+			logger.error("StageService could not return a new Stage dialog!");
 			return null;
 		}
 		
