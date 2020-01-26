@@ -57,8 +57,7 @@ public class ConversationDeleteTabController {
 				var selectedMessagesList = conversationListView.getItems().stream().filter(message -> message.getIsSelected().get())
 						.collect(Collectors.toList());
 				for (Message msg : selectedMessagesList) {
-//					var response = disposalService.deleteConversationMessage(msg);
-					var response = false;
+					var response = disposalService.deleteConversationMessage(msg);
 					if (response) {
 						updateText(progressText, "Deletion Success - [" + msg.getId() + "]");
 						msgsToDelete.add(msg);
