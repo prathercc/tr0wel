@@ -32,6 +32,45 @@ public class MessageService {
 	public MessageService() {
 		logger.info("MessageService has been initialized.");
 	}
+	
+	public boolean deleteConversationMessage(Message msg) {
+		try {
+			RestTemplate restTemplate = new RestTemplate();
+			String requestUrl = Properties.discordChannelsUrl + "/" + accountService.getSelectedConversation().getId()
+					+ "/messages/" + msg.getId();
+			HttpHeaders headers = new HttpHeaders();
+			headers.set("authorization", accountService.getDiscordAccount().getAuthorization());
+			headers.set("user-agent", Properties.userAgent);
+			HttpEntity<JsonNode> request = new HttpEntity<JsonNode>(headers);
+			restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+			var response = restTemplate.exchange(requestUrl, HttpMethod.DELETE, request, String.class);
+			return response.getStatusCodeValue() == 204;
+		}
+		catch(Exception e) {
+			logger.error("MessageService could not delete Message: " + msg.getId());
+			return false;
+		}
+		
+	}
+	
+	public boolean deleteChannelMessage(Message msg) {
+		try {
+			RestTemplate restTemplate = new RestTemplate();
+			String requestUrl = Properties.discordChannelsUrl + "/" + accountService.getSelectedChannel().getId()
+					+ "/messages/" + msg.getId();
+			HttpHeaders headers = new HttpHeaders();
+			headers.set("authorization", accountService.getDiscordAccount().getAuthorization());
+			headers.set("user-agent", Properties.userAgent);
+			HttpEntity<JsonNode> request = new HttpEntity<JsonNode>(headers);
+			restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+			var response = restTemplate.exchange(requestUrl, HttpMethod.DELETE, request, String.class);
+			return response.getStatusCodeValue() == 204;
+		}
+		catch(Exception e) {
+			logger.error("MessageService could not delete Message: " + msg.getId());
+			return false;
+		}
+	}
 
 	public List<Message> fetchConversationMessages(String lastId) {
 		var conversationId = accountService.getSelectedConversation().getId();

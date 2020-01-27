@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 import dev.prath.accord.domain.Message;
 import dev.prath.accord.service.AccountService;
-import dev.prath.accord.service.DisposalService;
+import dev.prath.accord.service.MessageService;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -34,7 +34,7 @@ public class ConversationManagerController {
 	AccountService accountService;
 
 	@Autowired
-	DisposalService disposalService;
+	MessageService messageService;
 
 	private static final Logger logger = LoggerFactory.getLogger(ConversationManagerController.class);
 

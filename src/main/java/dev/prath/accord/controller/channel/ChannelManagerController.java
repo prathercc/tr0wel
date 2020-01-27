@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import dev.prath.accord.domain.Message;
 import dev.prath.accord.domain.User;
 import dev.prath.accord.service.AccountService;
-import dev.prath.accord.service.DisposalService;
+import dev.prath.accord.service.MessageService;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
@@ -39,7 +39,7 @@ public class ChannelManagerController {
 	AccountService accountService;
 
 	@Autowired
-	DisposalService disposalService;
+	MessageService messageService;
 	
 	private boolean selectOrientation = false;
 

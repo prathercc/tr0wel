@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import dev.prath.accord.domain.Message;
 import dev.prath.accord.domain.User;
 import dev.prath.accord.service.AccountService;
-import dev.prath.accord.service.DisposalService;
+import dev.prath.accord.service.MessageService;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
@@ -41,7 +41,7 @@ public class ChannelDeleteTabController {
 	AccountService accountService;
 
 	@Autowired
-	DisposalService disposalService;
+	MessageService messageService;
 
 	private static final Logger logger = LoggerFactory.getLogger(ChannelDeleteTabController.class);
 	
@@ -60,7 +60,7 @@ public class ChannelDeleteTabController {
 				var selectedMessagesList = channelListView.getItems().stream().filter(message -> message.getIsSelected().get())
 						.collect(Collectors.toList());
 				for (Message msg : selectedMessagesList) {
-					var response = disposalService.deleteChannelMessage(msg);
+					var response = messageService.deleteChannelMessage(msg);
 					if (response) {
 						updateText(progressText, "Deletion Success - [" + msg.getId() + "]");
 						msgsToDelete.add(msg);

@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 import dev.prath.accord.domain.Message;
 import dev.prath.accord.service.AccountService;
-import dev.prath.accord.service.DisposalService;
+import dev.prath.accord.service.MessageService;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
@@ -38,7 +38,7 @@ public class ConversationDeleteTabController {
 	AccountService accountService;
 
 	@Autowired
-	DisposalService disposalService;
+	MessageService messageService;
 
 	private static final Logger logger = LoggerFactory.getLogger(ConversationDeleteTabController.class);
 	
@@ -57,7 +57,7 @@ public class ConversationDeleteTabController {
 				var selectedMessagesList = conversationListView.getItems().stream().filter(message -> message.getIsSelected().get())
 						.collect(Collectors.toList());
 				for (Message msg : selectedMessagesList) {
-					var response = disposalService.deleteConversationMessage(msg);
+					var response = messageService.deleteConversationMessage(msg);
 					if (response) {
 						updateText(progressText, "Deletion Success - [" + msg.getId() + "]");
 						msgsToDelete.add(msg);
