@@ -11,7 +11,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -44,7 +43,6 @@ public class AuthenticationService {
 			headers.set("user-agent", Properties.userAgent);
 			HttpEntity<Credentials> request = new HttpEntity<Credentials>(credentials, headers);
 			restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-			restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
 			ResponseEntity<Authorization> response = restTemplate.exchange(Properties.discordAuthUrl + "/login",
 					HttpMethod.POST, request, Authorization.class);
 			return response.getStatusCodeValue() == 200 ? response.getBody() : null;
