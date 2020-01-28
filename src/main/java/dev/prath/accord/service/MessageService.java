@@ -5,6 +5,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPatch;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicHeader;
+import org.apache.http.protocol.HTTP;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,33 +39,37 @@ public class MessageService {
 		logger.info("MessageService has been initialized.");
 	}
 	
-	public boolean deleteConversationMessage(Message msg) {
+	public boolean editMessage(Message msg, String newMessageContent, String channelId) {
+		//Unfortunately I cannot use PATCH with RestTemplate, so we have to use Apache's HttpClient to make this request.
+		newMessageContent = newMessageContent.length() >= 2000 ? newMessageContent.substring(0, 1999) : newMessageContent;
+		var sessionAuthorization = accountService.getDiscordAccount().getAuthorization();
 		try {
-			RestTemplate restTemplate = new RestTemplate();
-			String requestUrl = Properties.discordChannelsUrl + "/" + accountService.getSelectedConversation().getId()
+			String requestUrl = Properties.discordChannelsUrl + "/" + channelId
 					+ "/messages/" + msg.getId();
-			HttpHeaders headers = new HttpHeaders();
-			headers.set("authorization", accountService.getDiscordAccount().getAuthorization());
-			headers.set("user-agent", Properties.userAgent);
-			HttpEntity<JsonNode> request = new HttpEntity<JsonNode>(headers);
-			restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-			var response = restTemplate.exchange(requestUrl, HttpMethod.DELETE, request, String.class);
-			return response.getStatusCodeValue() == 204;
+			HttpClient httpclient = HttpClients.createDefault();
+		    HttpPatch httpPatch = new HttpPatch(requestUrl);
+		    httpPatch.setHeader("authorization", sessionAuthorization);
+		    httpPatch.setHeader("user-agent", Properties.userAgent);
+		    StringEntity params =new StringEntity("{\"content\": \"" + newMessageContent + "\"}");
+		    params.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+		    httpPatch.setEntity(params);
+		    var response = httpclient.execute(httpPatch);
+		    return response.getStatusLine().getStatusCode() == 200;
 		}
 		catch(Exception e) {
-			logger.error("MessageService could not delete Message: " + msg.getId());
+			logger.error("MessageService could not edit Message: " + msg.getId());
 			return false;
 		}
-		
 	}
 	
-	public boolean deleteChannelMessage(Message msg) {
+	public boolean deleteMessage(Message msg, String channelId) {
+		var sessionAuthorization = accountService.getDiscordAccount().getAuthorization();
 		try {
 			RestTemplate restTemplate = new RestTemplate();
-			String requestUrl = Properties.discordChannelsUrl + "/" + accountService.getSelectedChannel().getId()
+			String requestUrl = Properties.discordChannelsUrl + "/" + channelId
 					+ "/messages/" + msg.getId();
 			HttpHeaders headers = new HttpHeaders();
-			headers.set("authorization", accountService.getDiscordAccount().getAuthorization());
+			headers.set("authorization", sessionAuthorization);
 			headers.set("user-agent", Properties.userAgent);
 			HttpEntity<JsonNode> request = new HttpEntity<JsonNode>(headers);
 			restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());

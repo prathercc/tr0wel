@@ -60,7 +60,7 @@ public class ChannelDeleteTabController {
 				var selectedMessagesList = channelListView.getItems().stream().filter(message -> message.getIsSelected().get())
 						.collect(Collectors.toList());
 				for (Message msg : selectedMessagesList) {
-					var response = messageService.deleteChannelMessage(msg);
+					var response = messageService.deleteMessage(msg, accountService.getSelectedChannel().getId());
 					if (response) {
 						updateText(progressText, "Deletion Success - [" + msg.getId() + "]");
 						msgsToDelete.add(msg);
