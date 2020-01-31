@@ -17,10 +17,12 @@ import dev.prath.accord.service.AccountService;
 import dev.prath.accord.service.MessageService;
 import dev.prath.accord.service.StageService;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ListView;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -28,11 +30,13 @@ import javafx.stage.Stage;
 public class ChannelManagementTabController {
 
 	@FXML
-	private ChoiceBox<Guild> guildSelectionBox;
-	@FXML
-	private ChoiceBox<Channel> channelSelectionBox;
-	@FXML
 	private Button manageChannelButton;
+	@FXML
+	private ListView<Guild> guildListView;
+	@FXML
+	private ListView<Channel> channelListView;
+	@FXML
+	private Text configProgressText;
 
 	@Autowired
 	MessageService service;
@@ -43,26 +47,24 @@ public class ChannelManagementTabController {
 	@Autowired
 	StageService stageService;
 
-	@FXML
-	private Text configProgressText;
-
 	private static final Logger logger = LoggerFactory.getLogger(ChannelManagementTabController.class);
 
 	public void initialize() {
+		initializeListViews();
 		DiscordAccount discordAccount = accountService.getDiscordAccount();
-		discordAccount.getGuilds().stream().forEach(guild -> guildSelectionBox.getItems().add(guild));
+		discordAccount.getGuilds().stream().forEach(guild -> guildListView.getItems().add(guild));
 	}
 
 	private void launchManageChannel(List<Message> channelMessages) {
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
-				Channel selectedChannel = (Channel) channelSelectionBox.getValue();
+				Channel selectedChannel = channelListView.getSelectionModel().getSelectedItem();
 				selectedChannel.setMessages(channelMessages);
 				accountService.setSelectedChannel(selectedChannel);
 				Stage stage = stageService.getNewStageAsDialog("accord - Channel Manager Menu",
 						"/fxml/ChannelManager/ChannelManager.fxml", AuthenticationController.configurationStage);
-				if(stage != null) {
+				if (stage != null) {
 					stage.show();
 				}
 			}
@@ -70,26 +72,9 @@ public class ChannelManagementTabController {
 	}
 
 	public void manageChannel() {
-		try {
-			Thread thread = new Thread(getNewChannelTask());
-			thread.setDaemon(true);
-			thread.start();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	public void selectChannel() {
-		manageChannelButton.setDisable(false);
-	}
-
-	public void selectGuild() {
-		channelSelectionBox.setDisable(false);
-		channelSelectionBox.getItems().clear();
-		channelSelectionBox.getSelectionModel().clearSelection();
-		Guild selectedGuild = (Guild) guildSelectionBox.getValue();
-		selectedGuild.getChannels().stream().forEach(channel -> channelSelectionBox.getItems().add(channel));
-		manageChannelButton.setDisable(true); // New guild was selected, so disable the 'manageChannelButton'
+		Thread thread = new Thread(getNewChannelTask());
+		thread.setDaemon(true);
+		thread.start();
 	}
 
 	private Task<Void> getNewChannelTask() {
@@ -97,7 +82,7 @@ public class ChannelManagementTabController {
 			@Override
 			protected Void call() throws Exception {
 				toggleControls(true);
-				var selectedChannel = (Channel) channelSelectionBox.getValue();
+				var selectedChannel = channelListView.getSelectionModel().getSelectedItem();
 				accountService.setSelectedChannel(selectedChannel);
 				boolean reachedEnd = false;
 				String lastId = "";
@@ -105,13 +90,12 @@ public class ChannelManagementTabController {
 				while (reachedEnd != true) {
 					List<Message> newMessagesList = service.fetchChannelMessages(lastId);
 					if (newMessagesList.size() < 100) {
-						updateConfigProgress(
-								"Loaded channel " + selectedChannel.getId());
+						updateConfigProgress("Loaded channel " + selectedChannel.getId());
 						reachedEnd = true; // If the data length was less than 100, we know we have reached the end
 					}
 					messageList.addAll(newMessagesList); // Populate our messageList with the additional data
 					Thread.sleep(250);
-					lastId = newMessagesList.size() != 0 ? newMessagesList.get(newMessagesList.size() - 1).getId() : ""; // Save the last id we are on
+					lastId = newMessagesList.size() != 0 ? newMessagesList.get(newMessagesList.size() - 1).getId() : "";
 					updateConfigProgress(newMessagesList.size() != 0 ? "Loading - [" + lastId + "]"
 							: "[" + (lastId.length() > 0 ? lastId : "Last Id not found") + "] - Failure!");
 				}
@@ -125,18 +109,9 @@ public class ChannelManagementTabController {
 	}
 
 	private void toggleControls(boolean val) {
-		if (!val && channelSelectionBox.getValue() != null) {
-			manageChannelButton.setDisable(val); // Only re-enable if there is a channel selected
-		}
-		if (val) {
-			manageChannelButton.setDisable(val);
-			channelSelectionBox.setDisable(val);
-		}
-		if (!val && guildSelectionBox.getValue() != null) {
-			channelSelectionBox.setDisable(val);
-		}
-
-		guildSelectionBox.setDisable(val);
+		guildListView.setDisable(val);
+		channelListView.setDisable(val);
+		manageChannelButton.setDisable(val);
 	}
 
 	private void updateConfigProgress(String val) {
@@ -144,6 +119,25 @@ public class ChannelManagementTabController {
 			@Override
 			public void run() {
 				configProgressText.setText(val);
+			}
+		});
+	}
+
+	private void initializeListViews() {
+		guildListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Guild>() {
+			@Override
+			public void changed(ObservableValue<? extends Guild> observable, Guild oldValue, Guild newValue) {
+				channelListView.getItems().clear(); // Reset channelListView items
+				channelListView.scrollTo(Integer.MIN_VALUE); // Reset channelListView scroll position
+				Guild selectedGuild = guildListView.getSelectionModel().getSelectedItem();
+				selectedGuild.getChannels().stream().forEach(channel -> channelListView.getItems().add(channel));
+				manageChannelButton.setDisable(true); // New guild was selected, so disable the 'manageChannelButton'
+			}
+		});
+		channelListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Channel>() {
+			@Override
+			public void changed(ObservableValue<? extends Channel> observable, Channel oldValue, Channel newValue) {
+				manageChannelButton.setDisable(false); // Allow manageChannelButton to be pressed
 			}
 		});
 	}
