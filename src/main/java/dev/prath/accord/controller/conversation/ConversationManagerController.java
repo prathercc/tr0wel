@@ -4,12 +4,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import dev.prath.accord.domain.Conversation;
 import dev.prath.accord.domain.Message;
+import dev.prath.accord.domain.User;
 import dev.prath.accord.service.AccountService;
 import dev.prath.accord.service.MessageService;
 import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Tab;
 import javafx.scene.control.cell.CheckBoxListCell;
@@ -29,6 +33,8 @@ public class ConversationManagerController {
 	private Button selectAllButton;
 	@FXML
 	private Text numOfMsgText;
+	@FXML
+	private ChoiceBox<User> userSelectionBox;
 	
 	@Autowired
 	AccountService accountService;
@@ -41,20 +47,58 @@ public class ConversationManagerController {
 	private boolean selectOrientation = false;
 	
 	public void initialize() {
-		var sessionUID = accountService.getDiscordAccount().getUser().getId();
-		var conversationMessages = accountService.getSelectedConversation().getMessages();
+		Conversation conversation = accountService.getSelectedConversation();
 		conversationListView.setCellFactory(CheckBoxListCell.forListView(Message::getIsSelected));
-		conversationMessages.stream().filter(message -> message.getAuthor().getId().equalsIgnoreCase(sessionUID))
-				.forEach(message -> conversationListView.getItems().add(message));
-		updateText(numOfMsgText, "Found " + conversationListView.getItems().size() + " messages by you in this conversation");
+		conversation.getRecipients().stream().forEach(user -> userSelectionBox.getItems().add(user));
 		ConversationDeleteTabController.setParentControls(conversationListView, new Tab[] {exportTab, editTab,deleteTab}, selectAllButton, numOfMsgText);
 		ConversationEditTabController.setParentControls(conversationListView, new Tab[] {exportTab, editTab,deleteTab}, selectAllButton, numOfMsgText);
 		ConversationExportTabController.setParentControls(conversationListView, new Tab[] {exportTab, editTab,deleteTab}, selectAllButton, numOfMsgText);
 	}
 	
+	public void selectUser() {
+		Thread thread = new Thread(getNewSelectionTask());
+		thread.setDaemon(true);
+		thread.start();
+	}
+	
+	public Task<Void> getNewSelectionTask() {
+		Task<Void> selectionTask = new Task<Void>() {
+			@Override
+			protected Void call() throws Exception {
+				toggleControls(true);
+				Platform.runLater(new Runnable() {
+					@Override
+					public void run() {
+						conversationListView.getItems().clear();
+						if (userSelectionBox.getValue() != null) {
+							var selectedConversationMessages = accountService.getSelectedConversation().getMessages();
+							var selectedUserId = userSelectionBox.getValue().getId();
+							selectedConversationMessages.stream()
+									.filter(message -> message.getAuthor().getId().equalsIgnoreCase(selectedUserId))
+									.forEach(message -> conversationListView.getItems().add(message));
+							updateText(numOfMsgText, "Found " + conversationListView.getItems().size() + " messages by user.");
+						}
+					}
+				});
+				toggleControls(false);
+				return null;
+			}
+		};
+		return selectionTask;
+	}
+	
 	public void selectAll() {
 		selectOrientation = !selectOrientation ? true : false;
 		conversationListView.getItems().stream().forEach(message -> message.setIsSelected(selectOrientation));
+	}
+	
+	private void toggleControls(boolean val) {
+		conversationListView.setDisable(val);
+		selectAllButton.setDisable(val);
+		userSelectionBox.setDisable(val);
+		exportTab.setDisable(val);
+		editTab.setDisable(val);
+		deleteTab.setDisable(val);
 	}
 	
 	private void updateText(Text text, String val) {
@@ -65,6 +109,4 @@ public class ConversationManagerController {
 			}
 		});
 	}
-	
-
 }
