@@ -4,38 +4,44 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="240.0" prefWidth="438.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dev.prath.accord.controller.configuration.ConfigurationController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="205.0" prefWidth="443.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dev.prath.accord.controller.configuration.ConfigurationController">
 	<children>
-		<TabPane prefHeight="244.0" prefWidth="654.0" tabClosingPolicy="UNAVAILABLE">
-			<tabs>
-				<Tab text="Channel Management">
-					<content>
-						<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="201.0" prefWidth="654.0">
-							<children>
-								<VBox layoutX="2.0" layoutY="-1.0" prefHeight="206.0" prefWidth="439.0">
-									<children>
-										<fx:include source="Tabs/ChannelManagement.fxml" />
-									</children>
-								</VBox>
-							</children>
-						</AnchorPane>
-					</content>
-				</Tab>
-				<Tab text="Conversation Management">
-					<content>
-						<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-							<children>
-								<VBox layoutX="13.0" layoutY="6.0" prefHeight="144.0" prefWidth="171.0">
-									<children>
-										<fx:include source="Tabs/ConversationManagement.fxml" />
-									</children>
-								</VBox>
-							</children>
-						</AnchorPane>
-					</content>
-				</Tab>
-			</tabs>
-		</TabPane>
+      <AnchorPane prefHeight="270.0" prefWidth="443.0">
+         <children>
+      		<TabPane prefHeight="187.0" prefWidth="443.0" tabClosingPolicy="UNAVAILABLE">
+      			<tabs>
+      				<Tab fx:id="channelManagementTab" text="Channel Management">
+      					<content>
+      						<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="201.0" prefWidth="654.0">
+      							<children>
+      								<VBox layoutX="2.0" layoutY="-1.0" prefHeight="206.0" prefWidth="439.0">
+      									<children>
+      										<fx:include source="Tabs/ChannelManagement.fxml" />
+      									</children>
+      								</VBox>
+      							</children>
+      						</AnchorPane>
+      					</content>
+      				</Tab>
+      				<Tab fx:id="conversationManagementTab" text="Conversation Management">
+      					<content>
+      						<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+      							<children>
+      								<VBox layoutX="46.0" layoutY="-2.0" prefHeight="178.0" prefWidth="345.0">
+      									<children>
+      										<fx:include source="Tabs/ConversationManagement.fxml" />
+      									</children>
+      								</VBox>
+      							</children>
+      						</AnchorPane>
+      					</content>
+      				</Tab>
+      			</tabs>
+      		</TabPane>
+            <Text fx:id="configProgressText" layoutX="5.0" layoutY="195.0" strokeType="OUTSIDE" strokeWidth="0.0" />
+         </children>
+      </AnchorPane>
 	</children>
 </VBox>
