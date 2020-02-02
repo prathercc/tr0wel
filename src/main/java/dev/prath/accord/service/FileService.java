@@ -45,10 +45,9 @@ public class FileService {
 
 	public void checkIniFolderPath() {
 		try {
-			Path path = Paths.get(System.getProperty("user.home"), ".accord");
-			if (!Files.exists(path)) {
-				Files.createDirectory(path);
-				logger.info("FileService has created directory: " + path.toString());
+			if (!Files.exists(Properties.iniFolderPath)) {
+				Files.createDirectory(Properties.iniFolderPath);
+				logger.info("FileService has created directory: " + Properties.iniFolderPath.toString());
 			}
 			if (!Files.exists(Properties.iniPath)) {
 				Files.createFile(Properties.iniPath);

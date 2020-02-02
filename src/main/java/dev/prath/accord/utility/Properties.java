@@ -11,6 +11,7 @@ public class Properties {
 	public static final String discordChannelsUrl = "https://discordapp.com/api/channels";
 	public static final String userAgent = "Mozilla/5.0 (X11; Linux x86_64; rv:17.0) Gecko/20121202 Firefox/17.0 Iceweasel/17.0.1";
 	public static final Path iniPath = Paths.get(Paths.get(System.getProperty("user.home"), ".accord").toString(),"accord.ini");
+	public static final Path iniFolderPath = Paths.get(System.getProperty("user.home"), ".accord");
 	
 }
 
