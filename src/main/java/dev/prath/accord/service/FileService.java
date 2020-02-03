@@ -1,15 +1,19 @@
 package dev.prath.accord.service;
 
+import java.awt.Desktop;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.List;
 import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import dev.prath.accord.domain.Message;
 import dev.prath.accord.utility.Properties;
 
 @Service
@@ -19,6 +23,27 @@ public class FileService {
 
 	public FileService() {
 		logger.info("FileService has been initialized.");
+	}
+	
+	public void exportMessages(List<Message> messages) {
+		try {
+			Path tempPath = Files.createTempDirectory("accordExport");
+			File outputFile = new File(tempPath.toString() + "\\accord_exported_messages.txt");
+			FileWriter fileWriter = new FileWriter(outputFile);
+			messages.stream().forEach(msg -> {
+				try {
+					fileWriter.write(msg.toString() + "\n");
+				}
+				catch(Exception e) {
+					logger.error("FileService failed to write message to file: " + msg.toString());
+				}
+			});
+			fileWriter.close();
+			Desktop.getDesktop().open(tempPath.toFile());
+			
+		} catch (Exception e) {
+			logger.error("FileService ran into a problem exporting messages!");
+		}
 	}
 
 	public String getIniValue() {
