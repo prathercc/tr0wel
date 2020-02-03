@@ -1,4 +1,5 @@
 package dev.prath.accord.controller.conversation;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +17,13 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.cell.CheckBoxListCell;
 import javafx.scene.text.Text;
+
 @Component
 public class ConversationManagerController {
-	
+
 	@FXML
 	private Tab exportTab;
 	@FXML
@@ -35,7 +38,9 @@ public class ConversationManagerController {
 	private Text numOfMsgText;
 	@FXML
 	private ChoiceBox<User> userSelectionBox;
-	
+	@FXML
+	private TabPane conversationTabPane;
+
 	@Autowired
 	AccountService accountService;
 
@@ -45,22 +50,25 @@ public class ConversationManagerController {
 	private static final Logger logger = LoggerFactory.getLogger(ConversationManagerController.class);
 
 	private boolean selectOrientation = false;
-	
+
 	public void initialize() {
 		Conversation conversation = accountService.getSelectedConversation();
 		conversationListView.setCellFactory(CheckBoxListCell.forListView(Message::getIsSelected));
 		conversation.getRecipients().stream().forEach(user -> userSelectionBox.getItems().add(user));
-		ConversationDeleteTabController.setParentControls(conversationListView, new Tab[] {exportTab, editTab,deleteTab}, selectAllButton, numOfMsgText);
-		ConversationEditTabController.setParentControls(conversationListView, new Tab[] {exportTab, editTab,deleteTab}, selectAllButton, numOfMsgText);
-		ConversationExportTabController.setParentControls(conversationListView, new Tab[] {exportTab, editTab,deleteTab}, selectAllButton, numOfMsgText);
+		ConversationDeleteTabController.setParentControls(conversationListView,
+				new Tab[] { exportTab, editTab, deleteTab }, selectAllButton, numOfMsgText);
+		ConversationEditTabController.setParentControls(conversationListView,
+				new Tab[] { exportTab, editTab, deleteTab }, selectAllButton, numOfMsgText);
+		ConversationExportTabController.setParentControls(conversationListView,
+				new Tab[] { exportTab, editTab, deleteTab }, selectAllButton, numOfMsgText);
 	}
-	
+
 	public void selectUser() {
 		Thread thread = new Thread(getNewSelectionTask());
 		thread.setDaemon(true);
 		thread.start();
 	}
-	
+
 	public Task<Void> getNewSelectionTask() {
 		Task<Void> selectionTask = new Task<Void>() {
 			@Override
@@ -71,12 +79,23 @@ public class ConversationManagerController {
 					public void run() {
 						conversationListView.getItems().clear();
 						if (userSelectionBox.getValue() != null) {
+							var sessionUID = accountService.getDiscordAccount().getUser().getId();
 							var selectedConversationMessages = accountService.getSelectedConversation().getMessages();
 							var selectedUserId = userSelectionBox.getValue().getId();
+
+							/* If the user selected another user, disable the edit/delete tabs */
+							conversationTabPane.getSelectionModel()
+									.select(!sessionUID.equalsIgnoreCase(selectedUserId) ? exportTab
+											: conversationTabPane.getSelectionModel().getSelectedItem());
+							editTab.setDisable(!sessionUID.equalsIgnoreCase(selectedUserId));
+							deleteTab.setDisable(!sessionUID.equalsIgnoreCase(selectedUserId));
+							/*******************************************************************/
+
 							selectedConversationMessages.stream()
 									.filter(message -> message.getAuthor().getId().equalsIgnoreCase(selectedUserId))
 									.forEach(message -> conversationListView.getItems().add(message));
-							updateText(numOfMsgText, "Found " + conversationListView.getItems().size() + " messages by user.");
+							updateText(numOfMsgText,
+									"Found " + conversationListView.getItems().size() + " messages by user.");
 						}
 					}
 				});
@@ -86,12 +105,12 @@ public class ConversationManagerController {
 		};
 		return selectionTask;
 	}
-	
+
 	public void selectAll() {
 		selectOrientation = !selectOrientation ? true : false;
 		conversationListView.getItems().stream().forEach(message -> message.setIsSelected(selectOrientation));
 	}
-	
+
 	private void toggleControls(boolean val) {
 		conversationListView.setDisable(val);
 		selectAllButton.setDisable(val);
@@ -100,7 +119,7 @@ public class ConversationManagerController {
 		editTab.setDisable(val);
 		deleteTab.setDisable(val);
 	}
-	
+
 	private void updateText(Text text, String val) {
 		Platform.runLater(new Runnable() {
 			@Override

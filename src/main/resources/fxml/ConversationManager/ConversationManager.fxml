@@ -15,7 +15,7 @@
 	<children>
 		<AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="665.0" prefWidth="892.0" VBox.vgrow="ALWAYS">
 			<children>
-				<TabPane prefHeight="159.0" prefWidth="642.0" tabClosingPolicy="UNAVAILABLE">
+				<TabPane fx:id="conversationTabPane" prefHeight="159.0" prefWidth="642.0" tabClosingPolicy="UNAVAILABLE">
 					<tabs>
 						<Tab fx:id="exportTab" text="Export">
 							<content>
