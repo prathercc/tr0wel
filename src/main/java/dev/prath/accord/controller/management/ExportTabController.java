@@ -1,4 +1,4 @@
-package dev.prath.accord.controller.channel;
+package dev.prath.accord.controller.management;
 
 import org.springframework.stereotype.Component;
 
@@ -11,9 +11,9 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Tab;
 import javafx.scene.text.Text;
-@Component
-public class ChannelExportTabController {
 
+@Component
+public class ExportTabController {
 	@FXML
 	private CheckBox exportedSelectedCheckbox;
 	@FXML 
@@ -25,7 +25,7 @@ public class ChannelExportTabController {
 	@FXML
 	private ListView<User> participatingUsersList;
 	
-	private static ListView<Message> channelListView;
+	private static ListView<Message> listView;
 	private static Tab exportTab;
 	private static Tab editTab;
 	private static Tab deleteTab;
@@ -34,7 +34,7 @@ public class ChannelExportTabController {
 	private static ChoiceBox<User> userSelectionBox;
 	
 	protected static void setParentControls(ListView<Message> list, Tab[] tabList, Button selectButton, Text numText, ChoiceBox<User> usersBox) {
-		channelListView = list;
+		listView = list;
 		exportTab = tabList[0];
 		editTab = tabList[1];
 		deleteTab = tabList[2];

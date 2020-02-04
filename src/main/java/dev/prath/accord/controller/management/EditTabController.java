@@ -1,4 +1,4 @@
-package dev.prath.accord.controller.channel;
+package dev.prath.accord.controller.management;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,9 +22,9 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
+
 @Component
-public class ChannelEditTabController {
-	
+public class EditTabController {
 	@FXML
 	private TextField newMessageTextField;
 	@FXML
@@ -32,7 +32,7 @@ public class ChannelEditTabController {
 	@FXML
 	private Text progressText;
 	
-	private static ListView<Message> channelListView;
+	private static ListView<Message> listView;
 	private static Tab exportTab;
 	private static Tab editTab;
 	private static Tab deleteTab;
@@ -46,7 +46,7 @@ public class ChannelEditTabController {
 	@Autowired
 	AccountService accountService;
 	
-    private static final Logger logger = LoggerFactory.getLogger(ChannelEditTabController.class);
+    private static final Logger logger = LoggerFactory.getLogger(EditTabController.class);
 	
 	public void editSelections() {
 		Thread thread = new Thread(getNewEditTask());
@@ -60,10 +60,13 @@ public class ChannelEditTabController {
 			protected Void call() throws Exception {
 				toggleControls(true);
 				List<Message> msgsToEdit = new ArrayList<Message>();
-				var selectedMessagesList = channelListView.getItems().stream().filter(message -> message.getIsSelected().get())
+				var selectedMessagesList = listView.getItems().stream().filter(message -> message.getIsSelected().get())
 						.collect(Collectors.toList());
 				for (Message msg : selectedMessagesList) {
-					var response = messageService.editMessage(msg, newMessageTextField.getText(), accountService.getSelectedChannel().getId());
+					var selectedChannel = accountService.getSelectedChannel();
+					var selectedConversation = accountService.getSelectedConversation();
+					var selectedId = selectedChannel != null ? selectedChannel.getId() : selectedConversation.getId();
+					var response = messageService.editMessage(msg, newMessageTextField.getText(), selectedId);
 					if (response) {
 						updateText(progressText, "Edit Success - [" + msg.getId() + "]");
 						msgsToEdit.add(msg);
@@ -76,16 +79,16 @@ public class ChannelEditTabController {
 					@Override
 					public void run() {
 						msgsToEdit.stream().forEach(newMessage -> {
-							channelListView.getItems().stream().forEach(oldMessage -> {
+							listView.getItems().stream().forEach(oldMessage -> {
 								if(oldMessage.getId().equalsIgnoreCase(newMessage.getId())) {
 									oldMessage.setMessage(newMessageTextField.getText()); // Update message
 									oldMessage.setIsSelected(false); // De-select the edited messages.
 								}
 							});
 						});
-						channelListView.refresh();
+						listView.refresh();
 						updateText(numOfMsgText,
-								"Found " + channelListView.getItems().size() + " messages by you in this conversation");
+								"Found " + listView.getItems().size() + " messages by you in this conversation");
 					}
 				});
 				updateText(progressText, "");
@@ -101,7 +104,7 @@ public class ChannelEditTabController {
 		deleteTab.setDisable(val);
 		exportTab.setDisable(val);
 		editTab.setDisable(val);
-		channelListView.setDisable(val);
+		listView.setDisable(val);
 		editSelectionsButton.setDisable(val);
 		newMessageTextField.setDisable(val);
 		userSelectionBox.setDisable(val);
@@ -117,7 +120,7 @@ public class ChannelEditTabController {
 	}
 	
 	protected static void setParentControls(ListView<Message> list, Tab[] tabList, Button selectButton, Text numText, ChoiceBox<User> usersBox) {
-		channelListView = list;
+		listView = list;
 		exportTab = tabList[0];
 		editTab = tabList[1];
 		deleteTab = tabList[2];

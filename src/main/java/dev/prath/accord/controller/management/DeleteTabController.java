@@ -1,4 +1,4 @@
-package dev.prath.accord.controller.channel;
+package dev.prath.accord.controller.management;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,15 +21,15 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Tab;
 import javafx.scene.text.Text;
-@Component
-public class ChannelDeleteTabController {
 
+@Component
+public class DeleteTabController {
 	@FXML
 	private Button deleteSelectionsButton;
 	@FXML
 	private Text progressText;
 	
-	private static ListView<Message> channelListView;
+	private static ListView<Message> listView;
 	private static Tab exportTab;
 	private static Tab editTab;
 	private static Tab deleteTab;
@@ -43,7 +43,7 @@ public class ChannelDeleteTabController {
 	@Autowired
 	MessageService messageService;
 
-	private static final Logger logger = LoggerFactory.getLogger(ChannelDeleteTabController.class);
+	private static final Logger logger = LoggerFactory.getLogger(DeleteTabController.class);
 	
 	public void deleteSelections() {
 		Thread thread = new Thread(getNewDeletionTask());
@@ -57,10 +57,13 @@ public class ChannelDeleteTabController {
 			protected Void call() throws Exception {
 				toggleControls(true);
 				List<Message> msgsToDelete = new ArrayList<Message>();
-				var selectedMessagesList = channelListView.getItems().stream().filter(message -> message.getIsSelected().get())
+				var selectedMessagesList = listView.getItems().stream().filter(message -> message.getIsSelected().get())
 						.collect(Collectors.toList());
 				for (Message msg : selectedMessagesList) {
-					var response = messageService.deleteMessage(msg, accountService.getSelectedChannel().getId());
+					var selectedChannel = accountService.getSelectedChannel();
+					var selectedConversation = accountService.getSelectedConversation();
+					var selectedId = selectedChannel != null ? selectedChannel.getId() : selectedConversation.getId();
+					var response = messageService.deleteMessage(msg, selectedId);
 					if (response) {
 						updateText(progressText, "Deletion Success - [" + msg.getId() + "]");
 						msgsToDelete.add(msg);
@@ -73,10 +76,10 @@ public class ChannelDeleteTabController {
 				Platform.runLater(new Runnable() {
 					@Override
 					public void run() {
-						msgsToDelete.stream().forEach(message -> channelListView.getItems().remove(message));
+						msgsToDelete.stream().forEach(message -> listView.getItems().remove(message));
 
-						if (channelListView.getItems().size() != 0) {
-							updateText(numOfMsgText, "Found " + channelListView.getItems().size() + " messages by user.");
+						if (listView.getItems().size() != 0) {
+							updateText(numOfMsgText, "Found " + listView.getItems().size() + " messages by user.");
 						} else {
 							// No more messages? Pull them off the user selection list
 							User userToDelete = (User) userSelectionBox.getValue();
@@ -102,7 +105,7 @@ public class ChannelDeleteTabController {
 		deleteTab.setDisable(val);
 		exportTab.setDisable(val);
 		editTab.setDisable(val);
-		channelListView.setDisable(val);
+		listView.setDisable(val);
 		userSelectionBox.setDisable(val);
 	}
 	
@@ -116,7 +119,7 @@ public class ChannelDeleteTabController {
 	}
 	
 	protected static void setParentControls(ListView<Message> list, Tab[] tabList, Button selectButton, Text numText, ChoiceBox<User> usersBox) {
-		channelListView = list;
+		listView = list;
 		exportTab = tabList[0];
 		editTab = tabList[1];
 		deleteTab = tabList[2];
