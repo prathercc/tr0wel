@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="110.0" prefWidth="323.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dev.prath.accord.controller.management.EditTabController">
+	<children>
+		<AnchorPane prefHeight="431.0" prefWidth="600.0">
+			<children>
+				<TextField fx:id="newMessageTextField" layoutX="14.0" layoutY="14.0" prefHeight="25.0" prefWidth="288.0" promptText="Enter a new message..." />
+				<Button fx:id="editSelectionsButton" layoutX="112.0" layoutY="47.0" mnemonicParsing="false" onAction="#editSelections" text="Edit Selections" />
+				<Text fx:id="progressText" layoutX="14.0" layoutY="92.0" strokeType="OUTSIDE" strokeWidth="0.0" />
+			</children>
+		</AnchorPane>
+	</children>
+</VBox>

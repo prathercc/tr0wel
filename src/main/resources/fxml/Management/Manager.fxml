@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<VBox prefHeight="398.0" prefWidth="642.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dev.prath.accord.controller.conversation.ConversationManagerController">
+<VBox prefHeight="398.0" prefWidth="642.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dev.prath.accord.controller.management.ManagerController">
 	<children>
 		<AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="665.0" prefWidth="892.0" VBox.vgrow="ALWAYS">
 			<children>
@@ -58,7 +58,7 @@
 						</Tab>
 					</tabs>
 				</TabPane>
-				<ListView fx:id="conversationListView" layoutX="15.0" layoutY="171.0" prefHeight="186.0" prefWidth="612.0" />
+				<ListView fx:id="listView" layoutX="15.0" layoutY="171.0" prefHeight="186.0" prefWidth="612.0" />
 				<Button fx:id="selectAllButton" layoutX="14.0" layoutY="364.0" mnemonicParsing="false" onAction="#selectAll" text="Select All" />
 				<ChoiceBox fx:id="userSelectionBox" layoutX="283.0" layoutY="142.0" onAction="#selectUser" prefWidth="150.0" />
 				<Text layoutX="298.0" layoutY="138.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Select User to Manage" />
