@@ -28,6 +28,7 @@ public class AccountService {
 	}
 
 	public void setSelectedConversation(Conversation val) {
+		selectedChannel = null;
 		attachReferences(val.getMessages(), val.getRecipients());
 		selectedConversation = val;
 		logger.warn("AccountService has changed the selected conversation from "
@@ -39,6 +40,7 @@ public class AccountService {
 	}
 
 	public void setSelectedChannel(Channel val) {
+		selectedConversation = null;
 		attachReferences(val.getMessages(), val.getParticipatingUsers());
 		selectedChannel = val;
 		logger.warn("AccountService has changed the selected channel from "
