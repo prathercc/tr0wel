@@ -1,4 +1,4 @@
-package dev.prath.accord.controller;
+package dev.prath.accord.controller.authentication;
 
 import java.util.List;
 
