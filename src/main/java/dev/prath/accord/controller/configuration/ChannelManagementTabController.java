@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import dev.prath.accord.controller.AuthenticationController;
+import dev.prath.accord.controller.authentication.AuthenticationController;
 import dev.prath.accord.domain.Channel;
 import dev.prath.accord.domain.DiscordAccount;
 import dev.prath.accord.domain.Guild;

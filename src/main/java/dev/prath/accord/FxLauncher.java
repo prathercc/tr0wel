@@ -18,7 +18,7 @@ public class FxLauncher extends Application {
 	
 	@Override
 	public void start(Stage stage) throws Exception {
-		fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/authenticationMenu.fxml"));
+		fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/Authentication/AuthenticationMenu.fxml"));
 		fxmlLoader.setControllerFactory(Main.springContext::getBean);
 		rootNode = fxmlLoader.load();
 		stage.setTitle("accord - Authentication");
