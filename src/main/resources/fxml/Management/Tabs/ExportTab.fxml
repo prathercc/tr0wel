@@ -7,26 +7,15 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity"
-	minHeight="-Infinity" minWidth="-Infinity" prefHeight="129.0"
-	prefWidth="262.0" xmlns="http://javafx.com/javafx/11.0.1"
-	xmlns:fx="http://javafx.com/fxml/1"
-	fx:controller="dev.prath.accord.controller.management.ExportTabController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="137.0" prefWidth="261.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dev.prath.accord.controller.management.ExportTabController">
 	<children>
 		<AnchorPane prefHeight="473.0" prefWidth="600.0">
 			<children>
-				<CheckBox fx:id="exportFromUsersCheckbox" layoutX="14.0"
-					layoutY="29.0" mnemonicParsing="false"
-					text="Export All From Users:" />
-				<ListView fx:id="participatingUsersList" layoutX="14.0"
-					layoutY="48.0" prefHeight="49.0" prefWidth="170.0" />
-				<CheckBox fx:id="exportedSelectedCheckbox" layoutX="14.0"
-					layoutY="6.0" mnemonicParsing="false"
-					text="Export Selected Messages" />
-				<Button fx:id="exportButton" layoutX="195.0" layoutY="38.0"
-					mnemonicParsing="false" text="Export" />
-				<Text fx:id="progressText" layoutX="14.0" layoutY="118.0"
-					strokeType="OUTSIDE" strokeWidth="0.0" />
+				<ListView fx:id="participatingUsersList" disable="true" layoutX="29.0" layoutY="49.0" prefHeight="69.0" prefWidth="183.0" />
+				<Button fx:id="exportButton" layoutX="171.0" layoutY="10.0" mnemonicParsing="false" text="Export" />
+				<Text fx:id="progressText" layoutX="10.0" layoutY="132.0" strokeType="OUTSIDE" strokeWidth="0.0" />
+            <CheckBox fx:id="exportFromUsersCheckBox" layoutX="8.0" layoutY="28.0" mnemonicParsing="false" text="Export from users:" onAction="#exportUsersCheck"/>
+            <CheckBox fx:id="exportAllCheckBox" layoutX="8.0" layoutY="5.0" mnemonicParsing="false" text="Export All" onAction="#exportAllCheck"/>
 			</children>
 		</AnchorPane>
 	</children>
