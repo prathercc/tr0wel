@@ -61,7 +61,10 @@ public class Message {
 	}
 
 	public String getDatePosted() {
-		return datePosted;
+		TimeZone tz = Calendar.getInstance().getTimeZone();
+		String date = OffsetDateTime.parse(datePosted)
+				.format(DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm").withZone(tz.toZoneId()));
+		return date;
 	}
 
 	public void setDatePosted(String val) {
@@ -93,10 +96,7 @@ public class Message {
 	}
 
 	public String toString() {
-		TimeZone tz = Calendar.getInstance().getTimeZone();
-		String date = OffsetDateTime.parse(getDatePosted())
-				.format(DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm").withZone(tz.toZoneId()));
 		String attachmentString = attachments.size() == 1 ? " " + attachments.get(0).getUrl() : "";
-		return "[" + date + "] " + getAuthor().getUsername() + ": " + getMessage() + attachmentString;
+		return "[" + getDatePosted() + "] " + getAuthor().getUsername() + ": " + getMessage() + attachmentString;
 	}
 }

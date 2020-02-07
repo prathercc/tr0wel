@@ -31,7 +31,6 @@ public class Channel {
 		return participatingUsers;
 	}
 	
-	
 	public List<Message> getMessages(){
 		return messages;
 	}
