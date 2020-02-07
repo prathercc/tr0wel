@@ -13,6 +13,7 @@ import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Tab;
@@ -25,8 +26,6 @@ public class ManagerController {
 	@FXML
 	private ListView<Message> listView;
 	@FXML
-	private Button selectAllButton;
-	@FXML
 	private ChoiceBox<User> userSelectionBox;
 	@FXML
 	private Text numOfMsgText;
@@ -37,15 +36,16 @@ public class ManagerController {
 	@FXML
 	private Tab deleteTab;
 	@FXML
+	private Tab informationTab;
+	@FXML
 	private TabPane conversationTabPane;
+	@FXML
+	private CheckBox selectAllCheckBox;
 
 	@Autowired
 	AccountService accountService;
-
 	@Autowired
 	MessageService messageService;
-
-	private boolean selectOrientation = false;
 
 	private static final Logger logger = LoggerFactory.getLogger(ManagerController.class);
 
@@ -58,17 +58,16 @@ public class ManagerController {
 		} else if (selectedChannel != null) {
 			selectedChannel.getParticipatingUsers().stream().forEach(user -> userSelectionBox.getItems().add(user));
 		}
-		DeleteTabController.setParentControls(listView, new Tab[] { exportTab, editTab, deleteTab }, selectAllButton,
+		DeleteTabController.setParentControls(listView, new Tab[] { exportTab, editTab, deleteTab }, selectAllCheckBox,
 				numOfMsgText, userSelectionBox);
-		EditTabController.setParentControls(listView, new Tab[] { exportTab, editTab, deleteTab }, selectAllButton,
+		EditTabController.setParentControls(listView, new Tab[] { exportTab, editTab, deleteTab }, selectAllCheckBox,
 				numOfMsgText, userSelectionBox);
-		ExportTabController.setParentControls(listView, new Tab[] { exportTab, editTab, deleteTab }, selectAllButton,
+		ExportTabController.setParentControls(listView, new Tab[] { exportTab, editTab, deleteTab }, selectAllCheckBox,
 				numOfMsgText, userSelectionBox);
 	}
 
 	public void selectAll() {
-		selectOrientation = !selectOrientation ? true : false;
-		listView.getItems().stream().forEach(message -> message.setIsSelected(selectOrientation));
+		listView.getItems().stream().forEach(message -> message.setIsSelected(selectAllCheckBox.isSelected()));
 	}
 
 	public void selectUser() {
@@ -93,12 +92,17 @@ public class ManagerController {
 							var selectedMessages = selectedConversation != null ? selectedConversation.getMessages()
 									: selectedChannel.getMessages();
 							var selectedUserId = userSelectionBox.getValue().getId();
+							selectAllCheckBox.setSelected(false);
 
-							/* If the user selected another user in a conversation, disable the edit/delete tabs */
+							/*
+							 * If the user selected another user in a conversation, disable the edit/delete
+							 * tabs
+							 */
 							if (selectedConversation != null) {
+								var selectedTab = conversationTabPane.getSelectionModel().getSelectedItem();
 								conversationTabPane.getSelectionModel()
-										.select(!sessionUID.equalsIgnoreCase(selectedUserId) ? exportTab
-												: conversationTabPane.getSelectionModel().getSelectedItem());
+										.select(selectedTab == editTab || selectedTab == deleteTab ? informationTab
+												: selectedTab);
 								editTab.setDisable(!sessionUID.equalsIgnoreCase(selectedUserId));
 								deleteTab.setDisable(!sessionUID.equalsIgnoreCase(selectedUserId));
 							}
@@ -120,7 +124,7 @@ public class ManagerController {
 
 	private void toggleControls(boolean val) {
 		listView.setDisable(val);
-		selectAllButton.setDisable(val);
+		selectAllCheckBox.setDisable(val);
 		userSelectionBox.setDisable(val);
 		exportTab.setDisable(val);
 		editTab.setDisable(val);
