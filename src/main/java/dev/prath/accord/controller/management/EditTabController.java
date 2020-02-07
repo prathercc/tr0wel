@@ -17,6 +17,7 @@ import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Tab;
@@ -36,7 +37,7 @@ public class EditTabController {
 	private static Tab exportTab;
 	private static Tab editTab;
 	private static Tab deleteTab;
-	private static Button selectAllButton;
+	private static CheckBox selectAllButton;
 	private static Text numOfMsgText;
 	private static ChoiceBox<User> userSelectionBox;
 	
@@ -119,7 +120,7 @@ public class EditTabController {
 		});
 	}
 	
-	protected static void setParentControls(ListView<Message> list, Tab[] tabList, Button selectButton, Text numText, ChoiceBox<User> usersBox) {
+	protected static void setParentControls(ListView<Message> list, Tab[] tabList, CheckBox selectButton, Text numText, ChoiceBox<User> usersBox) {
 		listView = list;
 		exportTab = tabList[0];
 		editTab = tabList[1];
