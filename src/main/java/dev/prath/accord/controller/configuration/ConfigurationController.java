@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.text.Text;
 @Component
 public class ConfigurationController {
@@ -17,11 +18,15 @@ public class ConfigurationController {
 	private Tab channelManagementTab;
 	@FXML
 	private Tab conversationManagementTab;
+	@FXML
+	private Tab statsTab;
+	@FXML
+	private TabPane configurationTabPane;
 	
 	private static final Logger logger = LoggerFactory.getLogger(ConfigurationController.class);
 	
 	public void initialize() {
-		ChannelManagementTabController.setParentControls(configProgressText, channelManagementTab, conversationManagementTab);
-		ConversationManagementTabController.setParentControls(configProgressText, channelManagementTab, conversationManagementTab);
+		ChannelManagementTabController.setParentControls(configProgressText, configurationTabPane);
+		ConversationManagementTabController.setParentControls(configProgressText, configurationTabPane);
 	}
 }

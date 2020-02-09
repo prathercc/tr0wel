@@ -24,6 +24,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -38,8 +39,7 @@ public class ChannelManagementTabController {
 	private ListView<Channel> channelListView;
 
 	private static Text configProgressText;
-	private static Tab channelManagementTab;
-	private static Tab conversationManagementTab;
+	private static TabPane configurationTabPane;
 
 	@Autowired
 	MessageService service;
@@ -115,8 +115,7 @@ public class ChannelManagementTabController {
 		guildListView.setDisable(val);
 		channelListView.setDisable(val);
 		manageChannelButton.setDisable(val);
-		channelManagementTab.setDisable(val);
-		conversationManagementTab.setDisable(val);
+		configurationTabPane.setDisable(val);
 	}
 
 	private void updateConfigProgress(String val) {
@@ -147,9 +146,8 @@ public class ChannelManagementTabController {
 		});
 	}
 	
-	protected static void setParentControls(Text text, Tab channel, Tab conversation) {
+	protected static void setParentControls(Text text, TabPane tabPane) {
 		configProgressText = text;
-		channelManagementTab = channel;
-		conversationManagementTab = conversation;
+		configurationTabPane = tabPane;
 	}
 }
