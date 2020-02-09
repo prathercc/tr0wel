@@ -9,6 +9,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import dev.prath.accord.domain.Channel;
+import dev.prath.accord.domain.Conversation;
 import dev.prath.accord.domain.Message;
 import dev.prath.accord.domain.User;
 import dev.prath.accord.service.AccountService;
@@ -32,7 +34,7 @@ public class EditTabController {
 	private Button editSelectionsButton;
 	@FXML
 	private Text progressText;
-	
+
 	private static ListView<Message> listView;
 	private static Tab exportTab;
 	private static Tab editTab;
@@ -40,33 +42,34 @@ public class EditTabController {
 	private static CheckBox selectAllButton;
 	private static Text numOfMsgText;
 	private static ChoiceBox<User> userSelectionBox;
-	
+
 	@Autowired
 	MessageService messageService;
-	
+
 	@Autowired
 	AccountService accountService;
-	
-    private static final Logger logger = LoggerFactory.getLogger(EditTabController.class);
-	
+
+	private static final Logger logger = LoggerFactory.getLogger(EditTabController.class);
+
 	public void editSelections() {
 		Thread thread = new Thread(getNewEditTask());
 		thread.setDaemon(true);
 		thread.start();
 	}
-	
+
 	public Task<Void> getNewEditTask() {
 		Task<Void> deletionTask = new Task<Void>() {
 			@Override
 			protected Void call() throws Exception {
 				toggleControls(true);
 				List<Message> msgsToEdit = new ArrayList<Message>();
-				var selectedMessagesList = listView.getItems().stream().filter(message -> message.getIsSelected().get())
-						.collect(Collectors.toList());
+				List<Message> selectedMessagesList = listView.getItems().stream()
+						.filter(message -> message.getIsSelected().get()).collect(Collectors.toList());
 				for (Message msg : selectedMessagesList) {
-					var selectedChannel = accountService.getSelectedChannel();
-					var selectedConversation = accountService.getSelectedConversation();
-					var selectedId = selectedChannel != null ? selectedChannel.getId() : selectedConversation.getId();
+					Channel selectedChannel = accountService.getSelectedChannel();
+					Conversation selectedConversation = accountService.getSelectedConversation();
+					String selectedId = selectedChannel != null ? selectedChannel.getId()
+							: selectedConversation.getId();
 					var response = messageService.editMessage(msg, newMessageTextField.getText(), selectedId);
 					if (response) {
 						updateText(progressText, "Edit Success - [" + msg.getId() + "]");
@@ -76,22 +79,7 @@ public class EditTabController {
 					}
 					Thread.sleep(250);
 				}
-				Platform.runLater(new Runnable() {
-					@Override
-					public void run() {
-						msgsToEdit.stream().forEach(newMessage -> {
-							listView.getItems().stream().forEach(oldMessage -> {
-								if(oldMessage.getId().equalsIgnoreCase(newMessage.getId())) {
-									oldMessage.setMessage(newMessageTextField.getText()); // Update message
-									oldMessage.setIsSelected(false); // De-select the edited messages.
-								}
-							});
-						});
-						listView.refresh();
-						updateText(numOfMsgText,
-								"Found " + listView.getItems().size() + " messages by you in this conversation");
-					}
-				});
+				updateMessages(msgsToEdit);
 				updateText(progressText, "");
 				toggleControls(false);
 				return null;
@@ -99,7 +87,25 @@ public class EditTabController {
 		};
 		return deletionTask;
 	}
-	
+
+	private void updateMessages(List<Message> msgsToEdit) {
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				msgsToEdit.stream().forEach(newMessage -> {
+					listView.getItems().stream().forEach(oldMessage -> {
+						if (oldMessage.getId().equalsIgnoreCase(newMessage.getId())) {
+							oldMessage.setMessage(newMessageTextField.getText()); // Update message
+							oldMessage.setIsSelected(false); // De-select the edited messages.
+						}
+					});
+				});
+				listView.refresh();
+				updateText(numOfMsgText, "Found " + listView.getItems().size() + " messages");
+			}
+		});
+	}
+
 	private void toggleControls(boolean val) {
 		selectAllButton.setDisable(val);
 		deleteTab.setDisable(val);
@@ -110,7 +116,7 @@ public class EditTabController {
 		newMessageTextField.setDisable(val);
 		userSelectionBox.setDisable(val);
 	}
-	
+
 	private void updateText(Text text, String val) {
 		Platform.runLater(new Runnable() {
 			@Override
@@ -119,8 +125,9 @@ public class EditTabController {
 			}
 		});
 	}
-	
-	protected static void setParentControls(ListView<Message> list, Tab[] tabList, CheckBox selectButton, Text numText, ChoiceBox<User> usersBox) {
+
+	protected static void setParentControls(ListView<Message> list, Tab[] tabList, CheckBox selectButton, Text numText,
+			ChoiceBox<User> usersBox) {
 		listView = list;
 		exportTab = tabList[0];
 		editTab = tabList[1];
