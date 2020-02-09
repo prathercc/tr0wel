@@ -11,21 +11,34 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<VBox prefHeight="180.0" prefWidth="346.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dev.prath.accord.controller.authentication.AuthenticationController">
-  <children>
-    <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="213.0" prefWidth="346.0" VBox.vgrow="ALWAYS">
-         <children>
-            <TextField fx:id="emailTextField" layoutX="26.0" layoutY="37.0" promptText="Email" />
-            <PasswordField fx:id="passwordTextField" layoutX="26.0" layoutY="69.0" promptText="Password" />
-            <Button fx:id="authenticateButton" layoutX="59.0" layoutY="125.0" mnemonicParsing="false" onAction="#authenticate" text="Authenticate" />
-            <Label layoutX="74.0" layoutY="8.0" text="Sign In" />
-            <Text fx:id="progressText" layoutX="25.0" layoutY="171.0" strokeType="OUTSIDE" strokeWidth="0.0" />
-            <CheckBox fx:id="rememberMeCheckBox" layoutX="25.0" layoutY="101.0" mnemonicParsing="false" text="Remember me" />
-            <ImageView fx:id="prathLogo" fitHeight="150.0" fitWidth="139.0" layoutX="198.0" layoutY="7.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../../images/prathdev.png" />
-               </image></ImageView>
-         </children>
-    </AnchorPane>
-  </children>
+<VBox prefHeight="180.0" prefWidth="346.0"
+	xmlns="http://javafx.com/javafx/11.0.1"
+	xmlns:fx="http://javafx.com/fxml/1"
+	fx:controller="dev.prath.accord.controller.authentication.AuthenticationController">
+	<children>
+		<AnchorPane maxHeight="-1.0" maxWidth="-1.0"
+			prefHeight="213.0" prefWidth="346.0" VBox.vgrow="ALWAYS">
+			<children>
+				<TextField fx:id="emailTextField" layoutX="26.0"
+					layoutY="37.0" promptText="Email" />
+				<PasswordField fx:id="passwordTextField"
+					layoutX="26.0" layoutY="69.0" promptText="Password" />
+				<Button fx:id="authenticateButton" layoutX="59.0"
+					layoutY="125.0" mnemonicParsing="false" onAction="#authenticate"
+					text="Authenticate" />
+				<Label layoutX="74.0" layoutY="8.0" text="Sign In" />
+				<Text fx:id="progressText" layoutX="25.0" layoutY="171.0"
+					strokeType="OUTSIDE" strokeWidth="0.0" />
+				<CheckBox fx:id="rememberMeCheckBox" layoutX="25.0"
+					layoutY="101.0" mnemonicParsing="false" text="Remember me" />
+				<ImageView fx:id="prathLogo" fitHeight="150.0"
+					fitWidth="139.0" layoutX="198.0" layoutY="7.0" pickOnBounds="true"
+					preserveRatio="true">
+					<image>
+						<Image url="@../../images/prathdev.png" />
+					</image>
+				</ImageView>
+			</children>
+		</AnchorPane>
+	</children>
 </VBox>
