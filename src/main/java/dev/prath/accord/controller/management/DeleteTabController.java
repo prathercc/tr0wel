@@ -60,9 +60,9 @@ public class DeleteTabController {
 				List<Message> msgsToDelete = new ArrayList<Message>();
 				var selectedMessagesList = listView.getItems().stream().filter(message -> message.getIsSelected().get())
 						.collect(Collectors.toList());
+				var selectedChannel = accountService.getSelectedChannel();
+				var selectedConversation = accountService.getSelectedConversation();
 				for (Message msg : selectedMessagesList) {
-					var selectedChannel = accountService.getSelectedChannel();
-					var selectedConversation = accountService.getSelectedConversation();
 					var selectedId = selectedChannel != null ? selectedChannel.getId() : selectedConversation.getId();
 					var response = messageService.deleteMessage(msg, selectedId);
 					if (response) {
@@ -77,11 +77,17 @@ public class DeleteTabController {
 				Platform.runLater(new Runnable() {
 					@Override
 					public void run() {
-						msgsToDelete.stream().forEach(message -> listView.getItems().remove(message));
+						msgsToDelete.stream().forEach(message -> {
+							if(selectedChannel != null)
+								selectedChannel.getMessages().remove(message);
+							else if(selectedConversation != null)
+								selectedConversation.getMessages().remove(message);
+							listView.getItems().remove(message);
+						});
 
 						if (listView.getItems().size() != 0) {
 							updateText(numOfMsgText, "Found " + listView.getItems().size() + " messages by user.");
-						} else {
+						} else if(selectedChannel != null) {
 							// No more messages? Pull them off the user selection list
 							User userToDelete = (User) userSelectionBox.getValue();
 							accountService.getSelectedChannel().getParticipatingUsers().remove(userToDelete);
@@ -89,6 +95,9 @@ public class DeleteTabController {
 							userSelectionBox.getItems().clear();
 							accountService.getSelectedChannel().getParticipatingUsers().stream()
 									.forEach(user -> userSelectionBox.getItems().add(user));
+							updateText(numOfMsgText, "");
+						}
+						else if(selectedConversation != null) {
 							updateText(numOfMsgText, "");
 						}
 					}
