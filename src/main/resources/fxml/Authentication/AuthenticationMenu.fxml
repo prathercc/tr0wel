@@ -10,17 +10,17 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<VBox prefHeight="355.0" prefWidth="471.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dev.prath.accord.controller.authentication.AuthenticationController">
+<VBox prefHeight="253.0" prefWidth="471.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dev.prath.accord.controller.authentication.AuthenticationController">
 	<children>
 		<AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="355.0" prefWidth="521.0" VBox.vgrow="ALWAYS">
 			<children>
-				<Text fx:id="progressText" layoutX="14.0" layoutY="183.0" strokeType="OUTSIDE" strokeWidth="0.0" />
-            <VBox fx:id="credentialAuthVbox" layoutX="14.0" layoutY="14.0" prefHeight="141.0" prefWidth="187.0">
+				<Text fx:id="progressText" layoutX="14.0" layoutY="170.0" strokeType="OUTSIDE" strokeWidth="0.0" />
+            <VBox fx:id="credentialAuthVbox" layoutX="14.0" layoutY="2.0" prefHeight="141.0" prefWidth="187.0">
                <children>
                   <fx:include source="Tabs/CredentialAuth.fxml" />
                </children>
             </VBox>
-            <VBox fx:id="authorizationAuthVbox" layoutX="259.0" layoutY="14.0" prefHeight="154.0" prefWidth="187.0">
+            <VBox fx:id="authorizationAuthVbox" layoutX="259.0" layoutY="3.0" prefHeight="154.0" prefWidth="187.0">
                <children>
                   <fx:include source="Tabs/AuthorizationAuth.fxml" />
                   <AnchorPane prefHeight="200.0" prefWidth="200.0">
@@ -31,8 +31,8 @@
                </children>
             </VBox>
             <Separator layoutX="230.0" orientation="VERTICAL" prefHeight="162.0" prefWidth="0.0" />
-            <Separator layoutY="186.0" prefHeight="0.0" prefWidth="471.0" />
-            <ImageView fx:id="prathdevLogo" fitHeight="162.0" fitWidth="198.0" layoutX="284.0" layoutY="188.0" pickOnBounds="true" preserveRatio="true">
+            <Separator layoutY="175.0" prefHeight="0.0" prefWidth="471.0" />
+            <ImageView fx:id="prathdevLogo" fitHeight="122.0" fitWidth="112.0" layoutX="286.0" layoutY="171.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../../images/prathdev.png" />
                </image>
@@ -40,7 +40,7 @@
                   <Cursor fx:constant="OPEN_HAND" />
                </cursor>
             </ImageView>
-            <ImageView fx:id="githubLogo" fitHeight="89.0" fitWidth="89.0" layoutX="63.0" layoutY="241.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="githubLogo" fitHeight="68.0" fitWidth="68.0" layoutX="84.0" layoutY="209.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../../images/githublogo.png" />
                </image>
@@ -48,9 +48,9 @@
                   <Cursor fx:constant="OPEN_HAND" />
                </cursor>
             </ImageView>
-            <Text layoutX="44.0" layoutY="226.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Source Code">
+            <Text layoutX="67.0" layoutY="200.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Source Code">
                <font>
-                  <Font size="20.0" />
+                  <Font size="16.0" />
                </font>
             </Text>
 			</children>
