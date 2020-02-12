@@ -12,8 +12,8 @@
 	<groupId>dev.prath</groupId>
 	<artifactId>accord11</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>accord11</name>
-	<description>Demo project for Spring Boot</description>
+	<name>accord</name>
+	<description></description>
 
 	<properties>
 		<java.version>11</java.version>

@@ -1,14 +1,18 @@
 package dev.prath.accord.controller.management;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import dev.prath.accord.domain.Channel;
 import dev.prath.accord.domain.Conversation;
 import dev.prath.accord.domain.Message;
 import dev.prath.accord.domain.User;
 import dev.prath.accord.service.AccountService;
+import dev.prath.accord.service.FileService;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -32,10 +36,12 @@ public class ExportTabController {
 	private Text progressText;
 	@FXML
 	private ListView<User> participatingUsersList;
-	
+
 	@Autowired
 	AccountService accountService;
-	
+	@Autowired
+	FileService fileService;
+
 	private static ListView<Message> listView;
 	private static Tab exportTab;
 	private static Tab editTab;
@@ -43,26 +49,56 @@ public class ExportTabController {
 	private static CheckBox selectAllButton;
 	private static Text numOfMsgText;
 	private static ChoiceBox<User> userSelectionBox;
-	
-	public void exportUsersCheck(){
+
+	public void exportMessages() {
+		Channel selectedChannel = accountService.getSelectedChannel();
+		Conversation selectedConversation = accountService.getSelectedConversation();
+
+		List<User> userExportList = exportAllCheckBox
+				.isSelected()
+						? participatingUsersList.getItems()
+						: exportFromUsersCheckBox.isSelected()
+								? participatingUsersList.getItems().stream().filter(user -> user.getIsSelected().get())
+										.collect(Collectors.toList())
+								: null;
+
+		if (userExportList != null) {
+			List<Message> allMessages = selectedChannel != null ? selectedChannel.getMessages()
+					: selectedConversation.getMessages();
+
+			List<String> userIdList = new ArrayList<String>();
+			userExportList.stream().forEach(user -> userIdList.add(user.getId()));
+			userIdList.stream().distinct().collect(Collectors.toList());
+			
+			List<Message> messagesToExport = allMessages.stream()
+					.filter(msg -> userIdList.contains(msg.getAuthor().getId())).collect(Collectors.toList());
+			
+			fileService.exportMessages(messagesToExport);
+		}
+
+	}
+
+	public void exportUsersCheck() {
 		exportAllCheckBox.setSelected(false);
 		participatingUsersList.setDisable(!exportFromUsersCheckBox.isSelected());
 	}
-	
-	public void exportAllCheck(){
+
+	public void exportAllCheck() {
 		exportFromUsersCheckBox.setSelected(false);
 		participatingUsersList.setDisable(true);
 	}
-	
+
 	public void initialize() {
 		participatingUsersList.setCellFactory(CheckBoxListCell.forListView(User::getIsSelected));
 		var selectedChannel = accountService.getSelectedChannel();
 		var selectedConversation = accountService.getSelectedConversation();
-		var userList = selectedChannel != null ? selectedChannel.getParticipatingUsers() : selectedConversation.getRecipients();
+		var userList = selectedChannel != null ? selectedChannel.getParticipatingUsers()
+				: selectedConversation.getRecipients();
 		userList.stream().forEach(user -> participatingUsersList.getItems().add(user));
 	}
 
-	protected static void setParentControls(ListView<Message> list, Tab[] tabList, CheckBox selectButton, Text numText, ChoiceBox<User> usersBox) {
+	protected static void setParentControls(ListView<Message> list, Tab[] tabList, CheckBox selectButton, Text numText,
+			ChoiceBox<User> usersBox) {
 		listView = list;
 		exportTab = tabList[0];
 		editTab = tabList[1];
