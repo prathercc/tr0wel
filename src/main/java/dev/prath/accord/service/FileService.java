@@ -1,6 +1,5 @@
 package dev.prath.accord.service;
 
-import java.awt.Desktop;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -11,36 +10,46 @@ import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import dev.prath.accord.domain.Channel;
+import dev.prath.accord.domain.Conversation;
 import dev.prath.accord.domain.Message;
+import dev.prath.accord.utility.DesktopApi;
 import dev.prath.accord.utility.Properties;
 
 @Service
 public class FileService {
+
+	@Autowired
+	AccountService accountService;
 
 	private static final Logger logger = LoggerFactory.getLogger(FileService.class);
 
 	public FileService() {
 		logger.info("FileService has been initialized.");
 	}
-	
+
 	public void exportMessages(List<Message> messages) {
+		Channel selectedChannel = accountService.getSelectedChannel();
+		Conversation selectedConversation = accountService.getSelectedConversation();
 		try {
-			Path tempPath = Files.createTempDirectory("accordExport");
-			File outputFile = new File(tempPath.toString() + "\\accord_exported_messages.txt");
+			Path dir = Files.createTempDirectory("accordExport");
+			File outputFile = new File(dir.toAbsolutePath() + "/accord_exported_messages.txt");
 			FileWriter fileWriter = new FileWriter(outputFile);
-			messages.stream().forEach(msg -> {
+			fileWriter.write(selectedChannel != null
+					? "Guild: " + selectedChannel.getGuildName() + "\nChannel: " + selectedChannel.getName() + "\n"
+					: "Conversation: " + selectedConversation.toString() + "\n");
+			for (Message msg : messages) {
 				try {
-					fileWriter.write(msg.toString() + "\n");
+					fileWriter.write("\n" + msg.toString() + "\n");
+				} catch (Exception e) {
+					logger.error("FileService failed to write message: " + msg.toString());
 				}
-				catch(Exception e) {
-					logger.error("FileService failed to write message to file: " + msg.toString());
-				}
-			});
+			}
 			fileWriter.close();
-			Desktop.getDesktop().open(tempPath.toFile());
-			
+			DesktopApi.browse(dir.toUri());
 		} catch (Exception e) {
 			logger.error("FileService ran into a problem exporting messages!");
 		}
