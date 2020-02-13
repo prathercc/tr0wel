@@ -22,7 +22,8 @@ public class DiscordAccount {
 		return conversations;
 	}
 
-	public void setConversations(List<Conversation> val) {
+	public void setConversations(List<Conversation> val) {	
+		val.stream().forEach(conversation -> conversation.getRecipients().add(user));
 		conversations = val;
 	}
 

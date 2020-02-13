@@ -144,7 +144,6 @@ public class CredentialAuthController {
 				discordAccount.setUser(userdata);
 				setProgressText("Fetching conversations...");
 				List<Conversation> conversations = service.fetchConversations(discordAccount);
-				conversations.stream().forEach(c -> c.getRecipients().add(discordAccount.getUser()));
 				discordAccount.setConversations(conversations);
 				setProgressText("Fetching guilds...");
 				List<Guild> guilds = service.fetchGuilds(discordAccount);
