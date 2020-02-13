@@ -25,6 +25,7 @@ public class Guild {
 
 	public void setChannels(List<Channel> val) {
 		val.stream().filter(channel -> channel.getType() == 0).forEach(channel -> channels.add(channel));
+		channels.stream().forEach(channel -> channel.setGuildName(name));
 	}
 
 	public String getId() {

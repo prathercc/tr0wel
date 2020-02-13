@@ -23,6 +23,8 @@ public class Channel {
 	@JsonProperty("type")
 	private int type = 0;
 	
+	private String guildName = "";
+	
 	private List<Message> messages = new ArrayList<Message>();
 	
 	private List<User> participatingUsers = new ArrayList<User>();
@@ -94,5 +96,13 @@ public class Channel {
 	
 	public String toString() {
 		return getName();
+	}
+
+	public String getGuildName() {
+		return guildName;
+	}
+
+	public void setGuildName(String guildName) {
+		this.guildName = guildName;
 	}
 }
