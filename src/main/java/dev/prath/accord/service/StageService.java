@@ -10,6 +10,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 @Service
 public class StageService {
@@ -56,6 +57,7 @@ public class StageService {
 			stage.setResizable(false);
 			stage.initModality(Modality.WINDOW_MODAL);
 			stage.initOwner(parent);
+			stage.initStyle(StageStyle.UTILITY);
 			logger.info("StageService is returning a new Stage dialog.");
 			return stage;
 		}
