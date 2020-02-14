@@ -3,6 +3,8 @@ package dev.prath.accord.controller.configuration;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -45,6 +47,8 @@ public class ConversationManagementTabController {
 	AccountService accountService;
 	@Autowired
 	StageService stageService;
+	
+	private static final Logger logger = LoggerFactory.getLogger(ConversationManagementTabController.class);
 
 	public void initialize() {
 		initializeListViews();
@@ -62,9 +66,10 @@ public class ConversationManagementTabController {
 				Stage stage = stageService.getNewStageAsDialog("accord - Conversation Manager",
 						"/fxml/Management/Manager.fxml",
 						AuthenticationController.configurationStage);
-				if (stage != null) {
+				if (stage != null) 
 					stage.show();
-				}
+				else
+					logger.error("ConversationManagementTabController received null value for stage.");
 			}
 		});
 	}

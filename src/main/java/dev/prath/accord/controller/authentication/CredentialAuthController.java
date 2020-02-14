@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import dev.prath.accord.FxLauncher;
 import dev.prath.accord.domain.Authorization;
 import dev.prath.accord.domain.Conversation;
 import dev.prath.accord.domain.Credentials;
@@ -43,7 +44,7 @@ public class CredentialAuthController {
 	private static VBox authorizationAuthVbox;
 	private static VBox credentialAuthVbox;
 	
-	private static final Logger logger = LoggerFactory.getLogger(AuthenticationController.class);
+	private static final Logger logger = LoggerFactory.getLogger(CredentialAuthController.class);
 
 	@Autowired
 	AuthenticationService service;
@@ -86,9 +87,10 @@ public class CredentialAuthController {
 				if (stage != null) {
 					AuthenticationController.configurationStage = stage;
 					stage.show();
-					dev.prath.accord.FxLauncher.authenticationMenu.hide();
+					FxLauncher.authenticationMenu.hide();
 				} else {
 					setProgressText("Error launching configuration menu!");
+					logger.error("CredentialAuthController received null value for stage.");
 				}
 			}
 		});
@@ -107,6 +109,7 @@ public class CredentialAuthController {
 				} else {
 					toggleControls(false);
 					setProgressText("User authentication failed!");
+					logger.error("CredentialAuthController was unable to authenticate user.");
 				}
 				return null;
 			}
@@ -152,6 +155,7 @@ public class CredentialAuthController {
 				return userdata != null ? discordAccount : null;
 			}
 			catch(Exception e) {
+				logger.error("CredentialAuthController ran into an error creating the DiscordAccount object.");
 				return null;
 			}
 		}

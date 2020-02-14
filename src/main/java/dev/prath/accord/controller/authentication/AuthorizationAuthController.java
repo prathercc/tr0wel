@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import dev.prath.accord.FxLauncher;
 import dev.prath.accord.domain.Authorization;
 import dev.prath.accord.domain.Conversation;
 import dev.prath.accord.domain.Credentials;
@@ -37,7 +38,7 @@ public class AuthorizationAuthController {
 	private static VBox authorizationAuthVbox;
 	private static VBox credentialAuthVbox;
 	
-	private static final Logger logger = LoggerFactory.getLogger(AuthenticationController.class);
+	private static final Logger logger = LoggerFactory.getLogger(AuthorizationAuthController.class);
 
 	@Autowired
 	AuthenticationService service;
@@ -71,9 +72,10 @@ public class AuthorizationAuthController {
 				if (stage != null) {
 					AuthenticationController.configurationStage = stage;
 					stage.show();
-					dev.prath.accord.FxLauncher.authenticationMenu.hide();
+					FxLauncher.authenticationMenu.hide();
 				} else {
 					setProgressText("Error launching configuration menu!");
+					logger.error("AuthorizationAuthController received null value for stage.");
 				}
 			}
 		});
@@ -92,6 +94,7 @@ public class AuthorizationAuthController {
 				} else {
 					toggleControls(false);
 					setProgressText("User authentication failed!");
+					logger.error("AuthorizationAuthController was unable to authenticate user.");
 				}
 				return null;
 			}
@@ -138,6 +141,7 @@ public class AuthorizationAuthController {
 				return userdata != null ? discordAccount : null;
 			}
 			catch(Exception e) {
+				logger.error("AuthorizationAuthController ran into an error creating the DiscordAccount object.");
 				return null;
 			}
 		}
