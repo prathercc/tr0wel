@@ -21,10 +21,12 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
+import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TitledPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -37,9 +39,13 @@ public class ChannelManagementTabController {
 	private ListView<Guild> guildListView;
 	@FXML
 	private ListView<Channel> channelListView;
+	@FXML
+	private Text progressText;
 
-	private static Text configProgressText;
-	private static TabPane configurationTabPane;
+	private static Accordion configurationAccordian;
+	private static TitledPane conversationTitlePane;
+	private static TitledPane channelTitlePane;
+	private static TitledPane statsTitlePane;
 
 	@Autowired
 	MessageService service;
@@ -116,14 +122,14 @@ public class ChannelManagementTabController {
 		guildListView.setDisable(val);
 		channelListView.setDisable(val);
 		manageChannelButton.setDisable(val);
-		configurationTabPane.setDisable(val);
+//		configurationAccordian.setDisable(val);
 	}
 
 	private void updateConfigProgress(String val) {
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
-				configProgressText.setText(val);
+				progressText.setText(val);
 			}
 		});
 	}
@@ -147,8 +153,10 @@ public class ChannelManagementTabController {
 		});
 	}
 	
-	protected static void setParentControls(Text text, TabPane tabPane) {
-		configProgressText = text;
-		configurationTabPane = tabPane;
+	protected static void setParentControls(Accordion accordian, TitledPane[] titlePaneArr) {
+		conversationTitlePane = titlePaneArr[0];
+		channelTitlePane = titlePaneArr[1];
+		statsTitlePane = titlePaneArr[2];
+		configurationAccordian = accordian;
 	}
 }
