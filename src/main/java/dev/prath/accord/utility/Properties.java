@@ -5,6 +5,7 @@ import java.nio.file.Paths;
 
 public class Properties {
 	
+	public static final String applicationName = "razlad";
 	public static final String discordUsersUrl = "https://discordapp.com/api/users";
 	public static final String discordGuildsUrl = "https://discordapp.com/api/guilds";
 	public static final String discordAuthUrl = "https://discordapp.com/api/auth";
