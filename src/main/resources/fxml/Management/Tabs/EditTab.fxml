@@ -10,7 +10,7 @@
 	minHeight="-Infinity" minWidth="-Infinity" prefHeight="110.0"
 	prefWidth="323.0" xmlns="http://javafx.com/javafx/11.0.1"
 	xmlns:fx="http://javafx.com/fxml/1"
-	fx:controller="dev.prath.accord.controller.management.EditTabController">
+	fx:controller="dev.prath.razlad.controller.management.EditTabController">
 	<children>
 		<AnchorPane prefHeight="431.0" prefWidth="600.0">
 			<children>

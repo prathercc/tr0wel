@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<VBox prefHeight="398.0" prefWidth="642.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dev.prath.accord.controller.management.ManagerController">
+<VBox prefHeight="398.0" prefWidth="642.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dev.prath.razlad.controller.management.ManagerController">
 	<children>
 		<AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="665.0" prefWidth="892.0" VBox.vgrow="ALWAYS">
 			<children>
