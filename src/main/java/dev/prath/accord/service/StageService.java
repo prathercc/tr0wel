@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import dev.prath.accord.Main;
+import dev.prath.accord.utility.Properties;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -14,16 +15,17 @@ import javafx.stage.StageStyle;
 
 @Service
 public class StageService {
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(StageService.class);
 	private FXMLLoader fxmlLoader;
 	private Parent rootNode;
-	
+
 	public StageService() {
 		logger.info("StageService has been initialized.");
 	}
-	
+
 	public Stage getNewStage(String title, String fxml) {
+		title = title.length() < 1 ? Properties.applicationName : title;
 		try {
 			fxmlLoader = new FXMLLoader();
 			fxmlLoader.setControllerFactory(Main.springContext::getBean);
@@ -36,15 +38,14 @@ public class StageService {
 			stage.setResizable(false);
 			logger.info("StageService is returning a new Stage.");
 			return stage;
-		}
-		catch(Exception e) {
+		} catch (Exception e) {
 			logger.error("StageService could not return a new Stage!");
 			return null;
 		}
-		
 	}
-	
+
 	public Stage getNewStageAsDialog(String title, String fxml, Stage parent) {
+		title = title.length() < 1 ? Properties.applicationName : title;
 		try {
 			fxmlLoader = new FXMLLoader();
 			fxmlLoader.setControllerFactory(Main.springContext::getBean);
@@ -60,11 +61,9 @@ public class StageService {
 			stage.initStyle(StageStyle.UTILITY);
 			logger.info("StageService is returning a new Stage dialog.");
 			return stage;
-		}
-		catch(Exception e) {
+		} catch (Exception e) {
 			logger.error("StageService could not return a new Stage dialog!");
 			return null;
 		}
-		
 	}
 }
