@@ -53,7 +53,6 @@ public class ExportTabController {
 	public void exportMessages() {
 		Channel selectedChannel = accountService.getSelectedChannel();
 		Conversation selectedConversation = accountService.getSelectedConversation();
-
 		List<User> userExportList = exportAllCheckBox
 				.isSelected()
 						? participatingUsersList.getItems()
@@ -61,8 +60,7 @@ public class ExportTabController {
 								? participatingUsersList.getItems().stream().filter(user -> user.getIsSelected().get())
 										.collect(Collectors.toList())
 								: null;
-
-		if (userExportList != null) {
+		if (userExportList != null && userExportList.size() > 0) {
 			List<Message> allMessages = selectedChannel != null ? selectedChannel.getMessages()
 					: selectedConversation.getMessages();
 
