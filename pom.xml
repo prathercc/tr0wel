@@ -123,7 +123,7 @@
 			</plugin>
 
 		</plugins>
-		<sourceDirectory>src/main/javadev/prath/razlad/</sourceDirectory> 
+		<sourceDirectory>src/main/java/prath/razlad/</sourceDirectory> 
 	</build>
 
 </project>
