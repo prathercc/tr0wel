@@ -101,7 +101,9 @@ public class EditTabController {
 					});
 				});
 				listView.refresh();
-				updateText(numOfMsgText, "Found " + listView.getItems().size() + " messages");
+				updateText(numOfMsgText, listView.getItems().size() != 0
+						? "Found " + listView.getItems().size() + " messages by user."
+						: "");
 			}
 		});
 	}
