@@ -35,8 +35,8 @@ public class FileService {
 		Channel selectedChannel = accountService.getSelectedChannel();
 		Conversation selectedConversation = accountService.getSelectedConversation();
 		try {
-			Path dir = Files.createTempDirectory("accordExport");
-			File outputFile = new File(dir.toAbsolutePath() + "/accord_exported_messages.txt");
+			Path dir = Files.createTempDirectory("razladExport");
+			File outputFile = new File(dir.toAbsolutePath() + "/razlad_exported_messages.txt");
 			FileWriter fileWriter = new FileWriter(outputFile);
 			fileWriter.write(selectedChannel != null
 					? "Guild: " + selectedChannel.getGuildName() + "\nChannel: " + selectedChannel.getName() + "\n"
