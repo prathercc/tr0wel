@@ -13,7 +13,7 @@
 				<Button fx:id="manageDmButton" disable="true" focusTraversable="false" layoutX="91.0" layoutY="205.0" mnemonicParsing="false" onAction="#manageConversation" text="Manage Conversation" />
             <ListView fx:id="conversationListView" layoutX="4.0" layoutY="29.0" prefHeight="163.0" prefWidth="334.0" />
             <Text layoutX="125.0" layoutY="19.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Conversations" />
-            <Text fx:id="progressText" layoutX="4.0" layoutY="243.0" strokeType="OUTSIDE" strokeWidth="0.0" />
+            <Text fx:id="progressText" layoutX="4.0" layoutY="248.0" strokeType="OUTSIDE" strokeWidth="0.0" text="loo" />
 			</children>
 		</AnchorPane>
 	</children>

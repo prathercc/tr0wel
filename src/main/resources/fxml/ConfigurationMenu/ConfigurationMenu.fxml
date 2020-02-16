@@ -1,58 +1,70 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Accordion?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="338.0" prefWidth="456.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <AnchorPane prefHeight="502.0" prefWidth="1254.0">
-         <children>
-            <Accordion fx:id="configurationAccordian" prefHeight="338.0" prefWidth="456.0">
-              <panes>
-                <TitledPane fx:id="conversationTitlePane" animated="false" text="Conversations">
-                  <content>
-                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                           <children>
-                              <VBox layoutX="55.0" layoutY="6.0" prefHeight="157.0" prefWidth="344.0">
-                                 <children>
-                                    <fx:include source="Tabs/ConversationManagement.fxml" />
-                                 </children>
-                              </VBox>
-                           </children>
-                        </AnchorPane>
-                  </content>
-                </TitledPane>
-                <TitledPane fx:id="channelTitlePane" animated="false" text="Channels">
-                  <content>
-                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                           <children>
-                              <VBox layoutX="6.0" prefHeight="149.0" prefWidth="439.0">
-                                 <children>
-                                    <fx:include source="Tabs/ChannelManagement.fxml" />
-                                 </children>
-                              </VBox>
-                           </children>
-                        </AnchorPane>
-                  </content>
-                </TitledPane>
-                  <TitledPane fx:id="statsTitlePane" animated="false" text="Stats">
-                    <content>
-                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                           <children>
-                              <VBox layoutX="41.0" layoutY="14.0" prefHeight="137.0" prefWidth="373.0">
-                                 <children>
-                                    <fx:include source="Tabs/Stats.fxml" />
-                                 </children>
-                              </VBox>
-                           </children>
-                        </AnchorPane>
-                    </content>
-                  </TitledPane>
-              </panes>
-            </Accordion>
-         </children>
-      </AnchorPane>
-   </children>
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="338.0" prefWidth="456.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dev.prath.accord.controller.configuration.ConfigurationController">
+	<children>
+		<AnchorPane prefHeight="502.0" prefWidth="1254.0">
+			<children>
+            <ImageView fitHeight="242.0" fitWidth="214.0" layoutX="121.0" layoutY="81.0" opacity="0.13" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../images/prathdev.png" />
+               </image>
+            </ImageView>
+				<Accordion fx:id="configurationAccordian" prefHeight="338.0" prefWidth="456.0">
+					<panes>
+						<TitledPane fx:id="conversationTitlePane" animated="false" text="Conversations">
+							<content>
+								<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+									<children>
+										<VBox layoutX="55.0" layoutY="6.0" prefHeight="157.0" prefWidth="344.0">
+											<children>
+												<fx:include source="Tabs/ConversationManagement.fxml" />
+											</children>
+										</VBox>
+									</children>
+								</AnchorPane>
+							</content>
+						</TitledPane>
+						<TitledPane fx:id="channelTitlePane" animated="false" text="Channels">
+							<content>
+								<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+									<children>
+										<VBox layoutX="6.0" prefHeight="149.0" prefWidth="439.0">
+											<children>
+												<fx:include source="Tabs/ChannelManagement.fxml" />
+											</children>
+										</VBox>
+									</children>
+								</AnchorPane>
+							</content>
+						</TitledPane>
+						<TitledPane fx:id="statsTitlePane" animated="false" text="Stats">
+							<content>
+								<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+									<children>
+										<VBox layoutX="41.0" layoutY="49.0" prefHeight="137.0" prefWidth="373.0">
+											<children>
+												<fx:include source="Tabs/Stats.fxml" />
+											</children>
+										</VBox>
+										<Separator layoutX="24.0" layoutY="19.0" orientation="VERTICAL" prefHeight="200.0" />
+										<Separator layoutX="26.0" layoutY="211.0" prefHeight="16.0" prefWidth="396.0" />
+                              <Separator layoutX="26.0" layoutY="12.0" prefHeight="16.0" prefWidth="396.0" />
+                              <Separator layoutX="419.0" layoutY="19.0" orientation="VERTICAL" prefHeight="200.0" />
+									</children>
+								</AnchorPane>
+							</content>
+						</TitledPane>
+					</panes>
+				</Accordion>
+			</children>
+		</AnchorPane>
+	</children>
 </VBox>
