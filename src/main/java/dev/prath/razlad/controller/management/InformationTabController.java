@@ -1,5 +1,7 @@
 package dev.prath.razlad.controller.management;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -26,19 +28,29 @@ public class InformationTabController {
 	@Autowired
 	AccountService accountService;
 
+	private static final Logger logger = LoggerFactory.getLogger(InformationTabController.class);
+
 	public void initialize() {
 		var selectedChannel = accountService.getSelectedChannel();
 		var selectedConversation = accountService.getSelectedConversation();
 		var users = selectedChannel != null ? selectedChannel.getParticipatingUsers()
 				: selectedConversation.getRecipients();
-		Message lastMessage = selectedChannel != null ? selectedChannel.getMessages().get(0)
-				: selectedConversation.getMessages().get(0);
+
+		Message lastMessage = null;
+		try {
+			lastMessage = selectedChannel != null ? selectedChannel.getMessages().get(0)
+					: selectedConversation.getMessages().get(0);
+		} catch (Exception e) {
+			logger.warn("InformationTabController was unable to find a last message for "
+					+ (selectedChannel != null ? "channel '" + selectedChannel.getName() + "'"
+							: "conversation '" + selectedConversation.toString() + "'"));
+		}
 
 		nameText.setText(selectedChannel != null ? selectedChannel.getName() : selectedConversation.toString());
 		idText.setText(selectedChannel != null ? selectedChannel.getId() : selectedConversation.getId());
 		activeUsersText.setText(Integer.toString(users.size()));
 		typeText.setText(selectedChannel != null ? "Channel" : "Conversation");
 		nsfwText.setText(selectedConversation != null ? "N/A" : selectedChannel.getIsNsfw() ? "Yes" : " No");
-		lastMessageDateText.setText(lastMessage.getDatePosted());
+		lastMessageDateText.setText(lastMessage != null ? lastMessage.getDatePosted() : "N/A");
 	}
 }
