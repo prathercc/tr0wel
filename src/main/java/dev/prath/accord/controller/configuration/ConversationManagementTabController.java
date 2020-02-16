@@ -41,7 +41,7 @@ public class ConversationManagementTabController {
 	private Button manageDmButton;
 	@FXML
 	private Text progressText;
-	
+
 	private static Accordion configurationAccordian;
 	private static TitledPane conversationTitlePane;
 	private static TitledPane channelTitlePane;
@@ -53,13 +53,14 @@ public class ConversationManagementTabController {
 	AccountService accountService;
 	@Autowired
 	StageService stageService;
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(ConversationManagementTabController.class);
 
 	public void initialize() {
 		initializeListViews();
 		DiscordAccount discordAccount = accountService.getDiscordAccount();
-		discordAccount.getConversations().stream().forEach(conversation -> conversationListView.getItems().add(conversation));
+		discordAccount.getConversations().stream()
+				.forEach(conversation -> conversationListView.getItems().add(conversation));
 	}
 
 	private void launchManageConversation(List<Message> conversationMessages) {
@@ -69,10 +70,9 @@ public class ConversationManagementTabController {
 				Conversation selectedConversation = accountService.getSelectedConversation();
 				selectedConversation.setMessages(conversationMessages);
 				accountService.setSelectedConversation(selectedConversation);
-				Stage stage = stageService.getNewStageAsDialog("accord - Conversation Manager",
-						"/fxml/Management/Manager.fxml",
+				Stage stage = stageService.getNewStageAsDialog("", "/fxml/Management/Manager.fxml",
 						AuthenticationController.configurationStage);
-				if (stage != null) 
+				if (stage != null)
 					stage.show();
 				else
 					logger.error("ConversationManagementTabController received null value for stage.");
@@ -108,8 +108,8 @@ public class ConversationManagementTabController {
 					messageList.addAll(newMessagesList); // Populate our messageList with the additional data
 					Thread.sleep(250);
 					lastId = newMessagesList.get(newMessagesList.size() - 1).getId(); // Save the last id we are on
-					updateConfigProgress(newMessagesList.size() != 0 ? "Loading - [" + lastId + "]"
-							: "[" + (lastId.length() > 0 ? lastId : "Last Id not found") + "] - Failure!");
+					updateConfigProgress(newMessagesList.size() != 0 ? "Loading - " + lastId
+							: (lastId.length() > 0 ? lastId : "Last Id not found") + " - Failure!");
 				}
 				updateConfigProgress("");
 				toggleControls(false);
@@ -123,7 +123,7 @@ public class ConversationManagementTabController {
 	private void toggleControls(boolean val) {
 		conversationListView.setDisable(val);
 		manageDmButton.setDisable(val);
-//		configurationAccordian.setDisable(val);
+		configurationAccordian.setDisable(val);
 	}
 
 	private void updateConfigProgress(String val) {
@@ -144,6 +144,7 @@ public class ConversationManagementTabController {
 			}
 		});
 	}
+
 	protected static void setParentControls(Accordion accordian, TitledPane[] titlePaneArr) {
 		conversationTitlePane = titlePaneArr[0];
 		channelTitlePane = titlePaneArr[1];

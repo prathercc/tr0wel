@@ -33,11 +33,11 @@ public class AuthorizationAuthController {
 	private TextField authorizationCodeTextField;
 	@FXML
 	private Button authorizeButton;
-	
+
 	private static Text progressText;
 	private static VBox authorizationAuthVbox;
 	private static VBox credentialAuthVbox;
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(AuthorizationAuthController.class);
 
 	@Autowired
@@ -51,24 +51,23 @@ public class AuthorizationAuthController {
 
 	@Autowired
 	StageService stageService;
-	
+
 	public void initialize() {
 
 	}
-	
+
 	public void authorize() {
 		Thread thread = new Thread(getNewAuthTask());
 		thread.setDaemon(true);
 		thread.start();
 	}
-	
+
 	private void launchConfiguration() {
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
 				setProgressText("Launching configuration menu...");
-				Stage stage = stageService.getNewStage("accord - Configuration Menu",
-						"/fxml/ConfigurationMenu/ConfigurationMenu.fxml");
+				Stage stage = stageService.getNewStage("", "/fxml/ConfigurationMenu/ConfigurationMenu.fxml");
 				if (stage != null) {
 					AuthenticationController.configurationStage = stage;
 					stage.show();
@@ -139,15 +138,14 @@ public class AuthorizationAuthController {
 				guilds.stream().forEach(guild -> guild.setChannels(service.fetchChannels(guild, discordAccount)));
 				discordAccount.setGuilds(guilds);
 				return userdata != null ? discordAccount : null;
-			}
-			catch(Exception e) {
+			} catch (Exception e) {
 				logger.error("AuthorizationAuthController ran into an error creating the DiscordAccount object.");
 				return null;
 			}
 		}
 		return null;
 	}
-	
+
 	protected static void setParentControls(Text progress, VBox authorization, VBox credential) {
 		progressText = progress;
 		authorizationAuthVbox = authorization;

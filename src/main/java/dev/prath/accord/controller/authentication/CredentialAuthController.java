@@ -39,11 +39,11 @@ public class CredentialAuthController {
 	private Button authenticateButton;
 	@FXML
 	private CheckBox rememberMeCheckBox;
-	
+
 	private static Text progressText;
 	private static VBox authorizationAuthVbox;
 	private static VBox credentialAuthVbox;
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(CredentialAuthController.class);
 
 	@Autowired
@@ -57,7 +57,7 @@ public class CredentialAuthController {
 
 	@Autowired
 	StageService stageService;
-	
+
 	public void initialize() {
 		ioService.checkIniFolderPath();
 		String iniValue = ioService.getIniValue();
@@ -67,13 +67,13 @@ public class CredentialAuthController {
 			emailTextField.setFocusTraversable(false);
 		}
 	}
-	
+
 	public void authenticate() {
 		Thread thread = new Thread(getNewAuthTask());
 		thread.setDaemon(true);
 		thread.start();
 	}
-	
+
 	private void launchConfiguration() {
 		Platform.runLater(new Runnable() {
 			@Override
@@ -82,8 +82,7 @@ public class CredentialAuthController {
 						? emailTextField.getText()
 						: ioService.getIniValue());
 				setProgressText("Launching configuration menu...");
-				Stage stage = stageService.getNewStage("accord - Configuration Menu",
-						"/fxml/ConfigurationMenu/ConfigurationMenu.fxml");
+				Stage stage = stageService.getNewStage("", "/fxml/ConfigurationMenu/ConfigurationMenu.fxml");
 				if (stage != null) {
 					AuthenticationController.configurationStage = stage;
 					stage.show();
@@ -95,7 +94,7 @@ public class CredentialAuthController {
 			}
 		});
 	}
-	
+
 	private Task<Void> getNewAuthTask() {
 		Task<Void> authenticationTask = new Task<Void>() {
 			@Override
@@ -116,7 +115,7 @@ public class CredentialAuthController {
 		};
 		return authenticationTask;
 	}
-	
+
 	private void toggleControls(boolean val) {
 		Platform.runLater(new Runnable() {
 			@Override
@@ -135,7 +134,7 @@ public class CredentialAuthController {
 			}
 		});
 	}
-	
+
 	private DiscordAccount createDiscordAccount(Credentials credentials) {
 		DiscordAccount discordAccount = new DiscordAccount(credentials);
 		Authorization authorization = service.fetchAuthorization(credentials);
@@ -153,15 +152,14 @@ public class CredentialAuthController {
 				guilds.stream().forEach(guild -> guild.setChannels(service.fetchChannels(guild, discordAccount)));
 				discordAccount.setGuilds(guilds);
 				return userdata != null ? discordAccount : null;
-			}
-			catch(Exception e) {
+			} catch (Exception e) {
 				logger.error("CredentialAuthController ran into an error creating the DiscordAccount object.");
 				return null;
 			}
 		}
 		return null;
 	}
-	
+
 	protected static void setParentControls(Text progress, VBox authorization, VBox credential) {
 		progressText = progress;
 		authorizationAuthVbox = authorization;

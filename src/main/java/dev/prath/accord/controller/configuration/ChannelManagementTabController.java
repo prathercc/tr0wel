@@ -71,9 +71,9 @@ public class ChannelManagementTabController {
 				Channel selectedChannel = channelListView.getSelectionModel().getSelectedItem();
 				selectedChannel.setMessages(channelMessages);
 				accountService.setSelectedChannel(selectedChannel);
-				Stage stage = stageService.getNewStageAsDialog("accord - Channel Manager Menu",
-						"/fxml/Management/Manager.fxml", AuthenticationController.configurationStage);
-				if (stage != null) 
+				Stage stage = stageService.getNewStageAsDialog("", "/fxml/Management/Manager.fxml",
+						AuthenticationController.configurationStage);
+				if (stage != null)
 					stage.show();
 				else
 					logger.error("ChannelManagementTabController received null value for stage.");
@@ -106,8 +106,8 @@ public class ChannelManagementTabController {
 					messageList.addAll(newMessagesList); // Populate our messageList with the additional data
 					Thread.sleep(250);
 					lastId = newMessagesList.size() != 0 ? newMessagesList.get(newMessagesList.size() - 1).getId() : "";
-					updateConfigProgress(newMessagesList.size() != 0 ? "Loading - [" + lastId + "]"
-							: "[" + (lastId.length() > 0 ? lastId : "Last Id not found") + "] - Failure!");
+					updateConfigProgress(newMessagesList.size() != 0 ? "Loading - " + lastId
+							: (lastId.length() > 0 ? lastId : "Last Id not found") + " - Failure!");
 				}
 				updateConfigProgress("");
 				toggleControls(false);
@@ -122,7 +122,7 @@ public class ChannelManagementTabController {
 		guildListView.setDisable(val);
 		channelListView.setDisable(val);
 		manageChannelButton.setDisable(val);
-//		configurationAccordian.setDisable(val);
+		configurationAccordian.setDisable(val);
 	}
 
 	private void updateConfigProgress(String val) {
@@ -152,7 +152,7 @@ public class ChannelManagementTabController {
 			}
 		});
 	}
-	
+
 	protected static void setParentControls(Accordion accordian, TitledPane[] titlePaneArr) {
 		conversationTitlePane = titlePaneArr[0];
 		channelTitlePane = titlePaneArr[1];

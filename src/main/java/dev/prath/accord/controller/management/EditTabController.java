@@ -72,10 +72,10 @@ public class EditTabController {
 							: selectedConversation.getId();
 					var response = messageService.editMessage(msg, newMessageTextField.getText(), selectedId);
 					if (response) {
-						updateText(progressText, "Edit Success - [" + msg.getId() + "]");
+						updateText(progressText, "Edit Success - " + msg.getId());
 						msgsToEdit.add(msg);
 					} else {
-						updateText(progressText, "Edit Failure - [" + msg.getId() + "]");
+						updateText(progressText, "Edit Failure - " + msg.getId());
 					}
 					Thread.sleep(250);
 				}

@@ -68,10 +68,10 @@ public class DeleteTabController {
 					String selectedId = selectedChannel != null ? selectedChannel.getId() : selectedConversation.getId();
 					var response = messageService.deleteMessage(msg, selectedId);
 					if (response) {
-						updateText(progressText, "Deletion Success - [" + msg.getId() + "]");
+						updateText(progressText, "Deletion Success - " + msg.getId());
 						msgsToDelete.add(msg);
 					} else {
-						updateText(progressText, "Deletion Failure - [" + msg.getId() + "]");
+						updateText(progressText, "Deletion Failure - " + msg.getId());
 					}
 					Thread.sleep(250);
 				}
