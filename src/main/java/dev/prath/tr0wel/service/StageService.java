@@ -4,8 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import dev.prath.razlad.Main;
-import dev.prath.razlad.utility.Properties;
+import dev.prath.tr0wel.Main;
+import dev.prath.tr0wel.utility.Properties;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;

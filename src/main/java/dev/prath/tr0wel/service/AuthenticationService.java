@@ -17,14 +17,14 @@ import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import dev.prath.razlad.domain.Authorization;
-import dev.prath.razlad.domain.Channel;
-import dev.prath.razlad.domain.Conversation;
-import dev.prath.razlad.domain.Credentials;
-import dev.prath.razlad.domain.DiscordAccount;
-import dev.prath.razlad.domain.Guild;
-import dev.prath.razlad.domain.User;
-import dev.prath.razlad.utility.Properties;
+import dev.prath.tr0wel.domain.Authorization;
+import dev.prath.tr0wel.domain.Channel;
+import dev.prath.tr0wel.domain.Conversation;
+import dev.prath.tr0wel.domain.Credentials;
+import dev.prath.tr0wel.domain.DiscordAccount;
+import dev.prath.tr0wel.domain.Guild;
+import dev.prath.tr0wel.domain.User;
+import dev.prath.tr0wel.utility.Properties;
 
 @Service
 public class AuthenticationService {

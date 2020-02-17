@@ -3,7 +3,7 @@ package dev.prath.tr0wel.controller.configuration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import dev.prath.razlad.service.AccountService;
+import dev.prath.tr0wel.service.AccountService;
 import javafx.fxml.FXML;
 import javafx.scene.text.Text;
 

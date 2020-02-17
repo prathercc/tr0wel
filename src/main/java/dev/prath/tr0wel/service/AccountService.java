@@ -9,11 +9,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import dev.prath.razlad.domain.Channel;
-import dev.prath.razlad.domain.Conversation;
-import dev.prath.razlad.domain.DiscordAccount;
-import dev.prath.razlad.domain.Message;
-import dev.prath.razlad.domain.User;
+import dev.prath.tr0wel.domain.Channel;
+import dev.prath.tr0wel.domain.Conversation;
+import dev.prath.tr0wel.domain.DiscordAccount;
+import dev.prath.tr0wel.domain.Message;
+import dev.prath.tr0wel.domain.User;
 
 @Service
 public class AccountService {

@@ -9,12 +9,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import dev.prath.razlad.domain.Channel;
-import dev.prath.razlad.domain.Conversation;
-import dev.prath.razlad.domain.Message;
-import dev.prath.razlad.domain.User;
-import dev.prath.razlad.service.AccountService;
-import dev.prath.razlad.service.MessageService;
+import dev.prath.tr0wel.domain.Channel;
+import dev.prath.tr0wel.domain.Conversation;
+import dev.prath.tr0wel.domain.Message;
+import dev.prath.tr0wel.domain.User;
+import dev.prath.tr0wel.service.AccountService;
+import dev.prath.tr0wel.service.MessageService;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;

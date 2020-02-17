@@ -24,8 +24,8 @@ import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import dev.prath.razlad.domain.Message;
-import dev.prath.razlad.utility.Properties;
+import dev.prath.tr0wel.domain.Message;
+import dev.prath.tr0wel.utility.Properties;
 
 @Service
 public class MessageService {
