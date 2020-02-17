@@ -123,7 +123,7 @@
 			</plugin>
 
 		</plugins>
-		<sourceDirectory>src/main/java/prath/tr0wel/</sourceDirectory> 
+		<sourceDirectory>src/main/java/dev/prath/tr0wel/</sourceDirectory> 
 	</build>
 
 </project>
