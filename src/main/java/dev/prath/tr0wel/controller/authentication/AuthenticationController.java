@@ -25,6 +25,8 @@ public class AuthenticationController {
 	@FXML
 	private ImageView githubLogo;
 	@FXML
+	private ImageView githubLogoText;
+	@FXML
 	private ImageView prathdevLogo;
 	@FXML
 	private Hyperlink whatIsThisLink;
@@ -38,6 +40,9 @@ public class AuthenticationController {
 		CredentialAuthController.setParentControls(progressText, authorizationAuthVbox, credentialAuthVbox);
 		
 		githubLogo.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+			logger.info("GitHub image was clicked, opening - " + Properties.sourceCodeLink);
+		});
+		githubLogoText.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
 			logger.info("GitHub image was clicked, opening - " + Properties.sourceCodeLink);
 		});
 		prathdevLogo.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
