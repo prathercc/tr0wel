@@ -9,7 +9,7 @@
 	minHeight="-Infinity" minWidth="-Infinity" prefHeight="110.0"
 	prefWidth="237.0" xmlns="http://javafx.com/javafx/11.0.1"
 	xmlns:fx="http://javafx.com/fxml/1"
-	fx:controller="dev.prath.tr0wel.controller.management.DeleteTabController">
+	fx:controller="cc.prather.tr0wel.controller.management.DeleteTabController">
 	<children>
 		<AnchorPane prefHeight="120.0" prefWidth="237.0">
 			<children>

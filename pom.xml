@@ -9,7 +9,7 @@
 		<version>2.2.3.RELEASE</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>dev.prath</groupId>
+	<groupId>cc.prather</groupId>
 	<artifactId>tr0wel</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>tr0wel</name>
@@ -92,7 +92,7 @@
 				<artifactId>javafx-maven-plugin</artifactId>
 				<version>0.0.3</version>
 				<configuration>
-					<mainClass>dev.prath.tr0wel.Main</mainClass>
+					<mainClass>cc.prather.tr0wel.Main</mainClass>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -105,7 +105,7 @@
 					</descriptorRefs>
 					<archive>
 						<manifest>
-							<mainClass>dev.prath.tr0wel.Main</mainClass>
+							<mainClass>cc.prather.tr0wel.Main</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
@@ -123,7 +123,7 @@
 			</plugin>
 
 		</plugins>
-		<sourceDirectory>src/main/java/dev/prath/tr0wel/</sourceDirectory> 
+		<sourceDirectory>src/main/java/cc/prather/tr0wel/</sourceDirectory> 
 	</build>
 
 </project>
