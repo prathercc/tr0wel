@@ -9,48 +9,51 @@
 	<children>
 		<AnchorPane prefHeight="442.0" prefWidth="600.0">
 			<children>
-				<Text fx:id="authorizationText" layoutX="62.0" layoutY="18.0" strokeType="OUTSIDE" strokeWidth="0.0" text="AJNN3459fxfm30SDOMAJNN3459.xf********" />
-				<Text fx:id="usernameText" layoutX="98.0" layoutY="36.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Testuser123" />
+				<Text fx:id="authorizationText" layoutX="53.0" layoutY="18.0" strokeType="OUTSIDE" strokeWidth="0.0" text="AJNN3459fxfm30SDOMAJNN3459.xf********">
+               <font>
+                  <Font name="Kinnari" size="13.0" />
+               </font></Text>
+				<Text fx:id="usernameText" layoutX="74.0" layoutY="36.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Testuser123" />
 				<Text fx:id="idText" layoutX="32.0" layoutY="92.0" strokeType="OUTSIDE" strokeWidth="0.0" text="240u52932" />
-				<Text fx:id="discriminatorText" layoutX="128.0" layoutY="54.0" strokeType="OUTSIDE" strokeWidth="0.0" text="1234" />
-				<Text fx:id="activeGuildsText" layoutX="122.0" layoutY="113.0" strokeType="OUTSIDE" strokeWidth="0.0" text="419" />
-				<Text fx:id="emailText" layoutX="63.0" layoutY="73.0" strokeType="OUTSIDE" strokeWidth="0.0" text="testyuser@testing.test" />
+				<Text fx:id="discriminatorText" layoutX="101.0" layoutY="54.0" strokeType="OUTSIDE" strokeWidth="0.0" text="1234" />
+				<Text fx:id="activeGuildsText" layoutX="98.0" layoutY="113.0" strokeType="OUTSIDE" strokeWidth="0.0" text="419" />
+				<Text fx:id="emailText" layoutX="55.0" layoutY="73.0" strokeType="OUTSIDE" strokeWidth="0.0" text="testyuser@testing.test" />
 				<Text fontSmoothingType="LCD" layoutX="9.0" layoutY="18.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Auth.:">
 					<font>
-						<Font name="System Bold" size="14.0" />
+						<Font name="Kinnari" size="14.0" />
 					</font>
 				</Text>
 				<Text fontSmoothingType="LCD" layoutX="8.0" layoutY="36.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Username: ">
 					<font>
-						<Font name="System Bold" size="14.0" />
+						<Font name="Kinnari" size="14.0" />
 					</font>
 				</Text>
 				<Text fontSmoothingType="LCD" layoutX="9.0" layoutY="54.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Discriminator: ">
 					<font>
-						<Font name="System Bold" size="14.0" />
+						<Font name="Kinnari" size="14.0" />
 					</font>
 				</Text>
 				<Text fontSmoothingType="LCD" layoutX="8.0" layoutY="73.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Email:">
 					<font>
-						<Font name="System Bold" size="14.0" />
+						<Font name="Kinnari" size="14.0" />
 					</font>
 				</Text>
 				<Text fontSmoothingType="LCD" layoutX="8.0" layoutY="92.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Id: ">
 					<font>
-						<Font name="System Bold" size="14.0" />
+						<Font name="Kinnari" size="14.0" />
 					</font>
 				</Text>
 				<Text fontSmoothingType="LCD" layoutX="8.0" layoutY="112.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Active Guilds: ">
 					<font>
-						<Font name="System Bold" size="14.0" />
+						<Font name="Kinnari" size="14.0" />
 					</font>
 				</Text>
 				<Text fontSmoothingType="LCD" layoutX="8.0" layoutY="129.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Active Conversations: ">
 					<font>
-						<Font name="System Bold" size="14.0" />
+						<Font name="Kinnari" size="14.0" />
 					</font>
 				</Text>
-				<Text fx:id="activeConversationsText" layoutX="186.0" layoutY="129.0" strokeType="OUTSIDE" strokeWidth="0.0" text="419" />
+				<Text fx:id="activeConversationsText" layoutX="144.0" layoutY="129.0" strokeType="OUTSIDE" strokeWidth="0.0" text="419" />
 			</children>
 		</AnchorPane>
 	</children>

@@ -8,14 +8,14 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="113.0" prefWidth="198.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cc.prather.tr0wel.controller.authentication.AuthorizationAuthController">
    <children>
-      <Text layoutX="5.0" layoutY="19.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Authorization Sign In">
+      <Text layoutX="23.0" layoutY="20.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Authorization Sign In">
          <font>
-            <Font name="Tlwg Typist Bold" size="15.0" />
+            <Font name="Kinnari" size="17.0" />
          </font></Text>
-      <TextField fx:id="authorizationCodeTextField" layoutX="14.0" layoutY="43.0" promptText="Authorization Code" />
-      <Button fx:id="authorizeButton" layoutX="55.0" layoutY="85.0" mnemonicParsing="false" onAction="#authorize" text="Authorize">
+      <TextField fx:id="authorizationCodeTextField" layoutX="14.0" layoutY="41.0" promptText="Authorization Code" />
+      <Button fx:id="authorizeButton" layoutX="61.0" layoutY="74.0" mnemonicParsing="false" onAction="#authorize" text="Authorize">
          <font>
-            <Font name="Tlwg Typist Bold" size="13.0" />
+            <Font name="Kinnari" size="14.0" />
          </font></Button>
    </children>
 </AnchorPane>
