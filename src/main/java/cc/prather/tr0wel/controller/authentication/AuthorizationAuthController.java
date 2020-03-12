@@ -22,6 +22,7 @@ import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -33,6 +34,8 @@ public class AuthorizationAuthController {
 	private TextField authorizationCodeTextField;
 	@FXML
 	private Button authorizeButton;
+	@FXML
+	private Label authorizationSignInText;
 
 	private static Text progressText;
 	private static VBox authorizationAuthVbox;
@@ -107,6 +110,7 @@ public class AuthorizationAuthController {
 			public void run() {
 				authorizationAuthVbox.setDisable(val);
 				credentialAuthVbox.setDisable(val);
+				authorizationSignInText.setDisable(val);
 			}
 		});
 	}

@@ -23,12 +23,6 @@ public class AuthenticationController {
 	@FXML
 	private VBox credentialAuthVbox;
 	@FXML
-	private ImageView githubLogo;
-	@FXML
-	private ImageView githubLogoText;
-	@FXML
-	private ImageView pratherccLogo;
-	@FXML
 	private Hyperlink whatIsThisLink;
 
 	private static final Logger logger = LoggerFactory.getLogger(AuthenticationController.class);
@@ -38,16 +32,6 @@ public class AuthenticationController {
 	public void initialize() {
 		AuthorizationAuthController.setParentControls(progressText, authorizationAuthVbox, credentialAuthVbox);
 		CredentialAuthController.setParentControls(progressText, authorizationAuthVbox, credentialAuthVbox);
-		
-		githubLogo.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
-			logger.info("GitHub image was clicked, opening - " + Properties.sourceCodeLink);
-		});
-		githubLogoText.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
-			logger.info("GitHub image was clicked, opening - " + Properties.sourceCodeLink);
-		});
-		pratherccLogo.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
-			logger.info("Prather.cc image was clicked, opening - " + Properties.pratherccLink);
-		});
 	}
 	
 	public void whatIsThisLink() {

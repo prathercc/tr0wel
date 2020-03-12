@@ -9,40 +9,58 @@
 	<children>
 		<AnchorPane prefHeight="442.0" prefWidth="600.0">
 			<children>
-				<Text fx:id="nameText" layoutX="63.0" layoutY="18.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Testname" />
-				<Text fx:id="idText" layoutX="34.0" layoutY="36.0" strokeType="OUTSIDE" strokeWidth="0.0" text="5983485" />
-				<Text fx:id="activeUsersText" layoutX="116.0" layoutY="93.0" strokeType="OUTSIDE" strokeWidth="0.0" text="500" />
-				<Text fx:id="typeText" layoutX="58.0" layoutY="54.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Channel" />
-				<Text fx:id="nsfwText" layoutX="65.0" layoutY="113.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Yes" />
-				<Text fx:id="lastMessageDateText" layoutX="143.0" layoutY="73.0" strokeType="OUTSIDE" strokeWidth="0.0" text="1/2/1991" />
+				<Text fx:id="nameText" layoutX="53.0" layoutY="18.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Testname">
+               <font>
+                  <Font name="Kinnari" size="14.0" />
+               </font></Text>
+				<Text fx:id="idText" layoutX="29.0" layoutY="36.0" strokeType="OUTSIDE" strokeWidth="0.0" text="5983485">
+               <font>
+                  <Font name="Kinnari" size="14.0" />
+               </font></Text>
+				<Text fx:id="activeUsersText" layoutX="98.0" layoutY="93.0" strokeType="OUTSIDE" strokeWidth="0.0" text="500">
+               <font>
+                  <Font name="Kinnari" size="14.0" />
+               </font></Text>
+				<Text fx:id="typeText" layoutX="49.0" layoutY="54.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Channel">
+               <font>
+                  <Font name="Kinnari" size="14.0" />
+               </font></Text>
+				<Text fx:id="nsfwText" layoutX="63.0" layoutY="112.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Yes">
+               <font>
+                  <Font name="Kinnari" size="14.0" />
+               </font></Text>
+				<Text fx:id="lastMessageDateText" layoutX="112.0" layoutY="73.0" strokeType="OUTSIDE" strokeWidth="0.0" text="1/2/1991">
+               <font>
+                  <Font name="Kinnari" size="14.0" />
+               </font></Text>
             <Text fontSmoothingType="LCD" layoutX="8.0" layoutY="18.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Name:">
                <font>
-                  <Font name="System Bold" size="14.0" />
+                  <Font name="Kinnari Bold" size="15.0" />
                </font>
             </Text>
             <Text fontSmoothingType="LCD" layoutX="8.0" layoutY="36.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Id: ">
                <font>
-                  <Font name="System Bold" size="14.0" />
+                  <Font name="Kinnari Bold" size="15.0" />
                </font>
             </Text>
             <Text fontSmoothingType="LCD" layoutX="9.0" layoutY="54.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Type: ">
                <font>
-                  <Font name="System Bold" size="14.0" />
+                  <Font name="Kinnari Bold" size="15.0" />
                </font>
             </Text>
             <Text fontSmoothingType="LCD" layoutX="8.0" layoutY="73.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Latest Message:">
                <font>
-                  <Font name="System Bold" size="14.0" />
+                  <Font name="Kinnari Bold" size="15.0" />
                </font>
             </Text>
             <Text fontSmoothingType="LCD" layoutX="8.0" layoutY="92.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Active Users: ">
                <font>
-                  <Font name="System Bold" size="14.0" />
+                  <Font name="Kinnari Bold" size="15.0" />
                </font>
             </Text>
             <Text fontSmoothingType="LCD" layoutX="8.0" layoutY="112.0" strokeType="OUTSIDE" strokeWidth="0.0" text="NSFW: ">
                <font>
-                  <Font name="System Bold" size="14.0" />
+                  <Font name="Kinnari Bold" size="15.0" />
                </font>
             </Text>
 			</children>
