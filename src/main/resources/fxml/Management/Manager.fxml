@@ -20,9 +20,18 @@
 					<tabs>
                   <Tab fx:id="informationTab" text="Information">
                     <content>
-                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="110.0" prefWidth="642.0">
                            <children>
-                              <fx:include source="Tabs/InformationTab.fxml" />
+                              <VBox layoutX="12.0" layoutY="2.0" prefHeight="90.0" prefWidth="294.0">
+                                 <children>
+                                    <fx:include source="Tabs/InformationTab.fxml" />
+                                 </children>
+                              </VBox>
+                  				<Text layoutX="317.0" layoutY="104.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Select User to Manage">
+                                 <font>
+                                    <Font name="Kinnari" size="15.0" />
+                                 </font>
+                              </Text>
                            </children>
                         </AnchorPane>
                     </content>
@@ -69,13 +78,9 @@
 					</tabs>
 				</TabPane>
 				<ListView fx:id="listView" layoutX="15.0" layoutY="171.0" prefHeight="186.0" prefWidth="612.0" />
-				<ChoiceBox fx:id="userSelectionBox" layoutX="297.0" layoutY="142.0" onAction="#selectUser" prefWidth="150.0" />
-				<Text layoutX="298.0" layoutY="138.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Select User to Manage">
-               <font>
-                  <Font name="Kinnari" size="15.0" />
-               </font></Text>
+				<ChoiceBox fx:id="userSelectionBox" layoutX="309.0" layoutY="142.0" onAction="#selectUser" prefWidth="150.0" />
 				<Text fx:id="numOfMsgText" layoutX="209.0" layoutY="381.0" strokeType="OUTSIDE" strokeWidth="0.0" />
-				<ImageView fitHeight="242.0" fitWidth="172.0" layoutX="459.0" layoutY="16.0" opacity="0.39" pickOnBounds="true" preserveRatio="true">
+				<ImageView fitHeight="242.0" fitWidth="172.0" layoutX="470.0" layoutY="16.0" opacity="0.39" pickOnBounds="true" preserveRatio="true">
 					<image>
 						<Image url="@../../images/prathercc.png" />
 					</image>

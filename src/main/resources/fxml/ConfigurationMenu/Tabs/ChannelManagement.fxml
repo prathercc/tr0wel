@@ -7,7 +7,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="258.0" prefWidth="439.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cc.prather.tr0wel.controller.configuration.ChannelManagementTabController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="272.0" prefWidth="439.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cc.prather.tr0wel.controller.configuration.ChannelManagementTabController">
 	<children>
 		<AnchorPane prefHeight="440.0" prefWidth="600.0">
 			<children>
@@ -21,11 +21,11 @@
                </font></Text>
 				<Button fx:id="manageChannelButton" disable="true" focusTraversable="false" layoutX="165.0" layoutY="202.0" mnemonicParsing="false" onAction="#manageChannel" text="Manage Channel">
                <font>
-                  <Font name="Kinnari" size="13.0" />
+                  <Font name="Kinnari" size="15.0" />
                </font></Button>
             <ListView fx:id="guildListView" layoutX="8.0" layoutY="21.0" prefHeight="175.0" prefWidth="202.0" />
             <ListView fx:id="channelListView" layoutX="229.0" layoutY="22.0" prefHeight="175.0" prefWidth="202.0" />
-            <Text fx:id="progressText" layoutY="253.0" strokeType="OUTSIDE" strokeWidth="0.0">
+            <Text fx:id="progressText" layoutY="263.0" strokeType="OUTSIDE" strokeWidth="0.0">
                <font>
                   <Font name="Kinnari" size="16.0" />
                </font></Text>
