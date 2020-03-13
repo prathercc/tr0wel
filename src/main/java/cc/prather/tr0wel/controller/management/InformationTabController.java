@@ -6,24 +6,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import cc.prather.tr0wel.domain.Message;
+import cc.prather.tr0wel.domain.StatsRow;
 import cc.prather.tr0wel.service.AccountService;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.text.Text;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 
 @Component
 public class InformationTabController {
 	@FXML
-	private Text nameText;
+	private TableColumn nameColumn;
 	@FXML
-	private Text idText;
+	private TableColumn valueColumn;
 	@FXML
-	private Text activeUsersText;
-	@FXML
-	private Text typeText;
-	@FXML
-	private Text nsfwText;
-	@FXML
-	private Text lastMessageDateText;
+	private TableView informationTable;
 
 	@Autowired
 	AccountService accountService;
@@ -45,12 +44,16 @@ public class InformationTabController {
 					+ (selectedChannel != null ? "channel '" + selectedChannel.getName() + "'"
 							: "conversation '" + selectedConversation.toString() + "'"));
 		}
-
-		nameText.setText(selectedChannel != null ? selectedChannel.getName() : selectedConversation.toString());
-		idText.setText(selectedChannel != null ? selectedChannel.getId() : selectedConversation.getId());
-		activeUsersText.setText(Integer.toString(users.size()));
-		typeText.setText(selectedChannel != null ? "Channel" : "Conversation");
-		nsfwText.setText(selectedConversation != null ? "N/A" : selectedChannel.getIsNsfw() ? "Yes" : " No");
-		lastMessageDateText.setText(lastMessage != null ? lastMessage.getDatePosted() : "N/A");
+		final ObservableList<StatsRow> data = FXCollections.observableArrayList(
+				new StatsRow("Name: ",selectedChannel != null ? selectedChannel.getName() : selectedConversation.toString()),
+				new StatsRow("Id: ",selectedChannel != null ? selectedChannel.getId() : selectedConversation.getId()),
+				new StatsRow("Type: ",selectedChannel != null ? "Channel" : "Conversation"),
+				new StatsRow("Latest Message: ",lastMessage != null ? lastMessage.getDatePosted() : "N/A"),
+				new StatsRow("Active Users: ",Integer.toString(users.size())),
+				new StatsRow("NSFW: ",selectedConversation != null ? "N/A" : selectedChannel.getIsNsfw() ? "Yes" : " No"));
+				
+		nameColumn.setCellValueFactory(new PropertyValueFactory<StatsRow, String>("name"));
+		valueColumn.setCellValueFactory(new PropertyValueFactory<StatsRow, String>("value"));
+		informationTable.setItems(data);
 	}
 }
