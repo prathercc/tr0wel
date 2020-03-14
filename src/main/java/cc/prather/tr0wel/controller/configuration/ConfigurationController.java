@@ -33,5 +33,6 @@ public class ConfigurationController {
 		TitledPane[] titlePaneArr = {conversationTitlePane, channelTitlePane, statsTitlePane};
 		ChannelManagementTabController.setParentControls(configurationAccordian, titlePaneArr);
 		ConversationManagementTabController.setParentControls(configurationAccordian, titlePaneArr);
+		configurationAccordian.setExpandedPane(statsTitlePane);
 	}
 }
