@@ -73,14 +73,14 @@
 						</Tab>
 					</tabs>
 				</TabPane>
+      				<ImageView fitHeight="126.0" fitWidth="150.0" layoutX="475.0" layoutY="41.0" opacity="0.72" pickOnBounds="true" preserveRatio="true">
+      					<image>
+      						<Image url="@../../images/prathercc.png" />
+      					</image>
+      				</ImageView>
 				<ListView fx:id="listView" layoutX="15.0" layoutY="171.0" prefHeight="186.0" prefWidth="612.0" />
 				<ChoiceBox fx:id="userSelectionBox" layoutX="309.0" layoutY="142.0" onAction="#selectUser" prefWidth="150.0" />
 				<Text fx:id="numOfMsgText" layoutX="209.0" layoutY="381.0" strokeType="OUTSIDE" strokeWidth="0.0" />
-				<ImageView fitHeight="186.0" fitWidth="181.0" layoutX="461.0" layoutY="23.0" opacity="0.72" pickOnBounds="true" preserveRatio="true">
-					<image>
-						<Image url="@../../images/prathercc.png" />
-					</image>
-				</ImageView>
             <CheckBox fx:id="selectAllCheckBox" layoutX="23.0" layoutY="367.0" mnemonicParsing="false" onAction="#selectAll" text="Select All" />
             <Text layoutX="313.0" layoutY="133.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Select User to Manage">
                <font>
