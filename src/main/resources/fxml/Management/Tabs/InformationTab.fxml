@@ -11,8 +11,8 @@
 			<children>
             <TableView fx:id="informationTable" layoutY="-1.0" prefHeight="125.0" prefWidth="291.0">
               <columns>
-                <TableColumn fx:id="nameColumn" prefWidth="129.0" />
-                <TableColumn fx:id="valueColumn" editable="false" prefWidth="161.0" sortable="false" />
+                <TableColumn fx:id="nameColumn" prefWidth="129.0" text="Property" />
+                <TableColumn fx:id="valueColumn" editable="false" prefWidth="161.0" sortable="false" text="Value" />
               </columns>
             </TableView>
 			</children>

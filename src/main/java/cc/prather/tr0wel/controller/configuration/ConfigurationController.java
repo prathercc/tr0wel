@@ -25,14 +25,20 @@ public class ConfigurationController {
 	@FXML
 	private TitledPane channelTitlePane;
 	@FXML
-	private TitledPane statsTitlePane;
+	private TitledPane propertiesTitlePane;
 	
 	private static final Logger logger = LoggerFactory.getLogger(ConfigurationController.class);
 	
 	public void initialize() {
-		TitledPane[] titlePaneArr = {conversationTitlePane, channelTitlePane, statsTitlePane};
+		TitledPane[] titlePaneArr = {conversationTitlePane, channelTitlePane, propertiesTitlePane};
 		ChannelManagementTabController.setParentControls(configurationAccordian, titlePaneArr);
 		ConversationManagementTabController.setParentControls(configurationAccordian, titlePaneArr);
-		configurationAccordian.setExpandedPane(statsTitlePane);
+		configurationAccordian.setExpandedPane(propertiesTitlePane);
+	}
+	
+	public void handlePaneClose() {
+		if(configurationAccordian.getExpandedPane() == null) {
+			configurationAccordian.setExpandedPane(propertiesTitlePane);
+		}
 	}
 }

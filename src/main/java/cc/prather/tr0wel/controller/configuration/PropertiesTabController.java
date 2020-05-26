@@ -13,14 +13,14 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 @Component
-public class StatsTabController {
+public class PropertiesTabController {
 	@FXML
 	private TableColumn nameColumn;
 	@FXML
 	private TableColumn valueColumn;
 	
 	@FXML
-	private TableView statsTable;
+	private TableView propertiesTable;
 	
 	@Autowired
 	AccountService accountService;
@@ -38,6 +38,6 @@ public class StatsTabController {
 				new StatsRow("Active Conversations: ",account.getConversations().size() + ""));
 		nameColumn.setCellValueFactory(new PropertyValueFactory<StatsRow, String>("name"));
 		valueColumn.setCellValueFactory(new PropertyValueFactory<StatsRow, String>("value"));
-		statsTable.setItems(data);
+		propertiesTable.setItems(data);
 	}
 }
