@@ -87,7 +87,7 @@
                   <Font name="Kinnari" size="15.0" />
                </font>
             </Text>
-            <Hyperlink disable="true" layoutX="406.0" layoutY="-9.0" text="prather.cc/software/tr0wel">
+            <Hyperlink disable="true" layoutX="406.0" layoutY="-9.0" text="Prather.cc/software/tr0wel">
                <font>
                   <Font name="Kinnari" size="21.0" />
                </font>
