@@ -73,9 +73,9 @@
 						</Tab>
 					</tabs>
 				</TabPane>
-      				<ImageView fitHeight="126.0" fitWidth="150.0" layoutX="475.0" layoutY="41.0" opacity="0.72" pickOnBounds="true" preserveRatio="true">
+      				<ImageView fitHeight="126.0" fitWidth="150.0" layoutX="475.0" layoutY="41.0" opacity="0.72" pickOnBounds="true" preserveRatio="true" style="-fx-background-radius: 500px;">
       					<image>
-      						<Image url="@../../images/prathercc.png" />
+      						<Image url="@../../images/Logo.png" />
       					</image>
       				</ImageView>
 				<ListView fx:id="listView" layoutX="15.0" layoutY="171.0" prefHeight="186.0" prefWidth="612.0" />
@@ -87,7 +87,7 @@
                   <Font name="Kinnari" size="15.0" />
                </font>
             </Text>
-            <Hyperlink disable="true" layoutX="406.0" layoutY="-9.0" text="Prather.cc/software/tr0wel">
+            <Hyperlink disable="true" layoutX="406.0" layoutY="-9.0" text="prather.cc/software/tr0wel">
                <font>
                   <Font name="Kinnari" size="21.0" />
                </font>
