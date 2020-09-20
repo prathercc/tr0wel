@@ -77,13 +77,19 @@ public class ExportTabController {
 	}
 
 	public void exportUsersCheck() {
+		checkExportButton();
 		exportAllCheckBox.setSelected(false);
 		participatingUsersList.setDisable(!exportFromUsersCheckBox.isSelected());
 	}
 
 	public void exportAllCheck() {
+		checkExportButton();
 		exportFromUsersCheckBox.setSelected(false);
 		participatingUsersList.setDisable(true);
+	}
+	
+	public void checkExportButton() {
+		exportButton.setDisable(!exportFromUsersCheckBox.isSelected() && !exportAllCheckBox.isSelected());
 	}
 
 	public void initialize() {
