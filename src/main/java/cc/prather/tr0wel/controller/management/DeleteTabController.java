@@ -39,6 +39,7 @@ public class DeleteTabController {
 	private static CheckBox selectAllButton;
 	private static Text numOfMsgText;
 	private static ChoiceBox<User> userSelectionBox;
+	private static Button deleteSelectionsButtonCopy;
 
 	@Autowired
 	AccountService accountService;
@@ -47,6 +48,11 @@ public class DeleteTabController {
 	MessageService messageService;
 
 	private static final Logger logger = LoggerFactory.getLogger(DeleteTabController.class);
+	
+	public void initialize() {
+		deleteSelectionsButtonCopy = deleteSelectionsButton;
+		deleteSelectionsButtonCopy.setDisable(true);
+	}
 
 	public void deleteSelections() {
 		Thread thread = new Thread(getNewDeletionTask());
@@ -60,12 +66,13 @@ public class DeleteTabController {
 			protected Void call() throws Exception {
 				toggleControls(true);
 				List<Message> msgsToDelete = new ArrayList<Message>();
-				List<Message> selectedMessagesList = listView.getItems().stream().filter(message -> message.getIsSelected().get())
-						.collect(Collectors.toList());
+				List<Message> selectedMessagesList = listView.getItems().stream()
+						.filter(message -> message.getIsSelected().get()).collect(Collectors.toList());
 				Channel selectedChannel = accountService.getSelectedChannel();
 				Conversation selectedConversation = accountService.getSelectedConversation();
 				for (Message msg : selectedMessagesList) {
-					String selectedId = selectedChannel != null ? selectedChannel.getId() : selectedConversation.getId();
+					String selectedId = selectedChannel != null ? selectedChannel.getId()
+							: selectedConversation.getId();
 					var response = messageService.deleteMessage(msg, selectedId);
 					if (response) {
 						updateText(progressText, "Deletion Success - " + msg.getId());
@@ -75,7 +82,7 @@ public class DeleteTabController {
 					}
 					Thread.sleep(250);
 				}
-				updateMessages(msgsToDelete,selectedChannel,selectedConversation);
+				updateMessages(msgsToDelete, selectedChannel, selectedConversation);
 				updateText(progressText, "");
 				toggleControls(false);
 				return null;
@@ -83,8 +90,9 @@ public class DeleteTabController {
 		};
 		return deletionTask;
 	}
-	
-	private void updateMessages(List<Message> msgsToDelete, Channel selectedChannel, Conversation selectedConversation) {
+
+	private void updateMessages(List<Message> msgsToDelete, Channel selectedChannel,
+			Conversation selectedConversation) {
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
@@ -96,8 +104,7 @@ public class DeleteTabController {
 					listView.getItems().remove(message);
 				});
 				updateText(numOfMsgText,
-						listView.getItems().size() != 0
-								? "Found " + listView.getItems().size() + " messages by user."
+						listView.getItems().size() != 0 ? "Found " + listView.getItems().size() + " messages by user."
 								: "");
 			}
 		});
@@ -130,5 +137,15 @@ public class DeleteTabController {
 		selectAllButton = selectButton;
 		numOfMsgText = numText;
 		userSelectionBox = usersBox;
+		listView.setOnMouseExited(e -> {
+			Integer numOfSelected = listView.getItems().stream()
+					.filter(message -> message.getIsSelected().get()).collect(Collectors.toList()).size();
+			if(numOfSelected != 0) {
+				deleteSelectionsButtonCopy.setDisable(false);
+			}
+			else {
+				deleteSelectionsButtonCopy.setDisable(true);
+			}
+		});
 	}
 }
