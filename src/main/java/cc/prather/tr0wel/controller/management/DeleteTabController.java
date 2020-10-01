@@ -51,7 +51,6 @@ public class DeleteTabController {
 	
 	public void initialize() {
 		deleteSelectionsButtonCopy = deleteSelectionsButton;
-		deleteSelectionsButtonCopy.setDisable(true);
 	}
 
 	public void deleteSelections() {

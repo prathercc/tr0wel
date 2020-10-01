@@ -10,7 +10,7 @@
 	<children>
 		<AnchorPane prefHeight="120.0" prefWidth="237.0">
 			<children>
-				<Button fx:id="deleteSelectionsButton" layoutX="86.0" layoutY="37.0" mnemonicParsing="false" onAction="#deleteSelections" text="Delete Selections">
+				<Button fx:id="deleteSelectionsButton" disable="true" layoutX="86.0" layoutY="37.0" mnemonicParsing="false" onAction="#deleteSelections" text="Delete Selections">
                <font>
                   <Font name="Kinnari" size="14.0" />
                </font></Button>
