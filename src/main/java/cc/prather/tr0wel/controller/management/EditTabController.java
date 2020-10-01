@@ -42,6 +42,8 @@ public class EditTabController {
 	private static CheckBox selectAllButton;
 	private static Text numOfMsgText;
 	private static ChoiceBox<User> userSelectionBox;
+	private static Button editSelectionsButtonCopy;
+	private static TextField newMessageTextFieldCopy;
 
 	@Autowired
 	MessageService messageService;
@@ -50,6 +52,11 @@ public class EditTabController {
 	AccountService accountService;
 
 	private static final Logger logger = LoggerFactory.getLogger(EditTabController.class);
+	
+	public void initialize() {
+		editSelectionsButtonCopy = editSelectionsButton;
+		newMessageTextFieldCopy = newMessageTextField;
+	}
 
 	public void editSelections() {
 		Thread thread = new Thread(getNewEditTask());
@@ -137,5 +144,25 @@ public class EditTabController {
 		selectAllButton = selectButton;
 		numOfMsgText = numText;
 		userSelectionBox = usersBox;
+		listView.setOnMouseExited(e -> {
+			Integer numOfSelected = listView.getItems().stream()
+					.filter(message -> message.getIsSelected().get()).collect(Collectors.toList()).size();
+			if(numOfSelected != 0 && newMessageTextFieldCopy.getLength() > 0) {
+				editSelectionsButtonCopy.setDisable(false);
+			}
+			else {
+				editSelectionsButtonCopy.setDisable(true);
+			}
+		});
+		newMessageTextFieldCopy.setOnKeyTyped(e -> {
+			Integer numOfSelected = listView.getItems().stream()
+					.filter(message -> message.getIsSelected().get()).collect(Collectors.toList()).size();
+			if(numOfSelected != 0 && newMessageTextFieldCopy.getLength() > 0) {
+				editSelectionsButtonCopy.setDisable(false);
+			}
+			else {
+				editSelectionsButtonCopy.setDisable(true);
+			}
+		});
 	}
 }

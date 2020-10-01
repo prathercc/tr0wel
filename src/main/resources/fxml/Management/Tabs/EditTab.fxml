@@ -11,8 +11,8 @@
 	<children>
 		<AnchorPane prefHeight="431.0" prefWidth="600.0">
 			<children>
-				<TextField fx:id="newMessageTextField" layoutX="14.0" layoutY="14.0" prefHeight="25.0" prefWidth="288.0" promptText="Enter a new message..." />
-				<Button fx:id="editSelectionsButton" layoutX="108.0" layoutY="51.0" mnemonicParsing="false" onAction="#editSelections" text="Edit Selections">
+				<TextField fx:id="newMessageTextField" layoutX="14.0" layoutY="14.0" onAction="#editSelections" prefHeight="25.0" prefWidth="288.0" promptText="Enter a new message..." />
+				<Button fx:id="editSelectionsButton" disable="true" layoutX="108.0" layoutY="51.0" mnemonicParsing="false" onAction="#editSelections" text="Edit Selections">
                <font>
                   <Font name="Kinnari" size="14.0" />
                </font></Button>
