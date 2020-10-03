@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="110.0" prefWidth="487.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cc.prather.tr0wel.controller.utility.LoadingBoxController">
+	<children>
+		<AnchorPane prefHeight="431.0" prefWidth="532.0">
+			<children>
+				<Text fx:id="loadingText" layoutX="38.0" layoutY="60.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Loading..." />
+			</children>
+		</AnchorPane>
+	</children>
+</VBox>
