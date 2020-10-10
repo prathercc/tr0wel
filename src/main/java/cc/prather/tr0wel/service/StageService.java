@@ -19,6 +19,15 @@ public class StageService {
 	private static final Logger logger = LoggerFactory.getLogger(StageService.class);
 	private FXMLLoader fxmlLoader;
 	private Parent rootNode;
+	private Stage tempStage;
+
+	public Stage getTempStage() {
+		return tempStage;
+	}
+
+	public void setTempStage(Stage tempStage) {
+		this.tempStage = tempStage;
+	}
 
 	public StageService() {
 		logger.info("StageService has been initialized.");
