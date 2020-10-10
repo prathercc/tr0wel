@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import cc.prather.tr0wel.FxLauncher;
+import cc.prather.tr0wel.controller.utility.LoadingBoxController;
 import cc.prather.tr0wel.domain.Authorization;
 import cc.prather.tr0wel.domain.Conversation;
 import cc.prather.tr0wel.domain.Credentials;
@@ -40,7 +41,6 @@ public class CredentialAuthController {
 	@FXML
 	private CheckBox rememberMeCheckBox;
 
-	private static Text progressText;
 	private static VBox authorizationAuthVbox;
 	private static VBox credentialAuthVbox;
 
@@ -99,7 +99,6 @@ public class CredentialAuthController {
 		Task<Void> authenticationTask = new Task<Void>() {
 			@Override
 			protected Void call() throws Exception {
-				toggleControls(true);
 				Credentials credentials = new Credentials(emailTextField.getText(), passwordTextField.getText());
 				DiscordAccount discordAccount = createDiscordAccount(credentials);
 				if (discordAccount != null) {
@@ -113,26 +112,22 @@ public class CredentialAuthController {
 				return null;
 			}
 		};
+		authenticationTask.setOnRunning(e -> {
+			toggleControls(true);
+			stageService.setTempStage(stageService.getNewStageAsDialog("Loading", "/fxml/Utility/LoadingBox.fxml",
+					FxLauncher.authenticationMenu));
+			stageService.getTempStage().show();
+		});
 		return authenticationTask;
 	}
 
 	private void toggleControls(boolean val) {
-		Platform.runLater(new Runnable() {
-			@Override
-			public void run() {
-				credentialAuthVbox.setDisable(val);
-				authorizationAuthVbox.setDisable(val);
-			}
-		});
+		credentialAuthVbox.setDisable(val);
+		authorizationAuthVbox.setDisable(val);
 	}
 
 	private void setProgressText(String val) {
-		Platform.runLater(new Runnable() {
-			@Override
-			public void run() {
-				progressText.setText(val);
-			}
-		});
+		LoadingBoxController.setLoadingText(val);
 	}
 
 	private DiscordAccount createDiscordAccount(Credentials credentials) {
@@ -160,8 +155,7 @@ public class CredentialAuthController {
 		return null;
 	}
 
-	protected static void setParentControls(Text progress, VBox authorization, VBox credential) {
-		progressText = progress;
+	protected static void setParentControls(VBox authorization, VBox credential) {
 		authorizationAuthVbox = authorization;
 		credentialAuthVbox = credential;
 	}

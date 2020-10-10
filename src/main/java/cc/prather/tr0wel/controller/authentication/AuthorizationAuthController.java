@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import cc.prather.tr0wel.FxLauncher;
+import cc.prather.tr0wel.controller.utility.LoadingBoxController;
 import cc.prather.tr0wel.domain.Authorization;
 import cc.prather.tr0wel.domain.Conversation;
 import cc.prather.tr0wel.domain.Credentials;
@@ -37,7 +38,6 @@ public class AuthorizationAuthController {
 	@FXML
 	private Label authorizationSignInText;
 
-	private static Text progressText;
 	private static VBox authorizationAuthVbox;
 	private static VBox credentialAuthVbox;
 
@@ -101,6 +101,18 @@ public class AuthorizationAuthController {
 				return null;
 			}
 		};
+		authenticationTask.setOnRunning(e -> {
+			toggleControls(true);
+			stageService.setTempStage(stageService.getNewStageAsDialog("Loading", "/fxml/Utility/LoadingBox.fxml",
+					FxLauncher.authenticationMenu));
+			stageService.getTempStage().show();
+		});
+		authenticationTask.setOnSucceeded(e -> {
+			stageService.getTempStage().hide();
+		});
+		authenticationTask.setOnFailed(e -> {
+			stageService.getTempStage().hide();
+		});
 		return authenticationTask;
 	}
 
@@ -119,7 +131,7 @@ public class AuthorizationAuthController {
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
-				progressText.setText(val);
+				LoadingBoxController.setLoadingText(val);
 			}
 		});
 	}
@@ -146,12 +158,11 @@ public class AuthorizationAuthController {
 				logger.error("AuthorizationAuthController ran into an error creating the DiscordAccount object.");
 				return null;
 			}
-		}
-		return null;
+		} else
+			return null;
 	}
 
-	protected static void setParentControls(Text progress, VBox authorization, VBox credential) {
-		progressText = progress;
+	protected static void setParentControls(VBox authorization, VBox credential) {
 		authorizationAuthVbox = authorization;
 		credentialAuthVbox = credential;
 	}
