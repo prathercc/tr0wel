@@ -107,12 +107,6 @@ public class AuthorizationAuthController {
 					FxLauncher.authenticationMenu));
 			stageService.getTempStage().show();
 		});
-		authenticationTask.setOnSucceeded(e -> {
-			stageService.getTempStage().hide();
-		});
-		authenticationTask.setOnFailed(e -> {
-			stageService.getTempStage().hide();
-		});
 		return authenticationTask;
 	}
 
