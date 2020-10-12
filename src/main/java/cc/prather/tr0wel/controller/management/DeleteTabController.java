@@ -136,7 +136,17 @@ public class DeleteTabController {
 		selectAllButton = selectButton;
 		numOfMsgText = numText;
 		userSelectionBox = usersBox;
-		listView.setOnMouseExited(e -> {
+		selectAllButton.setOnMouseClicked(e -> {
+			Integer numOfSelected = listView.getItems().stream()
+					.filter(message -> message.getIsSelected().get()).collect(Collectors.toList()).size();
+			if(numOfSelected != 0) {
+				deleteSelectionsButtonCopy.setDisable(false);
+			}
+			else {
+				deleteSelectionsButtonCopy.setDisable(true);
+			}
+		});
+		listView.setOnMouseMoved(e -> {
 			Integer numOfSelected = listView.getItems().stream()
 					.filter(message -> message.getIsSelected().get()).collect(Collectors.toList()).size();
 			if(numOfSelected != 0) {
