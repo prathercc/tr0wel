@@ -9,12 +9,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import cc.prather.tr0wel.FxLauncher;
+import cc.prather.tr0wel.controller.utility.LoadingBoxController;
 import cc.prather.tr0wel.domain.Channel;
 import cc.prather.tr0wel.domain.Conversation;
 import cc.prather.tr0wel.domain.Message;
 import cc.prather.tr0wel.domain.User;
 import cc.prather.tr0wel.service.AccountService;
 import cc.prather.tr0wel.service.MessageService;
+import cc.prather.tr0wel.service.StageService;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
@@ -51,8 +54,11 @@ public class EditTabController {
 	@Autowired
 	AccountService accountService;
 
+	@Autowired
+	StageService stageService;
+
 	private static final Logger logger = LoggerFactory.getLogger(EditTabController.class);
-	
+
 	public void initialize() {
 		editSelectionsButtonCopy = editSelectionsButton;
 		newMessageTextFieldCopy = newMessageTextField;
@@ -79,10 +85,11 @@ public class EditTabController {
 							: selectedConversation.getId();
 					var response = messageService.editMessage(msg, newMessageTextField.getText(), selectedId);
 					if (response) {
-						updateText(progressText, "Edit Success - " + msg.getId());
+						updateText(progressText, "Edited message" + msg.getId().substring(msg.getId().length() - 4));
 						msgsToEdit.add(msg);
 					} else {
-						updateText(progressText, "Edit Failure - " + msg.getId());
+						updateText(progressText,
+								"Could not edit message " + msg.getId().substring(msg.getId().length() - 4));
 					}
 					Thread.sleep(550);
 				}
@@ -92,6 +99,15 @@ public class EditTabController {
 				return null;
 			}
 		};
+		deletionTask.setOnRunning(e -> {
+			toggleControls(true);
+			stageService.setTempStage(stageService.getNewStageAsDialog("Loading", "/fxml/Utility/LoadingBox.fxml",
+					ManagerController.stage));
+			stageService.getTempStage().show();
+		});
+		deletionTask.setOnSucceeded(e -> {
+			stageService.getTempStage().hide();
+		});
 		return deletionTask;
 	}
 
@@ -108,9 +124,9 @@ public class EditTabController {
 					});
 				});
 				listView.refresh();
-				updateText(numOfMsgText, listView.getItems().size() != 0
-						? "Found " + listView.getItems().size() + " messages by user."
-						: "");
+				numOfMsgText.setText(
+						listView.getItems().size() != 0 ? "Found " + listView.getItems().size() + " messages by user."
+								: "");
 			}
 		});
 	}
@@ -127,12 +143,7 @@ public class EditTabController {
 	}
 
 	private void updateText(Text text, String val) {
-		Platform.runLater(new Runnable() {
-			@Override
-			public void run() {
-				text.setText(val);
-			}
-		});
+		LoadingBoxController.setLoadingText(val);
 	}
 
 	protected static void setParentControls(ListView<Message> list, Tab[] tabList, CheckBox selectButton, Text numText,
@@ -145,22 +156,20 @@ public class EditTabController {
 		numOfMsgText = numText;
 		userSelectionBox = usersBox;
 		listView.setOnMouseExited(e -> {
-			Integer numOfSelected = listView.getItems().stream()
-					.filter(message -> message.getIsSelected().get()).collect(Collectors.toList()).size();
-			if(numOfSelected != 0 && newMessageTextFieldCopy.getLength() > 0) {
+			Integer numOfSelected = listView.getItems().stream().filter(message -> message.getIsSelected().get())
+					.collect(Collectors.toList()).size();
+			if (numOfSelected != 0 && newMessageTextFieldCopy.getLength() > 0) {
 				editSelectionsButtonCopy.setDisable(false);
-			}
-			else {
+			} else {
 				editSelectionsButtonCopy.setDisable(true);
 			}
 		});
 		newMessageTextFieldCopy.setOnKeyTyped(e -> {
-			Integer numOfSelected = listView.getItems().stream()
-					.filter(message -> message.getIsSelected().get()).collect(Collectors.toList()).size();
-			if(numOfSelected != 0 && newMessageTextFieldCopy.getLength() > 0) {
+			Integer numOfSelected = listView.getItems().stream().filter(message -> message.getIsSelected().get())
+					.collect(Collectors.toList()).size();
+			if (numOfSelected != 0 && newMessageTextFieldCopy.getLength() > 0) {
 				editSelectionsButtonCopy.setDisable(false);
-			}
-			else {
+			} else {
 				editSelectionsButtonCopy.setDisable(true);
 			}
 		});

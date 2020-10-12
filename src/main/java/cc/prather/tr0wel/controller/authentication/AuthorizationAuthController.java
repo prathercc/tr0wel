@@ -87,7 +87,6 @@ public class AuthorizationAuthController {
 		Task<Void> authenticationTask = new Task<Void>() {
 			@Override
 			protected Void call() throws Exception {
-				toggleControls(true);
 				Credentials credentials = new Credentials("", "");
 				DiscordAccount discordAccount = createDiscordAccount(credentials);
 				if (discordAccount != null) {
@@ -122,12 +121,7 @@ public class AuthorizationAuthController {
 	}
 
 	private void setProgressText(String val) {
-		Platform.runLater(new Runnable() {
-			@Override
-			public void run() {
-				LoadingBoxController.setLoadingText(val);
-			}
-		});
+		LoadingBoxController.setLoadingText(val);
 	}
 
 	private DiscordAccount createDiscordAccount(Credentials credentials) {

@@ -8,7 +8,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import cc.prather.tr0wel.FxLauncher;
 import cc.prather.tr0wel.controller.authentication.AuthenticationController;
+import cc.prather.tr0wel.controller.management.ManagerController;
+import cc.prather.tr0wel.controller.utility.LoadingBoxController;
 import cc.prather.tr0wel.domain.Channel;
 import cc.prather.tr0wel.domain.DiscordAccount;
 import cc.prather.tr0wel.domain.Guild;
@@ -24,10 +27,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
 import javafx.scene.control.TitledPane;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 @Component
@@ -39,8 +39,6 @@ public class ChannelManagementTabController {
 	private ListView<Guild> guildListView;
 	@FXML
 	private ListView<Channel> channelListView;
-	@FXML
-	private Text progressText;
 
 	private static Accordion configurationAccordian;
 	private static TitledPane conversationTitlePane;
@@ -73,9 +71,10 @@ public class ChannelManagementTabController {
 				accountService.setSelectedChannel(selectedChannel);
 				Stage stage = stageService.getNewStageAsDialog("", "/fxml/Management/Manager.fxml",
 						AuthenticationController.configurationStage);
-				if (stage != null)
+				if (stage != null) {
+					ManagerController.stage = stage;
 					stage.show();
-				else
+				} else
 					logger.error("ChannelManagementTabController received null value for stage.");
 			}
 		});
@@ -100,21 +99,27 @@ public class ChannelManagementTabController {
 				while (reachedEnd != true) {
 					List<Message> newMessagesList = service.fetchChannelMessages(lastId);
 					if (newMessagesList.size() < 100) {
-						updateConfigProgress("Loaded channel " + selectedChannel.getId());
 						reachedEnd = true; // If the data length was less than 100, we know we have reached the end
 					}
 					messageList.addAll(newMessagesList); // Populate our messageList with the additional data
+					updateConfigProgress("Loaded " + messageList.size() + " messages...");
 					Thread.sleep(250);
 					lastId = newMessagesList.size() != 0 ? newMessagesList.get(newMessagesList.size() - 1).getId() : "";
-					updateConfigProgress(newMessagesList.size() != 0 ? "Loading - " + lastId
-							: (lastId.length() > 0 ? lastId : "Last Id not found") + " - Failure!");
 				}
-				updateConfigProgress("");
 				toggleControls(false);
 				launchManageChannel(messageList);
 				return null;
 			}
 		};
+		messageTask.setOnRunning(e -> {
+			toggleControls(true);
+			stageService.setTempStage(stageService.getNewStageAsDialog("Loading", "/fxml/Utility/LoadingBox.fxml",
+					ManagerController.stage));
+			stageService.getTempStage().show();
+		});
+		messageTask.setOnSucceeded(e -> {
+			stageService.getTempStage().hide();
+		});
 		return messageTask;
 	}
 
@@ -126,12 +131,7 @@ public class ChannelManagementTabController {
 	}
 
 	private void updateConfigProgress(String val) {
-		Platform.runLater(new Runnable() {
-			@Override
-			public void run() {
-				progressText.setText(val);
-			}
-		});
+		LoadingBoxController.setLoadingText(val);
 	}
 
 	private void initializeListViews() {

@@ -8,7 +8,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import cc.prather.tr0wel.FxLauncher;
 import cc.prather.tr0wel.controller.authentication.AuthenticationController;
+import cc.prather.tr0wel.controller.utility.LoadingBoxController;
 import cc.prather.tr0wel.domain.Channel;
 import cc.prather.tr0wel.domain.Conversation;
 import cc.prather.tr0wel.domain.DiscordAccount;
@@ -39,8 +41,6 @@ public class ConversationManagementTabController {
 	private ListView<Conversation> conversationListView;
 	@FXML
 	private Button manageDmButton;
-	@FXML
-	private Text progressText;
 
 	private static Accordion configurationAccordian;
 	private static TitledPane conversationTitlePane;
@@ -94,7 +94,6 @@ public class ConversationManagementTabController {
 		Task<Void> messageTask = new Task<Void>() {
 			@Override
 			protected Void call() throws Exception {
-				toggleControls(true);
 				accountService.setSelectedConversation(conversationListView.getSelectionModel().getSelectedItem());
 				boolean reachedEnd = false;
 				String lastId = "";
@@ -102,21 +101,27 @@ public class ConversationManagementTabController {
 				while (reachedEnd != true) {
 					List<Message> newMessagesList = service.fetchConversationMessages(lastId);
 					if (newMessagesList.size() < 100) {
-						updateConfigProgress("Loaded conversation " + accountService.getSelectedConversation().getId());
 						reachedEnd = true; // If the data length was less than 100, we know we have reached the end
 					}
 					messageList.addAll(newMessagesList); // Populate our messageList with the additional data
+					updateConfigProgress("Loaded " + messageList.size() + " messages...");
 					Thread.sleep(250);
 					lastId = newMessagesList.get(newMessagesList.size() - 1).getId(); // Save the last id we are on
-					updateConfigProgress(newMessagesList.size() != 0 ? "Loading - " + lastId
-							: (lastId.length() > 0 ? lastId : "Last Id not found") + " - Failure!");
 				}
-				updateConfigProgress("");
 				toggleControls(false);
 				launchManageConversation(messageList);
 				return null;
 			}
 		};
+		messageTask.setOnRunning(e -> {
+			toggleControls(true);
+			stageService.setTempStage(stageService.getNewStageAsDialog("Loading", "/fxml/Utility/LoadingBox.fxml",
+					FxLauncher.authenticationMenu));
+			stageService.getTempStage().show();
+		});
+		messageTask.setOnSucceeded(e -> {
+			stageService.getTempStage().hide();
+		});
 		return messageTask;
 	}
 
@@ -127,12 +132,7 @@ public class ConversationManagementTabController {
 	}
 
 	private void updateConfigProgress(String val) {
-		Platform.runLater(new Runnable() {
-			@Override
-			public void run() {
-				progressText.setText(val);
-			}
-		});
+		LoadingBoxController.setLoadingText(val);
 	}
 
 	private void initializeListViews() {

@@ -9,12 +9,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import cc.prather.tr0wel.FxLauncher;
+import cc.prather.tr0wel.controller.utility.LoadingBoxController;
 import cc.prather.tr0wel.domain.Channel;
 import cc.prather.tr0wel.domain.Conversation;
 import cc.prather.tr0wel.domain.Message;
 import cc.prather.tr0wel.domain.User;
 import cc.prather.tr0wel.service.AccountService;
 import cc.prather.tr0wel.service.MessageService;
+import cc.prather.tr0wel.service.StageService;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
@@ -47,23 +50,29 @@ public class DeleteTabController {
 	@Autowired
 	MessageService messageService;
 
+	@Autowired
+	StageService stageService;
+
 	private static final Logger logger = LoggerFactory.getLogger(DeleteTabController.class);
-	
+
 	public void initialize() {
 		deleteSelectionsButtonCopy = deleteSelectionsButton;
 	}
 
 	public void deleteSelections() {
-		Thread thread = new Thread(getNewDeletionTask());
-		thread.setDaemon(true);
-		thread.start();
+		List<Message> selectedMessagesList = listView.getItems().stream()
+				.filter(message -> message.getIsSelected().get()).collect(Collectors.toList());
+		if (selectedMessagesList.size() > 0) {
+			Thread thread = new Thread(getNewDeletionTask());
+			thread.setDaemon(true);
+			thread.start();
+		}
 	}
 
 	public Task<Void> getNewDeletionTask() {
 		Task<Void> deletionTask = new Task<Void>() {
 			@Override
 			protected Void call() throws Exception {
-				toggleControls(true);
 				List<Message> msgsToDelete = new ArrayList<Message>();
 				List<Message> selectedMessagesList = listView.getItems().stream()
 						.filter(message -> message.getIsSelected().get()).collect(Collectors.toList());
@@ -74,19 +83,28 @@ public class DeleteTabController {
 							: selectedConversation.getId();
 					var response = messageService.deleteMessage(msg, selectedId);
 					if (response) {
-						updateText(progressText, "Deletion Success - " + msg.getId());
+						updateText(progressText, "Deleted message " + msg.getId().substring(msg.getId().length() - 4));
 						msgsToDelete.add(msg);
 					} else {
-						updateText(progressText, "Deletion Failure - " + msg.getId());
+						updateText(progressText,
+								"Could not delete message " + msg.getId().substring(msg.getId().length() - 4));
 					}
 					Thread.sleep(250);
 				}
 				updateMessages(msgsToDelete, selectedChannel, selectedConversation);
-				updateText(progressText, "");
 				toggleControls(false);
 				return null;
 			}
 		};
+		deletionTask.setOnRunning(e -> {
+			toggleControls(true);
+			stageService.setTempStage(stageService.getNewStageAsDialog("Loading", "/fxml/Utility/LoadingBox.fxml",
+					ManagerController.stage));
+			stageService.getTempStage().show();
+		});
+		deletionTask.setOnSucceeded(e -> {
+			stageService.getTempStage().hide();
+		});
 		return deletionTask;
 	}
 
@@ -102,7 +120,7 @@ public class DeleteTabController {
 						selectedConversation.getMessages().remove(message);
 					listView.getItems().remove(message);
 				});
-				updateText(numOfMsgText,
+				numOfMsgText.setText(
 						listView.getItems().size() != 0 ? "Found " + listView.getItems().size() + " messages by user."
 								: "");
 			}
@@ -119,12 +137,7 @@ public class DeleteTabController {
 	}
 
 	private void updateText(Text text, String val) {
-		Platform.runLater(new Runnable() {
-			@Override
-			public void run() {
-				text.setText(val);
-			}
-		});
+		LoadingBoxController.setLoadingText(val);
 	}
 
 	protected static void setParentControls(ListView<Message> list, Tab[] tabList, CheckBox selectButton, Text numText,
@@ -137,22 +150,20 @@ public class DeleteTabController {
 		numOfMsgText = numText;
 		userSelectionBox = usersBox;
 		selectAllButton.setOnMouseClicked(e -> {
-			Integer numOfSelected = listView.getItems().stream()
-					.filter(message -> message.getIsSelected().get()).collect(Collectors.toList()).size();
-			if(numOfSelected != 0) {
+			Integer numOfSelected = listView.getItems().stream().filter(message -> message.getIsSelected().get())
+					.collect(Collectors.toList()).size();
+			if (numOfSelected != 0) {
 				deleteSelectionsButtonCopy.setDisable(false);
-			}
-			else {
+			} else {
 				deleteSelectionsButtonCopy.setDisable(true);
 			}
 		});
 		listView.setOnMouseMoved(e -> {
-			Integer numOfSelected = listView.getItems().stream()
-					.filter(message -> message.getIsSelected().get()).collect(Collectors.toList()).size();
-			if(numOfSelected != 0) {
+			Integer numOfSelected = listView.getItems().stream().filter(message -> message.getIsSelected().get())
+					.collect(Collectors.toList()).size();
+			if (numOfSelected != 0) {
 				deleteSelectionsButtonCopy.setDisable(false);
-			}
-			else {
+			} else {
 				deleteSelectionsButtonCopy.setDisable(true);
 			}
 		});

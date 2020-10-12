@@ -19,6 +19,7 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.cell.CheckBoxListCell;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 
 @Component
 public class ManagerController {
@@ -40,6 +41,8 @@ public class ManagerController {
 	private TabPane conversationTabPane;
 	@FXML
 	private CheckBox selectAllCheckBox;
+	
+	public static Stage stage;
 
 	@Autowired
 	AccountService accountService;

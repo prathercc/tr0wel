@@ -6,6 +6,8 @@ import org.springframework.stereotype.Component;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 @Component
 public class LoadingBoxController {
