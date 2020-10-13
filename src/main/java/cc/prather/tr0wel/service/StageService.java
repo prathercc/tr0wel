@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import cc.prather.tr0wel.Main;
+import cc.prather.tr0wel.controller.management.ManagerController;
 import cc.prather.tr0wel.utility.Properties;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -65,7 +66,7 @@ public class StageService {
 			stage.setTitle(title);
 			stage.setScene(scene);
 			stage.setResizable(false);
-			stage.initModality(Modality.WINDOW_MODAL);
+			stage.initModality(Modality.APPLICATION_MODAL);
 			stage.initOwner(parent);
 			stage.initStyle(StageStyle.UTILITY);
 			logger.info("StageService is returning a new Stage dialog.");
@@ -74,5 +75,12 @@ public class StageService {
 			logger.error("StageService could not return a new Stage dialog!");
 			return null;
 		}
+	}
+	
+	public void launchLoadingWindow(Stage parent) {
+		this.setTempStage(this.getNewStageAsDialog("Loading", "/fxml/Utility/LoadingBox.fxml",
+				ManagerController.stage));
+		this.getTempStage().show();
+		this.getTempStage().toFront();
 	}
 }

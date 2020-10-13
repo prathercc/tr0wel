@@ -102,9 +102,7 @@ public class AuthorizationAuthController {
 		};
 		authenticationTask.setOnRunning(e -> {
 			toggleControls(true);
-			stageService.setTempStage(stageService.getNewStageAsDialog("Loading", "/fxml/Utility/LoadingBox.fxml",
-					FxLauncher.authenticationMenu));
-			stageService.getTempStage().show();
+			stageService.launchLoadingWindow(FxLauncher.authenticationMenu);
 		});
 		return authenticationTask;
 	}

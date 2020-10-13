@@ -115,9 +115,7 @@ public class ConversationManagementTabController {
 		};
 		messageTask.setOnRunning(e -> {
 			toggleControls(true);
-			stageService.setTempStage(stageService.getNewStageAsDialog("Loading", "/fxml/Utility/LoadingBox.fxml",
-					FxLauncher.authenticationMenu));
-			stageService.getTempStage().show();
+			stageService.launchLoadingWindow(FxLauncher.authenticationMenu);
 		});
 		messageTask.setOnSucceeded(e -> {
 			stageService.getTempStage().hide();

@@ -101,9 +101,7 @@ public class EditTabController {
 		};
 		deletionTask.setOnRunning(e -> {
 			toggleControls(true);
-			stageService.setTempStage(stageService.getNewStageAsDialog("Loading", "/fxml/Utility/LoadingBox.fxml",
-					ManagerController.stage));
-			stageService.getTempStage().show();
+			stageService.launchLoadingWindow(ManagerController.stage);
 		});
 		deletionTask.setOnSucceeded(e -> {
 			stageService.getTempStage().hide();
