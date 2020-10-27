@@ -19,6 +19,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Tab;
 import javafx.scene.control.cell.CheckBoxListCell;
@@ -48,7 +49,7 @@ public class ExportTabController {
 	private static Tab deleteTab;
 	private static CheckBox selectAllButton;
 	private static Text numOfMsgText;
-	private static ChoiceBox<User> userSelectionBox;
+	private static ComboBox<User> userSelectionBox;
 
 	public void exportMessages() {
 		Channel selectedChannel = accountService.getSelectedChannel();
@@ -102,13 +103,13 @@ public class ExportTabController {
 	}
 
 	protected static void setParentControls(ListView<Message> list, Tab[] tabList, CheckBox selectButton, Text numText,
-			ChoiceBox<User> usersBox) {
+			ComboBox<User> userSelectionBox2) {
 		listView = list;
 		exportTab = tabList[0];
 		editTab = tabList[1];
 		deleteTab = tabList[2];
 		selectAllButton = selectButton;
 		numOfMsgText = numText;
-		userSelectionBox = usersBox;
+		userSelectionBox = userSelectionBox2;
 	}
 }

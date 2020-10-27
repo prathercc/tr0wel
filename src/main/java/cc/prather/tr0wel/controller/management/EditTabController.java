@@ -24,6 +24,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
@@ -44,7 +45,7 @@ public class EditTabController {
 	private static Tab deleteTab;
 	private static CheckBox selectAllButton;
 	private static Text numOfMsgText;
-	private static ChoiceBox<User> userSelectionBox;
+	private static ComboBox<User> userSelectionBox;
 	private static Button editSelectionsButtonCopy;
 	private static TextField newMessageTextFieldCopy;
 
@@ -145,14 +146,14 @@ public class EditTabController {
 	}
 
 	protected static void setParentControls(ListView<Message> list, Tab[] tabList, CheckBox selectButton, Text numText,
-			ChoiceBox<User> usersBox) {
+			ComboBox<User> userSelectionBox2) {
 		listView = list;
 		exportTab = tabList[0];
 		editTab = tabList[1];
 		deleteTab = tabList[2];
 		selectAllButton = selectButton;
 		numOfMsgText = numText;
-		userSelectionBox = usersBox;
+		userSelectionBox = userSelectionBox2;
 		listView.setOnMouseExited(e -> {
 			Integer numOfSelected = listView.getItems().stream().filter(message -> message.getIsSelected().get())
 					.collect(Collectors.toList()).size();

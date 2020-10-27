@@ -14,6 +14,7 @@ import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -26,7 +27,7 @@ public class ManagerController {
 	@FXML
 	private ListView<Message> listView;
 	@FXML
-	private ChoiceBox<User> userSelectionBox;
+	private ComboBox<User> userSelectionBox;
 	@FXML
 	private Text numOfMsgText;
 	@FXML
