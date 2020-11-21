@@ -106,7 +106,9 @@ public class ConversationManagementTabController {
 					messageList.addAll(newMessagesList); // Populate our messageList with the additional data
 					updateConfigProgress("Loaded " + messageList.size() + " messages...");
 					Thread.sleep(250);
-					lastId = newMessagesList.get(newMessagesList.size() - 1).getId(); // Save the last id we are on
+					if(newMessagesList.size() > 0) {
+						lastId = newMessagesList.get(newMessagesList.size() - 1).getId(); // Save the last id we are on
+					}
 				}
 				toggleControls(false);
 				launchManageConversation(messageList);
