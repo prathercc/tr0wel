@@ -9,17 +9,17 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<VBox maxHeight="398.0" maxWidth="494.0" prefHeight="398.0" prefWidth="411.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cc.prather.tr0wel.controller.management.ManagerController">
+<VBox maxHeight="398.0" maxWidth="606.0" prefHeight="398.0" prefWidth="606.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cc.prather.tr0wel.controller.management.ManagerController">
 	<children>
 		<AnchorPane prefHeight="665.0" prefWidth="471.0" VBox.vgrow="ALWAYS">
 			<children>
-				<TabPane fx:id="conversationTabPane" prefHeight="168.0" prefWidth="411.0" tabClosingPolicy="UNAVAILABLE">
+				<TabPane fx:id="conversationTabPane" prefHeight="168.0" prefWidth="606.0" tabClosingPolicy="UNAVAILABLE">
 					<tabs>
                   <Tab fx:id="informationTab" text="Information">
                     <content>
                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="110.0" prefWidth="642.0">
                            <children>
-                              <VBox layoutX="21.0" layoutY="2.0" prefHeight="90.0" prefWidth="294.0">
+                              <VBox layoutX="50.0" layoutY="3.0" prefHeight="90.0" prefWidth="476.0">
                                  <children>
                                     <fx:include source="Tabs/InformationTab.fxml" />
                                  </children>
@@ -32,7 +32,7 @@
 							<content>
 								<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
 									<children>
-										<VBox layoutX="75.0" layoutY="10.0" prefHeight="136.0" prefWidth="204.0">
+										<VBox layoutX="173.0" layoutY="14.0" prefHeight="136.0" prefWidth="204.0">
 											<children>
 												<fx:include source="./Tabs/ExportTab.fxml" />
 											</children>
@@ -45,7 +45,7 @@
 							<content>
 								<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
 									<children>
-										<VBox layoutX="44.0" layoutY="2.0" prefHeight="137.0" prefWidth="221.0">
+										<VBox layoutX="142.0" prefHeight="137.0" prefWidth="221.0">
 											<children>
 												<fx:include source="./Tabs/EditTab.fxml" />
 											</children>
@@ -58,7 +58,7 @@
 							<content>
 								<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
 									<children>
-										<VBox layoutX="61.0" layoutY="6.0" prefHeight="133.0" prefWidth="270.0">
+										<VBox layoutX="159.0" layoutY="14.0" prefHeight="133.0" prefWidth="270.0">
 											<children>
 												<fx:include source="./Tabs/DeleteTab.fxml" />
 											</children>
@@ -69,7 +69,7 @@
 						</Tab>
 					</tabs>
 				</TabPane>
-				<ListView fx:id="listView" layoutX="11.0" layoutY="171.0" prefHeight="174.0" prefWidth="395.0" />
+				<ListView fx:id="listView" layoutX="11.0" layoutY="171.0" prefHeight="174.0" prefWidth="584.0" />
 				<Text fx:id="numOfMsgText" layoutX="209.0" layoutY="381.0" strokeType="OUTSIDE" strokeWidth="0.0" />
             <CheckBox fx:id="selectAllCheckBox" layoutX="25.0" layoutY="360.0" mnemonicParsing="false" onAction="#selectAll" text="Select All" />
             <ComboBox fx:id="userSelectionBox" layoutX="145.0" layoutY="356.0" onAction="#selectUser" prefHeight="26.0" prefWidth="249.0" promptText="Select User to Manage" />
