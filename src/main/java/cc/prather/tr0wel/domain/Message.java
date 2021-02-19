@@ -80,7 +80,7 @@ public class Message {
 	}
 
 	public String getMessage() {
-		return message;
+		return message.replaceAll("[^\\x00-\\x7F]", "");
 	}
 
 	public void setMessage(String val) {
